@@ -12,12 +12,14 @@ public class GameMaster : MonoBehaviour
     public float m_visibleCardDecal = -0.3f;
     public float m_unVisibleCardDecal = -0.03f;
     public float m_cardSpace = 0.005f;
+    public int m_nbDrawnCardsFromDeck = 3;
     public float m_speed = 10f;
     public float m_mouseSpeed = 50.0f;
-    public float m_automationSpeed = 0.2f;
-    public float m_refillSpeed = 0.1f;
     public float m_moveBackSpeed = 10f;
-    public int m_nbDrawnCardsFromDeck = 3;
+    public float m_automationSpeedDt = 0.2f;
+    public float m_refillSpeedDt = 0.1f;
+    
+    
     [SerializeField]
     public List<Tableau> m_tableaux;
     [SerializeField]
@@ -36,6 +38,7 @@ public class GameMaster : MonoBehaviour
         m_timer = 0;
         m_win = false;
         m_canAutomate = false;
+        QualitySettings.SetQualityLevel(5, true);
     }
 
     // Update is called once per frame
@@ -44,13 +47,13 @@ public class GameMaster : MonoBehaviour
         m_timer += Time.deltaTime;
         if (m_refillDrawn)
         {          
-            if (m_refillDrawn && m_timer > m_refillSpeed)
+            if (m_refillDrawn && m_timer > m_refillSpeedDt)
             {
                 m_timer = 0;
                 CardScript c = m_discardPile.GetTopCard();
                 if(c)
                 {
-                    c.MoveToParent(m_deck, CardScript.Face.verso, false, m_unVisibleCardDecal, m_refillSpeed);
+                    c.MoveToParent(m_deck, CardScript.Face.verso, false, m_unVisibleCardDecal, m_speed);
                 }
                 else
                 {
@@ -60,7 +63,7 @@ public class GameMaster : MonoBehaviour
         }
         if(m_doAutomate)
         {
-            if(m_timer > m_automationSpeed)
+            if(m_timer > m_automationSpeedDt)
             {
                 m_doAutomate = Automate(true);
                 m_timer = 0;
@@ -118,7 +121,7 @@ public class GameMaster : MonoBehaviour
         else
         {
             CardScript c = m_deck.GetTopCard();
-            c.MoveToParent(m_discardPile, CardScript.Face.recto, false, m_unVisibleCardDecal, m_moveBackSpeed);
+            c.MoveToParent(m_discardPile, CardScript.Face.recto, false, m_unVisibleCardDecal, m_speed);
         }
     }
 
@@ -247,5 +250,16 @@ public class GameMaster : MonoBehaviour
         {
             GUI.Label(new Rect(130, 10, 50, 20), "YOU WIN");
         }
+
+        string[] names = QualitySettings.names;
+        GUILayout.BeginVertical();
+        for (int i = 0; i < names.Length; i++)
+        {
+            if (GUILayout.Button(names[i]))
+            {
+                QualitySettings.SetQualityLevel(i, true);
+            }
+        }
+        GUILayout.EndVertical();
     }
 }

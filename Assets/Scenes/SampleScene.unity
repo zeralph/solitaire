@@ -1206,12 +1206,12 @@ MonoBehaviour:
   m_visibleCardDecal: 0.2
   m_unVisibleCardDecal: 0.01
   m_cardSpace: 0.005
+  m_nbDrawnCardsFromDeck: 3
   m_speed: 5
   m_mouseSpeed: 50
-  m_automationSpeed: 0.2
-  m_refillSpeed: 0.1
   m_moveBackSpeed: 30
-  m_nbDrawnCardsFromDeck: 3
+  m_automationSpeedDt: 0.2
+  m_refillSpeedDt: 0.02
   m_tableaux:
   - {fileID: 637194437}
   - {fileID: 2058311574}

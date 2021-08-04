@@ -50,6 +50,8 @@ public class CardScript : ObjectBase
     public Transform m_symbolImage;
     public Transform m_value1Image;
     public Transform m_value2Image;
+    public Transform m_symbol1Image;
+    public Transform m_symbol2Image;
     private Vector3 m_targetPos;
     private bool m_isMoving;
     public float m_boomFactor = 100.0f;
@@ -354,6 +356,10 @@ public class CardScript : ObjectBase
         Texture symbolTexture = Resources.Load(symboltextureName, typeof(Texture)) as Texture;
         m_symbolImage.GetComponent<Renderer>().material.CopyPropertiesFromMaterial(m);
         m_symbolImage.GetComponent<Renderer>().material.SetTexture("_MainTex", symbolTexture);
+        m_symbol1Image.GetComponent<Renderer>().material.CopyPropertiesFromMaterial(m);
+        m_symbol1Image.GetComponent<Renderer>().material.SetTexture("_MainTex", symbolTexture);
+        m_symbol2Image.GetComponent<Renderer>().material.CopyPropertiesFromMaterial(m);
+        m_symbol2Image.GetComponent<Renderer>().material.SetTexture("_MainTex", symbolTexture);
     }
 
     private void UpdateFlip()
