@@ -1,0 +1,48 @@
+﻿<Properties StartupConfiguration="{F41B1219-B2E8-A659-7228-A99A511BBB47}|">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/GameMaster.cs">
+    <Files>
+      <File FileName="Assets/ObjectBase.cs" Line="14" Column="55" IsPinned="True" />
+      <File FileName="Assets/FamilyPile.cs" Line="14" Column="26" />
+      <File FileName="Assets/CardScript.cs" Line="208" Column="52" />
+      <File FileName="Assets/DeckScript.cs" Line="6" Column="2" />
+      <File FileName="Assets/Tableau.cs" Line="7" Column="32" />
+      <File FileName="Assets/CardMover.cs" Line="55" Column="37" />
+      <File FileName="Assets/GameMaster.cs" Line="149" Column="10" />
+      <File FileName="Assets/CardsCreator.cs" Line="95" Column="59" />
+      <File FileName="Assets/ScreenLog.cs" Line="46" Column="10" />
+    </Files>
+    <Pads>
+      <Pad Id="ProjectPad">
+        <State name="__root__">
+          <Node name="Solitaire" expanded="True">
+            <Node name="Assets" expanded="True">
+              <Node name="GameMaster.cs" selected="True" />
+            </Node>
+          </Node>
+        </State>
+      </Pad>
+      <Pad Id="MonoDevelop.Debugger.WatchPad">
+        <State>
+          <Value>c.transform.parent</Value>
+          <Value>m_discardPile.m_cards</Value>
+          <Value>curP</Value>
+          <Value>newparent</Value>
+          <Value>m_card.m_isMoving</Value>
+          <Value>bFailed = true</Value>
+          <Value>m_win = true</Value>
+          <Value>this.transform.GetChild(1)</Value>
+        </State>
+      </Pad>
+    </Pads>
+  </MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+  <MonoDevelop.Ide.ItemProperties.Assembly-CSharp PreferredExecutionTarget="56cd949d-09d0-45b6-b546-28c17055a3e2" />
+  <MonoDevelop.Ide.DebuggingService.Breakpoints>
+    <BreakpointStore>
+      <Breakpoint file="/Users/lucasrichalland/Solitaire/Assets/DeckScript.cs" relfile="Assets/DeckScript.cs" line="9" column="1" />
+      <Breakpoint file="/Users/lucasrichalland/Solitaire/Assets/CardScript.cs" relfile="Assets/CardScript.cs" line="227" column="1" />
+    </BreakpointStore>
+  </MonoDevelop.Ide.DebuggingService.Breakpoints>
+  <MultiItemStartupConfigurations />
+</Properties>
