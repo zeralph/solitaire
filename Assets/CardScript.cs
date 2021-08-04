@@ -160,6 +160,11 @@ public class CardScript : ObjectBase
         } 
     }
 
+    public override float GetCardDecal()
+    {
+        return m_cardDecal;
+    }
+
     public override bool IsMoving()
     {
         return m_isMoving;
@@ -185,19 +190,19 @@ public class CardScript : ObjectBase
                 DeckScript dek = t.GetComponentInParent<DeckScript>();
                 if (s && CanAdd(s) && dek == null)
                 {
-                    MoveToParent(s, m_face, false, m_gameMaster.m_visibleCardDecal, m_gameMaster.m_speed);
+                    MoveToParent(s, m_face, false, s.GetCardDecal(), m_gameMaster.m_speed);
                     bFailed = false;
                 }
                 else if (tab != null && tab.IsEmpty() && this.m_name == Name.king)
                 {
-                    MoveToParent(tab, m_face, false, m_gameMaster.m_unVisibleCardDecal, m_gameMaster.m_speed);
+                    MoveToParent(tab, m_face, false, tab.GetCardDecal(), m_gameMaster.m_speed);
                     bFailed = false;
                 }
                 else if (fam != null)
                 {
                     if (fam.CanAdd(this))
                     {
-                        this.MoveToParent(fam, CardScript.Face.recto, true, m_gameMaster.m_unVisibleCardDecal, m_gameMaster.m_speed);
+                        this.MoveToParent(fam, CardScript.Face.recto, true, fam.GetCardDecal(), m_gameMaster.m_speed);
                         bFailed = false;
                     }
                 }
@@ -205,8 +210,8 @@ public class CardScript : ObjectBase
             if (bFailed)
             {
                 //move back
-                bool b = (GetParent().GetComponent<CardScript>() != null);
-                float d = b ? m_gameMaster.m_visibleCardDecal : m_gameMaster.m_unVisibleCardDecal;
+                ObjectBase parentObject = GetParent().GetComponent<ObjectBase>();
+                float d = parentObject.GetCardDecal();
                 MoveToParent(curP, m_face, false, d, m_gameMaster.m_moveBackSpeed);
             }
             SetHitable(true);
@@ -244,6 +249,7 @@ public class CardScript : ObjectBase
                     tab.FlipTopcard();
                 }
             }
+            decal = newparent.GetCardDecal();
             v.y -= decal;
             m_targetPos.x = v.x;
             m_targetPos.y = v.y;

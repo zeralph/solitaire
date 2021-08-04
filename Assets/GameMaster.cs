@@ -9,8 +9,6 @@ public class GameMaster : MonoBehaviour
     public Transform m_cardsStartPoint;
     public DeckScript m_discardPile;
     public float m_zWhenMoving = -0.2f;
-    public float m_visibleCardDecal = -0.3f;
-    public float m_unVisibleCardDecal = -0.03f;
     public float m_cardSpace = 0.005f;
     public int m_nbDrawnCardsFromDeck = 3;
     public float m_speed = 10f;
@@ -53,7 +51,7 @@ public class GameMaster : MonoBehaviour
                 CardScript c = m_discardPile.GetTopCard();
                 if(c)
                 {
-                    c.MoveToParent(m_deck, CardScript.Face.verso, false, m_unVisibleCardDecal, m_speed);
+                    c.MoveToParent(m_deck, CardScript.Face.verso, false, c.GetCardDecal(), m_speed);
                 }
                 else
                 {
@@ -121,7 +119,7 @@ public class GameMaster : MonoBehaviour
         else
         {
             CardScript c = m_deck.GetTopCard();
-            c.MoveToParent(m_discardPile, CardScript.Face.recto, false, m_unVisibleCardDecal, m_speed);
+            c.MoveToParent(m_discardPile, CardScript.Face.recto, false, m_discardPile.GetCardDecal(), m_speed);
         }
     }
 
@@ -143,8 +141,7 @@ public class GameMaster : MonoBehaviour
             {
                 f = CardScript.Face.recto;
             }
-            float d = m_unVisibleCardDecal * tab.GetNbChildCards();
-            c.MoveToParent(tab, f, true, d, m_speed);
+            c.MoveToParent(tab, f, true, tab.GetCardDecal(), m_speed);
             m_tableauIndex++;
             return true;
         }
@@ -159,7 +156,7 @@ public class GameMaster : MonoBehaviour
     public void DrawFromDeck()
     {
         CardScript c = m_deck.GetTopCard();
-        c.MoveToParent(m_discardPile, CardScript.Face.recto, true, m_unVisibleCardDecal, m_speed);
+        c.MoveToParent(m_discardPile, CardScript.Face.recto, true, m_discardPile.GetCardDecal(), m_speed);
     }
 
     public void Clear()
@@ -188,7 +185,7 @@ public class GameMaster : MonoBehaviour
                 {
                     if(bDo)
                     {
-                        topDrawn.MoveToParent(m_familyPiles[i], CardScript.Face.recto, false, m_unVisibleCardDecal, m_speed);
+                        topDrawn.MoveToParent(m_familyPiles[i], CardScript.Face.recto, false, m_familyPiles[i].GetCardDecal(), m_speed);
                     }
                     return true;
                 }
@@ -207,7 +204,7 @@ public class GameMaster : MonoBehaviour
                     {
                         if (bDo)
                         {
-                            topTableauCard.MoveToParent(m_familyPiles[j], CardScript.Face.recto, false, m_unVisibleCardDecal, m_speed);
+                            topTableauCard.MoveToParent(m_familyPiles[j], CardScript.Face.recto, false, m_familyPiles[j].GetCardDecal(), m_speed);
                         }
                         return true;
                     }

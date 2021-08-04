@@ -140,4 +140,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 151ac3ae4c937440591ac656443cb7e9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_container: {fileID: 0}
+  m_cardDecal: 0.01
   m_nbHiddenCards: 0

@@ -6,6 +6,7 @@ using UnityEngine;
 public class ObjectBase : MonoBehaviour
 {
     public GameObject m_container;
+    public float m_cardDecal;
     protected GameMaster m_gameMaster;
 
     private void Awake()
@@ -33,6 +34,11 @@ public class ObjectBase : MonoBehaviour
     {
         o.transform.parent = m_container.transform;
         return true;
+    }
+
+    public virtual float GetCardDecal()
+    {
+        return m_cardDecal * GetNbChildCards();
     }
 
     public ObjectBase GetParent()
