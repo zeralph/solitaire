@@ -247,7 +247,7 @@ public class GameMaster : MonoBehaviour
         {
             GUI.Label(new Rect(130, 10, 50, 20), "YOU WIN");
         }
-
+        /*
         string[] names = QualitySettings.names;
         GUILayout.BeginVertical();
         for (int i = 0; i < names.Length; i++)
@@ -258,5 +258,6 @@ public class GameMaster : MonoBehaviour
             }
         }
         GUILayout.EndVertical();
+        */
     }
 }

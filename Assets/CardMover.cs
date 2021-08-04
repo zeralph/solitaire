@@ -50,7 +50,7 @@ public class CardMover : ObjectBase
                     {
                         return;
                     }
-                    if (m_card && !m_card.IsInDrawn())
+                    if (m_card && !m_card.IsInDrawn() && !(m_card.IsInTableau() && !m_card.IsRecto()))
                     {
                         m_card.StartMoveWithMouse();
                     }

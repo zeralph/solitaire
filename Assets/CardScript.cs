@@ -132,6 +132,11 @@ public class CardScript : ObjectBase
         return GetParent().GetComponent<DeckScript>() != null && GetParent().GetComponent<DeckScript>().name == "Drawn";
     }
 
+    public bool IsInTableau()
+    {
+        return GetParent().GetComponent<Tableau>() != null;
+    }
+
     public bool IsInDiscard()
     {
         return GetParent().GetComponent<DeckScript>() != null && GetParent().GetComponent<DeckScript>().name == "Discard";
