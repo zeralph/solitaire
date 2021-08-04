@@ -224,7 +224,7 @@ public class CardScript : ObjectBase
     public void MoveToParent(ObjectBase newparent, Face f, bool flipImmediate, float decal, float speed)
     {
         ObjectBase curP = GetParent();
-        Debug.Log("Move " + this.name + " from " + curP.name + " to " + newparent.name + ", decal " + decal);
+        //Debug.Log("Move " + this.name + " from " + curP.name + " to " + newparent.name + ", decal " + decal);
         if (curP == null)
         {
             Debug.LogError(m_name + " has no parent. strange ?");
