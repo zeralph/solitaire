@@ -15,6 +15,7 @@ public class GameMaster : MonoBehaviour
     public float m_mouseSpeed = 50.0f;
     public float m_moveBackSpeed = 10f;
     public float m_automationSpeedDt = 0.2f;
+    public float m_pickcardsFromdeckSpeedDt = 0.3f;
     public float m_refillSpeedDt = 0.1f;
     
     
@@ -28,6 +29,8 @@ public class GameMaster : MonoBehaviour
     private bool m_win;
     private bool m_canAutomate;
     private bool m_doAutomate;
+    private bool m_pickfromDrawn;
+    private int m_nbPickedCards = 0;
     // Start is called before the first frame update
     void Start()
     {
@@ -36,6 +39,8 @@ public class GameMaster : MonoBehaviour
         m_timer = 0;
         m_win = false;
         m_canAutomate = false;
+        m_nbPickedCards = 0;
+        m_pickfromDrawn = false;
         QualitySettings.SetQualityLevel(5, true);
     }
 
@@ -56,6 +61,24 @@ public class GameMaster : MonoBehaviour
                 else
                 {
                     m_refillDrawn = false;
+                }
+            }
+        }
+        if (m_pickfromDrawn)
+        {
+            if (m_timer > m_pickcardsFromdeckSpeedDt)
+            {
+                m_timer = 0;
+                if(m_nbPickedCards < m_nbDrawnCardsFromDeck)
+                {
+                    CardScript c = m_deck.GetTopCard();
+                    c.MoveToParent(m_discardPile, CardScript.Face.recto, false, m_discardPile.GetCardDecal(), m_speed);
+                    m_nbPickedCards++;
+                }
+                else
+                {
+                    m_pickfromDrawn = false;
+                    m_nbPickedCards = 0;
                 }
             }
         }
@@ -102,24 +125,12 @@ public class GameMaster : MonoBehaviour
         }
         if(m_deck.IsEmpty())
         {
-            /*
-            CardScript c = m_discardPile.GetTopCard();         
-            do
-            {
-                if(c.transform.parent != m_discardPile.transform)
-                {
-                    Debug.LogError("error");
-                }
-                c.MoveToParent(m_deck, CardScript.Face.verso, false, false);
-                c = m_discardPile.GetTopCard();
-            } while (c != null);
-            */
             m_refillDrawn = true;
         }
         else
         {
-            CardScript c = m_deck.GetTopCard();
-            c.MoveToParent(m_discardPile, CardScript.Face.recto, false, m_discardPile.GetCardDecal(), m_speed);
+            m_pickfromDrawn = true;
+            m_nbPickedCards = 0;
         }
     }
 
