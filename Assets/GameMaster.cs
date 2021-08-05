@@ -41,7 +41,12 @@ public class GameMaster : MonoBehaviour
         m_canAutomate = false;
         m_nbPickedCards = 0;
         m_pickfromDrawn = false;
-        QualitySettings.SetQualityLevel(5, true);
+
+
+        //quality stuff
+                 QualitySettings.vSyncCount = 0;
+         Application.targetFrameRate = 30;
+        QualitySettings.SetQualityLevel(3, true);
     }
 
     // Update is called once per frame
@@ -69,7 +74,7 @@ public class GameMaster : MonoBehaviour
             if (m_timer > m_pickcardsFromdeckSpeedDt)
             {
                 m_timer = 0;
-                if(m_nbPickedCards < m_nbDrawnCardsFromDeck)
+                if(m_deck.GetNbChildCards() > 0 && m_nbPickedCards < m_nbDrawnCardsFromDeck)
                 {
                     CardScript c = m_deck.GetTopCard();
                     c.MoveToParent(m_discardPile, CardScript.Face.recto, false, m_discardPile.GetCardDecal(), m_speed);

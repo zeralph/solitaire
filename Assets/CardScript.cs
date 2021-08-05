@@ -230,7 +230,7 @@ public class CardScript : ObjectBase
 
     public override Vector3 GetTargetPosition(ObjectBase b)
     {
-        return new Vector3(m_targetPos.x, m_targetPos.y, m_targetPos.z);
+        return new Vector3(m_targetPos.x, m_targetPos.y, m_targetPos.z - m_gameMaster.m_cardSpace);
     }
 
     public void MoveToParent(ObjectBase newparent, Face f, bool flipImmediate, float decal, float speed)
@@ -258,7 +258,7 @@ public class CardScript : ObjectBase
             v.y -= decal;
             m_targetPos.x = v.x;
             m_targetPos.y = v.y;
-            m_targetPos.z = v.z - m_gameMaster.m_cardSpace;
+            m_targetPos.z = v.z;// - m_gameMaster.m_cardSpace;
             m_isMoving = true;
             m_speed = speed;
         }
