@@ -454,6 +454,8 @@ MonoBehaviour:
   m_container: {fileID: 0}
   m_cardDecal: 0.2
   m_mesh: {fileID: 5592622194085205490}
+  m_recto: {fileID: 7836853956656050578}
+  m_verso: {fileID: 1747629847151507936}
   m_symbolImage: {fileID: 309131607}
   m_value1Image: {fileID: 1732627825}
   m_value2Image: {fileID: 1590207824}

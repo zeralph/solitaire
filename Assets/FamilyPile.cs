@@ -44,6 +44,9 @@ public class FamilyPile : ObjectBase
 
     void Update()
     {
-        
+        if (m_gameMaster.IsPaused())
+        {
+            return;
+        }
     }
 }

@@ -47,6 +47,8 @@ public class CardScript : ObjectBase
     private readonly string[] names = {"A", "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K"};
     private bool m_isFlipping = false;
     public Transform m_mesh;
+    public Transform m_recto;
+    public Transform m_verso;
     public Transform m_symbolImage;
     public Transform m_value1Image;
     public Transform m_value2Image;
@@ -80,7 +82,11 @@ public class CardScript : ObjectBase
 
     void Update()
     {
-        if(m_moveWithMouse)
+        if (m_gameMaster.IsPaused())
+        {
+            return;
+        }
+        if (m_moveWithMouse)
         {
             MoveWithMouse();
         }
@@ -316,7 +322,14 @@ public class CardScript : ObjectBase
                 
                 //a.Play("cardFlipVersoToRecto", PlayMode.StopAll);
                 a.Play("cardFlipRectoToVerso", PlayMode.StopAll);
-            }               
+            }             
+            m_symbolImage.gameObject.SetActive(m_face == Face.recto);
+            m_value1Image.gameObject.SetActive(m_face == Face.recto);
+            m_value2Image.gameObject.SetActive(m_face == Face.recto);
+            m_symbol1Image.gameObject.SetActive(m_face == Face.recto);
+            m_symbol2Image.gameObject.SetActive(m_face == Face.recto);
+            m_recto.gameObject.SetActive(m_face == Face.recto);
+            m_verso.gameObject.SetActive(m_face == Face.verso);
         }      
     }
 

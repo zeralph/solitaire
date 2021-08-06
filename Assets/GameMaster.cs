@@ -8,6 +8,7 @@ public class GameMaster : MonoBehaviour
     public DeckScript m_deck;
     public Transform m_cardsStartPoint;
     public DeckScript m_discardPile;
+    public Transform m_optionsMenu;
     public float m_zWhenMoving = -0.2f;
     public float m_cardSpace = 0.005f;
     public int m_nbDrawnCardsFromDeck = 3;
@@ -31,6 +32,7 @@ public class GameMaster : MonoBehaviour
     private bool m_doAutomate;
     private bool m_pickfromDrawn;
     private int m_nbPickedCards = 0;
+    private bool m_paused = false;
     // Start is called before the first frame update
     void Start()
     {
@@ -41,17 +43,18 @@ public class GameMaster : MonoBehaviour
         m_canAutomate = false;
         m_nbPickedCards = 0;
         m_pickfromDrawn = false;
-
-
-        //quality stuff
-                 QualitySettings.vSyncCount = 0;
-         Application.targetFrameRate = 30;
-        QualitySettings.SetQualityLevel(3, true);
+        m_optionsMenu.gameObject.SetActive(false);
+        m_paused = false;
+        m_optionsMenu.GetComponent<OptionsMenu>().ReloadSettings();
     }
 
     // Update is called once per frame
     void Update()
     {
+        if(IsPaused())
+        {
+            return;
+        }
         m_timer += Time.deltaTime;
         if (m_refillDrawn)
         {          
@@ -139,6 +142,11 @@ public class GameMaster : MonoBehaviour
         }
     }
 
+    public bool IsPaused()
+    {
+        return m_paused;
+    }
+
     public bool AddCard(CardScript c)
     {
         if (m_tableauIndex >= m_tableaux.Count)
@@ -169,6 +177,10 @@ public class GameMaster : MonoBehaviour
         }
     }
 
+    public void Pause(bool pause)
+    {
+        m_paused = pause;
+    }
     public void DrawFromDeck()
     {
         CardScript c = m_deck.GetTopCard();
@@ -238,7 +250,7 @@ public class GameMaster : MonoBehaviour
         float btnW = w / 6;
         float btnH = h / 10;
         float wStep = w / 20 + btnW;
-        if (cc.CardCreated() && GUI.Button(new Rect(0, h-btnH, btnW, btnH), "Shuffle"))
+        if (cc.CardCreated() && GUI.Button(new Rect(0, h-btnH, btnW, btnH), "SHUFFLE"))
         {
             cc.DistributeCards(m_cardsStartPoint.transform.position);
             //Shuffle();
@@ -251,9 +263,18 @@ public class GameMaster : MonoBehaviour
         {
             GetComponent<CardsCreator>().BoomCards();
         }
-        if (GUI.Button(new Rect(wStep * 3, h - btnH, btnW, btnH), "CHEAT"))
+        if (GUI.Button(new Rect(wStep * 3, h - btnH, btnW, btnH), "OPTIONS"))
         {
-            
+            if(!m_paused)
+            {
+                m_optionsMenu.gameObject.SetActive(true);
+                m_paused = true;
+            }
+            else
+            {
+                m_optionsMenu.gameObject.SetActive(false);
+                m_paused = false;
+            }
         }
         if (m_canAutomate && GUI.Button(new Rect(wStep * 4, h - btnH, btnW, btnH), "AUTOMATE"))
         {

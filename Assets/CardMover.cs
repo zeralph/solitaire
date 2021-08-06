@@ -24,6 +24,10 @@ public class CardMover : ObjectBase
 
     void Update()
     {
+        if (m_gameMaster.IsPaused())
+        {
+            return;
+        }
         m_lastObject = GetClickedObject();
         if (Input.GetMouseButtonDown(MOUSE)) //CLICK
         {
