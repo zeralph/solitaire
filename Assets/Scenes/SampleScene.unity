@@ -994,11 +994,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_visible: 0
   m_quality: 3
---- !u!224 &1713985986 stripped
-RectTransform:
-  m_CorrespondingSourceObject: {fileID: 4692953575489791447, guid: 84cea698208fb274b90355da5c198d0c, type: 3}
-  m_PrefabInstance: {fileID: 7536812789091038562}
-  m_PrefabAsset: {fileID: 0}
+  m_resolution: 0
+  m_framerate: 0
 --- !u!1001 &1835649047
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1156,6 +1153,7 @@ GameObject:
   - component: {fileID: 1910826764}
   - component: {fileID: 1910826765}
   - component: {fileID: 1910826766}
+  - component: {fileID: 1910826767}
   m_Layer: 0
   m_Name: GameMaster
   m_TagString: Untagged
@@ -1229,11 +1227,14 @@ MonoBehaviour:
   m_deck: {fileID: 773646453}
   m_cardsStartPoint: {fileID: 2000747702}
   m_discardPile: {fileID: 334535822}
-  m_optionsMenu: {fileID: 1713985986}
+  m_optionsMenu: {fileID: 0}
   m_zWhenMoving: -0.2
   m_cardSpace: 0.005
   m_nbDrawnCardsFromDeck: 3
-  m_speed: 5
+  m_speed: 2.76
+  m_distributionSpeed: 10
+  m_deckToDrawnSpeed: 2.5
+  m_drawToDeckRefillSpeed: 6
   m_mouseSpeed: 50
   m_moveBackSpeed: 30
   m_automationSpeedDt: 0.2
@@ -1265,6 +1266,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_enabled: 0
+--- !u!114 &1910826767
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1910826761}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 19526436159a8491db50a4a67a0a6ef3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_states: []
 --- !u!1 &1933847266
 GameObject:
   m_ObjectHideFlags: 0

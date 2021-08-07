@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -12,7 +11,10 @@ public class GameMaster : MonoBehaviour
     public float m_zWhenMoving = -0.2f;
     public float m_cardSpace = 0.005f;
     public int m_nbDrawnCardsFromDeck = 3;
-    public float m_speed = 10f;
+    public float m_speed = 3f;
+    public float m_distributionSpeed = 10f;
+    public float m_deckToDrawnSpeed = 2.5f;
+    public float m_drawToDeckRefillSpeed = 20f;
     public float m_mouseSpeed = 50.0f;
     public float m_moveBackSpeed = 10f;
     public float m_automationSpeedDt = 0.2f;
@@ -64,7 +66,7 @@ public class GameMaster : MonoBehaviour
                 CardScript c = m_discardPile.GetTopCard();
                 if(c)
                 {
-                    c.MoveToParent(m_deck, CardScript.Face.verso, false, c.GetCardDecal(), m_speed);
+                    c.MoveToParent(m_deck, CardScript.Face.verso, false, c.GetCardDecal(), m_drawToDeckRefillSpeed);
                 }
                 else
                 {
@@ -80,7 +82,7 @@ public class GameMaster : MonoBehaviour
                 if(m_deck.GetNbChildCards() > 0 && m_nbPickedCards < m_nbDrawnCardsFromDeck)
                 {
                     CardScript c = m_deck.GetTopCard();
-                    c.MoveToParent(m_discardPile, CardScript.Face.recto, false, m_discardPile.GetCardDecal(), m_speed);
+                    c.MoveToParent(m_discardPile, CardScript.Face.recto, false, m_discardPile.GetCardDecal(), m_deckToDrawnSpeed);
                     m_nbPickedCards++;
                 }
                 else
@@ -125,6 +127,12 @@ public class GameMaster : MonoBehaviour
         }
     }
 
+    public void SaveState()
+    {
+        List<CardScript> cl = GetComponent<CardsCreator>().GetCards();
+        GetComponent<StateRecorder>().SaveState(cl);
+    }
+
     public void OnClickOnDrawn()
     {
         if(m_deck.IsCardsMoving() || m_discardPile.IsCardsMoving() )
@@ -147,8 +155,9 @@ public class GameMaster : MonoBehaviour
         return m_paused;
     }
 
-    public bool AddCard(CardScript c)
+    public bool DistributeCard(CardScript c)
     {
+        GetComponent<StateRecorder>().Clear();
         if (m_tableauIndex >= m_tableaux.Count)
         {
             m_tableauIndex = 0;
@@ -165,13 +174,13 @@ public class GameMaster : MonoBehaviour
             {
                 f = CardScript.Face.recto;
             }
-            c.MoveToParent(tab, f, true, tab.GetCardDecal(), m_speed);
+            c.MoveToParent(tab, f, true, tab.GetCardDecal(), m_distributionSpeed);
             m_tableauIndex++;
             return true;
         }
         else
         {
-            c.MoveToParent(m_deck, CardScript.Face.verso, true, 0, m_speed);
+            c.MoveToParent(m_deck, CardScript.Face.verso, true, 0, m_distributionSpeed);
             m_tableauIndex = 0;
             return false;
         }

@@ -89,10 +89,15 @@ public class CardsCreator : ObjectBase
         m_distributing = true;
     }
 
+    public List<CardScript> GetCards()
+    {
+        return m_cards;
+    }
+
     private void DistributeCard(CardScript c)
     {
         //Add to the tableaux
-        bool bAdded = this.GetComponent<GameMaster>().AddCard(c);
+        bool bAdded = this.GetComponent<GameMaster>().DistributeCard(c);
         m_cardToDistributeIndex++;
     }
     private CardScript CreateCard(CardScript.Symbol s, CardScript.Name n, bool flip)

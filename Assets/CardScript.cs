@@ -242,7 +242,10 @@ public class CardScript : ObjectBase
     public void MoveToParent(ObjectBase newparent, Face f, bool flipImmediate, float decal, float speed)
     {
         ObjectBase curP = GetParent();
-        //Debug.Log("Move " + this.name + " from " + curP.name + " to " + newparent.name + ", decal " + decal);
+        if(curP != newparent)
+        {
+            m_gameMaster.SaveState();
+        }
         if (curP == null)
         {
             Debug.LogError(m_name + " has no parent. strange ?");
@@ -329,7 +332,7 @@ public class CardScript : ObjectBase
             m_symbol1Image.gameObject.SetActive(m_face == Face.recto);
             m_symbol2Image.gameObject.SetActive(m_face == Face.recto);
             m_recto.gameObject.SetActive(m_face == Face.recto);
-            m_verso.gameObject.SetActive(m_face == Face.verso);
+            //m_verso.gameObject.SetActive(m_face == Face.verso);
         }      
     }
 
