@@ -3,11 +3,30 @@ using UnityEngine;
 
 public class GameMaster : MonoBehaviour
 {
+    public enum eMoves
+    {
+        eNotSet=0,
+        eImpossibleMove,
+        eDrawnToDiscard, //draw
+        eDiscardToDrawn, //refill
+        eDiscardToTableau,
+        eDiscardToFamily,
+        eDiscardToCard,
+        eTableauToTableau,
+        eTableauToFamily,
+        eTableauToCard,
+        eFamilyToCard,
+        eCardToCard,
+        eCardToTableau,
+        eCardToFamily,
+        eFamilyToFamily,
+    }
+    public ObjectBase m_board;
     public DeckScript m_StartDeck;
     public DeckScript m_deck;
-    public Transform m_cardsStartPoint;
     public DeckScript m_discardPile;
-    public Transform m_optionsMenu;
+    public OptionsMenu m_optionsMenu;
+    public IngameMenu m_inGameMenu;
     public float m_zWhenMoving = -0.2f;
     public float m_cardSpace = 0.005f;
     public int m_nbDrawnCardsFromDeck = 3;
@@ -20,8 +39,7 @@ public class GameMaster : MonoBehaviour
     public float m_automationSpeedDt = 0.2f;
     public float m_pickcardsFromdeckSpeedDt = 0.3f;
     public float m_refillSpeedDt = 0.1f;
-    
-    
+
     [SerializeField]
     public List<Tableau> m_tableaux;
     [SerializeField]
@@ -35,6 +53,13 @@ public class GameMaster : MonoBehaviour
     private bool m_pickfromDrawn;
     private int m_nbPickedCards = 0;
     private bool m_paused = false;
+
+    public void OnMovePlayed(eMoves move)
+    {
+        Debug.Log(move.ToString());
+        SaveState();
+    }
+
     // Start is called before the first frame update
     void Start()
     {
@@ -47,6 +72,7 @@ public class GameMaster : MonoBehaviour
         m_pickfromDrawn = false;
         m_optionsMenu.gameObject.SetActive(false);
         m_paused = false;
+        m_optionsMenu.gameObject.SetActive(false);
         m_optionsMenu.GetComponent<OptionsMenu>().ReloadSettings();
     }
 
@@ -66,11 +92,12 @@ public class GameMaster : MonoBehaviour
                 CardScript c = m_discardPile.GetTopCard();
                 if(c)
                 {
-                    c.MoveToParent(m_deck, CardScript.Face.verso, false, c.GetCardDecal(), m_drawToDeckRefillSpeed);
+                    c.MoveToParent(m_deck, CardScript.Face.verso, m_drawToDeckRefillSpeed);
                 }
                 else
                 {
                     m_refillDrawn = false;
+                    OnMovePlayed(eMoves.eDiscardToDrawn);
                 }
             }
         }
@@ -82,13 +109,14 @@ public class GameMaster : MonoBehaviour
                 if(m_deck.GetNbChildCards() > 0 && m_nbPickedCards < m_nbDrawnCardsFromDeck)
                 {
                     CardScript c = m_deck.GetTopCard();
-                    c.MoveToParent(m_discardPile, CardScript.Face.recto, false, m_discardPile.GetCardDecal(), m_deckToDrawnSpeed);
+                    c.MoveToParent(m_discardPile, CardScript.Face.recto, m_deckToDrawnSpeed);
                     m_nbPickedCards++;
                 }
                 else
                 {
                     m_pickfromDrawn = false;
                     m_nbPickedCards = 0;
+                    OnMovePlayed(eMoves.eDrawnToDiscard);
                 }
             }
         }
@@ -129,8 +157,36 @@ public class GameMaster : MonoBehaviour
 
     public void SaveState()
     {
+        //List<CardScript> cl = GetComponent<CardsCreator>().GetCards();
+        GetComponent<StateRecorder>().AddState(m_board);
+    }
+
+    public ObjectBase Find(string name)
+    {
+        if(name == "Drawn ")
+        {
+            return m_deck;
+        }
+        if (name == "Discard ")
+        {
+            return m_discardPile;
+        }
+        for (int i = 0; i < m_tableaux.Count; i++)
+        {
+            if (m_tableaux[i].name == name)
+            {
+                return m_tableaux[i];
+            }
+        }
+        for(int i=0; i< m_familyPiles.Count; i++)
+        {
+            if(m_familyPiles[i].name == name)
+            {
+                return m_familyPiles[i];
+            }
+        }
         List<CardScript> cl = GetComponent<CardsCreator>().GetCards();
-        GetComponent<StateRecorder>().SaveState(cl);
+        return cl.Find(card => (card.name == name));
     }
 
     public void OnClickOnDrawn()
@@ -157,7 +213,6 @@ public class GameMaster : MonoBehaviour
 
     public bool DistributeCard(CardScript c)
     {
-        GetComponent<StateRecorder>().Clear();
         if (m_tableauIndex >= m_tableaux.Count)
         {
             m_tableauIndex = 0;
@@ -174,13 +229,13 @@ public class GameMaster : MonoBehaviour
             {
                 f = CardScript.Face.recto;
             }
-            c.MoveToParent(tab, f, true, tab.GetCardDecal(), m_distributionSpeed);
+            c.MoveToParent(tab, f, m_distributionSpeed);
             m_tableauIndex++;
             return true;
         }
         else
         {
-            c.MoveToParent(m_deck, CardScript.Face.verso, true, 0, m_distributionSpeed);
+            c.MoveToParent(m_deck, CardScript.Face.verso, m_distributionSpeed);
             m_tableauIndex = 0;
             return false;
         }
@@ -193,7 +248,7 @@ public class GameMaster : MonoBehaviour
     public void DrawFromDeck()
     {
         CardScript c = m_deck.GetTopCard();
-        c.MoveToParent(m_discardPile, CardScript.Face.recto, true, m_discardPile.GetCardDecal(), m_speed);
+        c.MoveToParent(m_discardPile, CardScript.Face.recto, m_speed);
     }
 
     public void Clear()
@@ -222,7 +277,7 @@ public class GameMaster : MonoBehaviour
                 {
                     if(bDo)
                     {
-                        topDrawn.MoveToParent(m_familyPiles[i], CardScript.Face.recto, false, m_familyPiles[i].GetCardDecal(), m_speed);
+                        topDrawn.MoveToParent(m_familyPiles[i], CardScript.Face.recto, m_speed);
                     }
                     return true;
                 }
@@ -241,7 +296,7 @@ public class GameMaster : MonoBehaviour
                     {
                         if (bDo)
                         {
-                            topTableauCard.MoveToParent(m_familyPiles[j], CardScript.Face.recto, false, m_familyPiles[j].GetCardDecal(), m_speed);
+                            topTableauCard.MoveToParent(m_familyPiles[j], CardScript.Face.recto, m_speed);
                         }
                         return true;
                     }
@@ -251,59 +306,80 @@ public class GameMaster : MonoBehaviour
         return false;
     }
 
-    void OnGUI()
+    public void PutCardsInStartDeck()
+    {
+        List<CardScript> cards = GetComponent<CardsCreator>().GetCards();
+        for(int i=0; i<cards.Count; i++)
+        {
+            m_StartDeck.Add(cards[i]);
+            //cards[i].RestoreTo(m_StartDeck, cards[i].m_face);
+        }
+    }
+
+    #region score
+
+    public int GetScrore()
+    {
+        return 12345;
+    }
+    public int GetTurn()
+    {
+        return 123;
+    }
+    #endregion
+    #region menu controls
+    public void NewGame()
     {
         CardsCreator cc = this.GetComponent<CardsCreator>();
-        float w = Screen.width;
-        float h = Screen.height;
-        float btnW = w / 6;
-        float btnH = h / 10;
-        float wStep = w / 20 + btnW;
-        if (cc.CardCreated() && GUI.Button(new Rect(0, h-btnH, btnW, btnH), "SHUFFLE"))
+        if(cc.CardCreated())
         {
-            cc.DistributeCards(m_cardsStartPoint.transform.position);
-            //Shuffle();
+            cc.DistributeCards(m_StartDeck.transform.position);
         }
-        if(GUI.Button(new Rect(wStep, h-btnH, btnW, btnH), "QUIT") || Input.GetKey("escape"))
-        {
-            Application.Quit();
-        }
-        if (GUI.Button(new Rect(wStep*2, h - btnH, btnW, btnH), "BOOM"))
-        {
-            GetComponent<CardsCreator>().BoomCards();
-        }
-        if (GUI.Button(new Rect(wStep * 3, h - btnH, btnW, btnH), "OPTIONS"))
-        {
-            if(!m_paused)
-            {
-                m_optionsMenu.gameObject.SetActive(true);
-                m_paused = true;
-            }
-            else
-            {
-                m_optionsMenu.gameObject.SetActive(false);
-                m_paused = false;
-            }
-        }
-        if (m_canAutomate && GUI.Button(new Rect(wStep * 4, h - btnH, btnW, btnH), "AUTOMATE"))
-        {
-            m_doAutomate = true;
-        }
-        if (m_win)
-        {
-            GUI.Label(new Rect(130, 10, 50, 20), "YOU WIN");
-        }
-        /*
-        string[] names = QualitySettings.names;
-        GUILayout.BeginVertical();
-        for (int i = 0; i < names.Length; i++)
-        {
-            if (GUILayout.Button(names[i]))
-            {
-                QualitySettings.SetQualityLevel(i, true);
-            }
-        }
-        GUILayout.EndVertical();
-        */
     }
+
+    public void OpenOptionsMenu()
+    {
+        m_optionsMenu.gameObject.SetActive(true);
+        m_inGameMenu.gameObject.SetActive(false);
+        m_paused = true;
+    }
+
+    public void CloseOptionsMenu()
+    {
+        m_optionsMenu.gameObject.SetActive(false);
+        m_inGameMenu.gameObject.SetActive(true);
+        m_paused = false;
+    }
+
+    public void Automate()
+    {
+        m_doAutomate = true;
+    }
+
+    public bool CanAutomate()
+    {
+        return m_canAutomate;
+    }
+
+    public bool CanUndo()
+    {
+        return GetComponent<StateRecorder>().CanUndo();
+    }
+
+    public bool CanRedo()
+    {
+        return GetComponent<StateRecorder>().CanRedo();
+    }
+
+    public void Undo()
+    {
+        GetComponent<StateRecorder>().LoadPreviousState(m_board);
+    }
+
+    public void Redo()
+    {
+        GetComponent<StateRecorder>().LoadNextState(m_board);
+    }
+    #endregion
+
 }

@@ -45,7 +45,6 @@ public class CardScript : ObjectBase
     private const int LAYER_CARD = 6;
     private const int LAYER_DUMMY = 0;
     private readonly string[] names = {"A", "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K"};
-    private bool m_isFlipping = false;
     public Transform m_mesh;
     public Transform m_recto;
     public Transform m_verso;
@@ -90,10 +89,9 @@ public class CardScript : ObjectBase
         {
             MoveWithMouse();
         }
-        UpdateMove();
-        UpdateFlip();
         //when parent is moving
-        if(!m_isMoving && transform.position != m_targetPos)
+        UpdateMove();
+        if (!m_isMoving && transform.position != m_targetPos)
         {
             m_targetPos = transform.position;
         }
@@ -119,7 +117,7 @@ public class CardScript : ObjectBase
 
     public bool IsRecto()
     {
-        return !m_isFlipping && m_face == Face.recto;
+        return m_face == Face.recto;
     }
 
     public void FlipRectoToVerso()
@@ -193,28 +191,33 @@ public class CardScript : ObjectBase
             }
             bool bFailed = true;
             ObjectBase curP = GetParent();
-            if (t != null)
+            ObjectBase newP = (t!=null)?t.GetComponentInParent<ObjectBase>():null;
+            //GameMaster.eMoves move = GameMaster.eMoves.eNullMove;
+            if (newP != null)
             {
-                CardScript s = t.GetComponent<CardScript>();
-                Tableau tab = t.GetComponentInParent<Tableau>();
-                FamilyPile fam = t.GetComponentInParent<FamilyPile>();
-                DeckScript dek = t.GetComponentInParent<DeckScript>();
+                CardScript s = newP.GetComponentInParent<CardScript>();
+                Tableau tab = newP.GetComponentInParent<Tableau>();
+                FamilyPile fam = newP.GetComponentInParent<FamilyPile>();
+                DeckScript dek = newP.GetComponentInParent<DeckScript>();
                 if (s && CanAdd(s) && dek == null)
                 {
-                    MoveToParent(s, m_face, false, s.GetCardDecal(), m_gameMaster.m_speed);
+                    MoveToParent(s, m_face, m_gameMaster.m_speed);
                     bFailed = false;
+                    newP = s;
                 }
                 else if (tab != null && tab.IsEmpty() && this.m_name == Name.king)
                 {
-                    MoveToParent(tab, m_face, false, tab.GetCardDecal(), m_gameMaster.m_speed);
+                    MoveToParent(tab, m_face, m_gameMaster.m_speed);
                     bFailed = false;
+                    newP = tab;
                 }
                 else if (fam != null)
                 {
                     if (fam.CanAdd(this))
                     {
-                        this.MoveToParent(fam, CardScript.Face.recto, true, fam.GetCardDecal(), m_gameMaster.m_speed);
+                        this.MoveToParent(fam, CardScript.Face.recto, m_gameMaster.m_speed);
                         bFailed = false;
+                        newP = fam;
                     }
                 }
             }
@@ -223,7 +226,84 @@ public class CardScript : ObjectBase
                 //move back
                 ObjectBase parentObject = GetParent().GetComponent<ObjectBase>();
                 float d = parentObject.GetCardDecal();
-                MoveToParent(curP, m_face, false, d, m_gameMaster.m_moveBackSpeed);
+                MoveToParent(curP, m_face, m_gameMaster.m_moveBackSpeed);
+                newP = curP;
+            }
+            else
+            {
+                GameMaster.eMoves m = GameMaster.eMoves.eNotSet;
+                if(curP.IsDrawn())
+                {
+                    if(newP.IsDiscard())
+                    {
+                        m = GameMaster.eMoves.eDrawnToDiscard;
+                    }
+                    else
+                    {
+                        m = GameMaster.eMoves.eImpossibleMove;
+                    }
+                }
+                else if(curP.IsCard())
+                {
+                    if(newP.IsCard() )
+                    {
+                        m = GameMaster.eMoves.eCardToCard;
+                    }
+                    else if(newP.Istableau())
+                    {
+                        m = GameMaster.eMoves.eCardToTableau;
+                    }
+                    else if (newP.IsFamily())
+                    {
+                        m = GameMaster.eMoves.eCardToFamily;
+                    }
+                }
+                else if(curP.IsDiscard())
+                {
+                    if (newP.Istableau())
+                    {
+                        m = GameMaster.eMoves.eDiscardToTableau;
+                    }
+                    else if (newP.IsCard())
+                    {
+                        m = GameMaster.eMoves.eDiscardToCard;
+                    }
+                    else if (newP.IsFamily())
+                    {
+                        m = GameMaster.eMoves.eDiscardToFamily;
+                    }
+                }
+                else if(curP.IsFamily())
+                {
+                    if(newP.IsCard())
+                    {
+                        m = GameMaster.eMoves.eFamilyToCard;
+                    }
+                    if (newP.IsFamily())
+                    {
+                        m = GameMaster.eMoves.eFamilyToFamily;
+                    }
+                }
+                else if (curP.Istableau())
+                {
+                    if (newP.IsCard())
+                    {
+                        m = GameMaster.eMoves.eTableauToCard;
+                    }
+                    else if (newP.Istableau())
+                    {
+                        m = GameMaster.eMoves.eTableauToTableau;
+                    }
+                    else if (newP.IsFamily())
+                    {
+                        m = GameMaster.eMoves.eTableauToFamily;
+                    }
+                }
+                else
+                {
+                    m = GameMaster.eMoves.eImpossibleMove;
+                }
+                m_gameMaster.OnMovePlayed(m);
             }
             SetHitable(true);
         }      
@@ -239,37 +319,43 @@ public class CardScript : ObjectBase
         return new Vector3(m_targetPos.x, m_targetPos.y, m_targetPos.z - m_gameMaster.m_cardSpace);
     }
 
-    public void MoveToParent(ObjectBase newparent, Face f, bool flipImmediate, float decal, float speed)
+    public void RestoreTo(ObjectBase newparent, Face f)
+    {
+        newparent.Add(this);
+        Vector3 v = newparent.GetTargetPosition(this);
+        float decal = newparent.GetCardDecal();
+        v.y -= decal;
+        m_targetPos.x = v.x;
+        m_targetPos.y = v.y;
+        m_targetPos.z = v.z;// - m_gameMaster.m_cardSpace;
+        this.transform.position = m_targetPos;
+        flipTo(f, true);
+    }
+
+    public void MoveToParent(ObjectBase newparent, Face f, float speed)
     {
         ObjectBase curP = GetParent();
-        if(curP != newparent)
-        {
-            m_gameMaster.SaveState();
-        }
         if (curP == null)
         {
             Debug.LogError(m_name + " has no parent. strange ?");
         }
         else
         {
-            Vector3 v = curP.GetTargetPosition(this);
+            Tableau tab = curP.GetComponent<Tableau>();
+            newparent.Add(this);
+            Vector3 v = newparent.GetTargetPosition(this);
+            flipTo(f, false);
+            if (tab != null)
             {
-                Tableau tab = curP.GetComponent<Tableau>();
-                newparent.Add(this);
-                v = newparent.GetTargetPosition(this);
-                flipTo(f, flipImmediate);
-                if (tab != null)
-                {
-                    tab.FlipTopcard();
-                }
+                tab.FlipTopcard();
             }
-            decal = newparent.GetCardDecal();
+            float decal = newparent.GetCardDecal();
             v.y -= decal;
             m_targetPos.x = v.x;
             m_targetPos.y = v.y;
             m_targetPos.z = v.z;// - m_gameMaster.m_cardSpace;
             m_isMoving = true;
-            m_speed = speed;
+            m_speed = speed;      
         }
     }
 
@@ -303,29 +389,22 @@ public class CardScript : ObjectBase
         }
     }
 
-    public void flipTo(Face f, bool immediate)
+    public void flipTo(Face f, bool force)
     {
-        if(!m_isFlipping && f != m_face)
+        if(force || f != m_face)
         {
             m_face = f;
             Animation a = m_mesh.GetComponent<Animation>();
-            immediate = true;
-            if (immediate && m_face == Face.recto)
+            if (m_face == Face.recto)
             {
                 a.Play("cardFlipVersoToRecto", PlayMode.StopAll);
                 //m_mesh.transform.rotation = Quaternion.Euler(0.0f, 0.0f, 0.0f);
             }
-            else if (immediate && m_face == Face.verso)
+            else if (m_face == Face.verso)
             {
                 a.Play("cardFlipRectoToVerso", PlayMode.StopAll);
                 //m_mesh.transform.rotation = Quaternion.Euler(0.0f, 180.0f, 0.0f);
-            }
-            else
-            {
-                
-                //a.Play("cardFlipVersoToRecto", PlayMode.StopAll);
-                a.Play("cardFlipRectoToVerso", PlayMode.StopAll);
-            }             
+            }          
             m_symbolImage.gameObject.SetActive(m_face == Face.recto);
             m_value1Image.gameObject.SetActive(m_face == Face.recto);
             m_value2Image.gameObject.SetActive(m_face == Face.recto);
@@ -387,23 +466,6 @@ public class CardScript : ObjectBase
         m_symbol1Image.GetComponent<Renderer>().material.SetTexture("_MainTex", symbolTexture);
         m_symbol2Image.GetComponent<Renderer>().material.CopyPropertiesFromMaterial(m);
         m_symbol2Image.GetComponent<Renderer>().material.SetTexture("_MainTex", symbolTexture);
-    }
-
-    private void UpdateFlip()
-    {
-        if (m_isFlipping)
-        {
-            Quaternion targetRot = Quaternion.Euler(0.0f, 180.0f, 0.0f);
-            if (m_face == Face.recto)
-            {
-                targetRot = Quaternion.Euler(0.0f, 0.0f, 0.0f);
-            }
-            m_mesh.transform.rotation = Quaternion.RotateTowards(m_mesh.transform.rotation, targetRot, m_flipSpeed * Time.deltaTime);
-            if (m_mesh.transform.rotation == targetRot)
-            {
-                m_isFlipping = false;
-            }
-        }
     }
 
     private Transform GetObjectUnder()

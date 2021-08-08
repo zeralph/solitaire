@@ -1,5 +1,5 @@
 {
-    "m_SelectedDeviceId": "",
+    "m_SelectedDeviceId": "7f4bd889",
     "m_SelectedPackage": {
         "deviceId": "",
         "name": "",
@@ -7,7 +7,44 @@
         "exited": false
     },
     "m_SelectedPriority": 0,
-    "m_KnownPackagesForSerialization": [],
+    "m_KnownPackagesForSerialization": [
+        {
+            "deviceId": "ad021702070bdb8b25",
+            "name": "com.android.settings",
+            "processId": 13265,
+            "exited": false
+        },
+        {
+            "deviceId": "ad021702070bdb8b25",
+            "name": "com.DefaultCompany.Solitaire",
+            "processId": 7020,
+            "exited": true
+        },
+        {
+            "deviceId": "ad021702070bdb8b25",
+            "name": "com.sec.android.app.launcher",
+            "processId": 4993,
+            "exited": false
+        },
+        {
+            "deviceId": "ad021702070bdb8b25",
+            "name": "com.DefaultCompany.Solitaire",
+            "processId": 8899,
+            "exited": true
+        },
+        {
+            "deviceId": "ad021702070bdb8b25",
+            "name": "com.DefaultCompany.Solitaire",
+            "processId": 10221,
+            "exited": false
+        },
+        {
+            "deviceId": "7f4bd889",
+            "name": "net.oneplus.launcher",
+            "processId": 25830,
+            "exited": false
+        }
+    ],
     "m_Tags": {
         "m_Entries": [
             {

@@ -14,14 +14,14 @@ public class OptionsMenu : MonoBehaviour
     };
     public enum RESOLUTION
     { 
-        High = 1,
-        medium=2,
-        Low =4,
+        Full = 1,
+        Half=2,
+        Quarter =4,
     };
     public enum FRAMERATE 
     { 
-        Low=30, 
-        High=60
+        Fps30=30, 
+        Fps60=60
     };
 
     public bool m_visible;
@@ -29,16 +29,21 @@ public class OptionsMenu : MonoBehaviour
     public QUALITY m_quality;
     public RESOLUTION m_resolution;
     public FRAMERATE m_framerate;
+    public GameMaster m_gameMaster;
+    public Button m_back;
 
     // Start is called before the first frame update
     void Awake()
     {
         PlayerPrefs.DeleteAll();
         ReloadSettings();
+        SetButtonText("ButtonFramerate", m_framerate.ToString());
+        GetButton("ButtonFramerate").onClick.AddListener(OnClickFramerate);
         SetButtonText("ButtonResolution", m_resolution.ToString() );
         GetButton("ButtonResolution").onClick.AddListener(OnClickResolution);
         SetButtonText("ButtonQuality", m_quality.ToString());
         GetButton("ButtonQuality").onClick.AddListener(OnClickQuality);
+        m_back.onClick.AddListener(m_gameMaster.CloseOptionsMenu);
     }
 
     private void Start()
@@ -97,13 +102,14 @@ public class OptionsMenu : MonoBehaviour
     public void LoadPrefs()
     {   
         m_quality = PlayerPrefs.HasKey("Quality")?(QUALITY)PlayerPrefs.GetInt("Quality"): QUALITY.Medium;
-        m_resolution = PlayerPrefs.HasKey("Resolution") ? (RESOLUTION)PlayerPrefs.GetInt("Resolution") : RESOLUTION.Low;
-        m_framerate = PlayerPrefs.HasKey("Framerate") ? (FRAMERATE)PlayerPrefs.GetInt("Framerate") : FRAMERATE.Low;
+        m_resolution = PlayerPrefs.HasKey("Resolution") ? (RESOLUTION)PlayerPrefs.GetInt("Resolution") : RESOLUTION.Quarter;
+        m_framerate = PlayerPrefs.HasKey("Framerate") ? (FRAMERATE)PlayerPrefs.GetInt("Framerate") : FRAMERATE.Fps30;
 
+        int fps = m_framerate == FRAMERATE.Fps60 ? 60 : 30;
         QualitySettings.SetQualityLevel((int)m_quality, true);
         float h = (float)Display.main.systemHeight / (float)m_resolution; 
         float w = (float)Display.main.systemWidth / (float)m_resolution;
-        Screen.SetResolution((int)w, (int)h, true, 30);
+        Screen.SetResolution((int)w, (int)h, FullScreenMode.ExclusiveFullScreen, fps);
         //Application.targetFrameRate = (int)m_framerate;
 
        // QualitySettings.vSyncCount = 0;
@@ -141,4 +147,18 @@ public class OptionsMenu : MonoBehaviour
         LoadPrefs();
     }
 
+    void OnClickFramerate()
+    {
+        int n = Enum.GetValues(typeof(FRAMERATE)).Length;
+        int i = Array.IndexOf(Enum.GetValues(typeof(FRAMERATE)), m_framerate);
+        i++;
+        if (i == n)
+        {
+            i = 0;
+        }
+        m_framerate = (FRAMERATE)Enum.GetValues(typeof(FRAMERATE)).GetValue(i);
+        SetButtonText("ButtonFramerate", m_framerate.ToString());
+        SavePrefs();
+        LoadPrefs();
+    }
 }

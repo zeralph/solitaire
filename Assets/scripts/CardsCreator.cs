@@ -45,6 +45,7 @@ public class CardsCreator : ObjectBase
                 if(m_cardToDistributeIndex == m_cards.Count)
                 {
                     m_distributing = false;
+                    m_gameMaster.SaveState();
                 }
             }
         }
@@ -80,7 +81,7 @@ public class CardsCreator : ObjectBase
             m_cards[i].transform.position = p;
             startDeck.Add(m_cards[i]);
             //m_cards[i].transform.parent = startDeck.transform;
-            m_cards[i].flipTo(CardScript.Face.verso, true);
+            m_cards[i].flipTo(CardScript.Face.verso, false);
         }
         //distribute
         this.GetComponent<GameMaster>().Clear();
@@ -97,17 +98,18 @@ public class CardsCreator : ObjectBase
     private void DistributeCard(CardScript c)
     {
         //Add to the tableaux
+        GetComponent<StateRecorder>().Clear();
         bool bAdded = this.GetComponent<GameMaster>().DistributeCard(c);
         m_cardToDistributeIndex++;
     }
     private CardScript CreateCard(CardScript.Symbol s, CardScript.Name n, bool flip)
     {
-        Vector3 v = m_gameMaster.m_cardsStartPoint.position;
+        Vector3 v = m_gameMaster.m_StartDeck.transform.position;
         GameObject o = Instantiate(m_cardPrefab, v, Quaternion.identity);
         o.name = s.ToString() + "_" + n.ToString();
         CardScript card = o.GetComponent<CardScript>();
         card.Set(s, n);
-        card.flipTo(CardScript.Face.verso, true);
+        card.flipTo(CardScript.Face.verso, false);
         return card;
     }
 
