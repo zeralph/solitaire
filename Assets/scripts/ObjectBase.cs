@@ -156,13 +156,22 @@ public class ObjectBase : MonoBehaviour
 public class ObjectBaseSerialized
 {
     public string name;
-    bool recto;
+    public bool recto;
     public List<ObjectBaseSerialized> children;
     //public CardScript.Face m_face;
     public ObjectBaseSerialized(ObjectBase o)
     {
         name = o.name;
-        recto = o.GetComponent<CardScript>() ? o.GetComponent<CardScript>().IsRecto() : false;
+        CardScript cs = o.GetComponent<CardScript>();
+        if(cs!=null)
+        {   
+            recto = cs.IsRecto();
+        }
+        else
+        {
+            recto = false;
+        }
+        
         children = new List<ObjectBaseSerialized>();
         int l = o.GetNbChildCards();
         for(int i=0; i<l; i++)

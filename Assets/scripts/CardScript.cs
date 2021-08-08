@@ -329,7 +329,18 @@ public class CardScript : ObjectBase
         m_targetPos.y = v.y;
         m_targetPos.z = v.z;// - m_gameMaster.m_cardSpace;
         this.transform.position = m_targetPos;
-        flipTo(f, true);
+        
+        if(f != Face.verso)
+        {
+            m_mesh.transform.rotation = Quaternion.Euler(0.0f, 180.0f, 0.0f);
+        }
+        else
+        {
+            m_mesh.transform.rotation = Quaternion.Euler(0.0f, 0.0f, 0.0f);
+        }
+        m_face = f;
+        
+        //flipTo(f, true);
     }
 
     public void MoveToParent(ObjectBase newparent, Face f, float speed)

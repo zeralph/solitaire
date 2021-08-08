@@ -21,6 +21,24 @@ public class GameMaster : MonoBehaviour
         eCardToFamily,
         eFamilyToFamily,
     }
+    public int[] SCORE =
+    {
+        0,//eNotSet=0,
+        0,//eImpossibleMove,
+        0,//eDrawnToDiscard,
+        -50,//eDiscardToDrawn,
+        10,//eDiscardToTableau,
+        10,//eDiscardToFamily,
+        10,//eDiscardToCard,
+        0,//eTableauToTableau,
+        10,//eTableauToFamily,
+        0,//eTableauToCard,
+        -20,//eFamilyToCard,
+        0,//eCardToCard,
+        0,//eCardToTableau,
+        10,//eCardToFamily,
+        0,//eFamilyToFamily,
+    };
     public ObjectBase m_board;
     public DeckScript m_StartDeck;
     public DeckScript m_deck;
@@ -54,9 +72,15 @@ public class GameMaster : MonoBehaviour
     private int m_nbPickedCards = 0;
     private bool m_paused = false;
 
+    private int m_score;
+    private int m_turn;
+
     public void OnMovePlayed(eMoves move)
     {
         Debug.Log(move.ToString());
+        int s;
+        m_score += SCORE[(int)move];
+        m_turn ++;
         SaveState();
     }
 
@@ -64,6 +88,8 @@ public class GameMaster : MonoBehaviour
     void Start()
     {
         m_tableauIndex = 0;
+        m_score = 0;
+        m_turn = 0;
         m_refillDrawn = false;
         m_timer = 0;
         m_win = false;
@@ -263,6 +289,8 @@ public class GameMaster : MonoBehaviour
         }
         m_tableauIndex = 0;
         m_deck.Clear();
+        m_score = 0;
+        m_turn = 0;
     }
 
     private bool Automate(bool bDo)
@@ -320,11 +348,11 @@ public class GameMaster : MonoBehaviour
 
     public int GetScrore()
     {
-        return 12345;
+        return m_score;
     }
     public int GetTurn()
     {
-        return 123;
+        return m_turn;
     }
     #endregion
     #region menu controls

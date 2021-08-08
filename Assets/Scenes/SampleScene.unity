@@ -1410,6 +1410,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b799eda090a6e4784bccc9e5fac9d9a7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  SCORE: 000000000000000000000000ceffffff0a0000000a0000000a000000000000000a00000000000000ecffffff00000000000000000a00000000000000
   m_board: {fileID: 1892362076}
   m_StartDeck: {fileID: 1506802760}
   m_deck: {fileID: 773646453}
@@ -1490,7 +1491,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!64 &1933847267
 MeshCollider:
   m_ObjectHideFlags: 0
