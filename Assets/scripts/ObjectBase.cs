@@ -115,13 +115,9 @@ public class ObjectBase : MonoBehaviour
 
     public virtual Vector3 GetTargetPosition(ObjectBase c)
     {
-        //int i = m_cards.IndexOf((CardScript)c);
-        //if (i == -1)
-        //{
-        //    i = m_cards.Count;
-        //}
         int i = GetNbChildCards() + 1;
-        Vector3 p = this.transform.position;
+        //Vector3 p = this.transform.position;
+        Vector3 p = new Vector3(0,0,0);
         p.z -= i * m_gameMaster.m_cardSpace;
         return p;
     }

@@ -316,7 +316,8 @@ public class CardScript : ObjectBase
 
     public override Vector3 GetTargetPosition(ObjectBase b)
     {
-        return new Vector3(m_targetPos.x, m_targetPos.y, m_targetPos.z - m_gameMaster.m_cardSpace);
+        return new Vector3(0, 0, - m_gameMaster.m_cardSpace);
+        //return new Vector3(m_targetPos.x, m_targetPos.y, m_targetPos.z - m_gameMaster.m_cardSpace);
     }
 
     public void RestoreTo(ObjectBase newparent, Face f)
@@ -328,7 +329,7 @@ public class CardScript : ObjectBase
         m_targetPos.x = v.x;
         m_targetPos.y = v.y;
         m_targetPos.z = v.z;// - m_gameMaster.m_cardSpace;
-        this.transform.position = m_targetPos;
+        this.transform.position =  GetParent().transform.position + m_targetPos;
         
         if(f != Face.verso)
         {
@@ -373,13 +374,18 @@ public class CardScript : ObjectBase
 
     private void MoveWithMouse()
     {
-        Plane plane = new Plane(Vector3.forward, 0);
+        //Vector3 f = Vector3.forward;
+        Vector3 f = m_gameMaster.transform.forward;
+        Plane plane = new Plane(f, m_gameMaster.transform.position);
+        //Plane plane = (Plane)m_gameMaster.m_mousePlane.GetComponent<MeshFilter>();
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         float point = 0f;
         if (plane.Raycast(ray, out point))
         {
             m_targetPos = ray.GetPoint(point);
-            m_targetPos.z = m_gameMaster.m_zWhenMoving;
+            //m_targetPos = m_targetPos - GetParent().transform.position;
+            //m_targetPos.z = m_gameMaster.m_zWhenMoving;
+            m_targetPos = GetParent().transform.InverseTransformPoint(m_targetPos);
             m_isMoving = true;
             SetHitable(false);
         }
@@ -390,9 +396,12 @@ public class CardScript : ObjectBase
         if(m_isMoving)
         {
             SetHitable(false);
-            this.transform.position = Vector3.MoveTowards(this.transform.position, m_targetPos, m_speed * Time.deltaTime);
+            
+            Vector3 parentPos = GetParent().transform.position + GetParent().transform.TransformVector(m_targetPos); ;
+            //this.transform.position = Vector3.MoveTowards(this.transform.position, parentPos, m_speed * Time.deltaTime);
+            this.transform.position = Vector3.MoveTowards(this.transform.position, parentPos, m_speed * Time.deltaTime);
             CardScript child = this.transform.GetComponentInChildren<CardScript>();
-            if (transform.position == m_targetPos)
+            if (transform.position == parentPos)
             {
                 m_isMoving = false;
                 SetHitable(true);
@@ -482,7 +491,9 @@ public class CardScript : ObjectBase
     private Transform GetObjectUnder()
     {
         int layerMask = 1 << 6;
-        Ray ray = new Ray(this.transform.position, Vector3.forward);
+        //Vector3 f = Vector3.forward;
+        Vector3 f = m_gameMaster.transform.forward;
+        Ray ray = new Ray(this.transform.position, f);
         RaycastHit hit;
         if (Physics.Raycast(ray, out hit, Mathf.Infinity, layerMask))
         {

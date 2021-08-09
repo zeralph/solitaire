@@ -39,6 +39,8 @@ public class GameMaster : MonoBehaviour
         10,//eCardToFamily,
         0,//eFamilyToFamily,
     };
+    public WorldMoveScript m_world; 
+    public Transform m_mousePlane;
     public ObjectBase m_board;
     public DeckScript m_StartDeck;
     public DeckScript m_deck;
@@ -100,6 +102,8 @@ public class GameMaster : MonoBehaviour
         m_paused = false;
         m_optionsMenu.gameObject.SetActive(false);
         m_optionsMenu.GetComponent<OptionsMenu>().ReloadSettings();
+        m_world.Reset();
+        m_world.StartMove();
     }
 
     // Update is called once per frame

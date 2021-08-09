@@ -80,6 +80,7 @@ public class CardsCreator : ObjectBase
             m_cards[i].transform.rotation = Quaternion.identity;
             m_cards[i].transform.position = p;
             startDeck.Add(m_cards[i]);
+            m_cards[i].transform.rotation = startDeck.m_container.transform.rotation;
             //m_cards[i].transform.parent = startDeck.transform;
             m_cards[i].flipTo(CardScript.Face.verso, false);
         }
