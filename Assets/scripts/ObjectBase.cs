@@ -44,11 +44,6 @@ public class ObjectBase : MonoBehaviour
         return true;
     }
 
-    public virtual float GetCardDecal()
-    {
-        return m_cardDecal * GetNbChildCards();
-    }
-
     public ObjectBase GetParent()
     {
         Transform t = transform.parent;
@@ -101,7 +96,10 @@ public class ObjectBase : MonoBehaviour
     {
         return false;
     }
-
+    public virtual bool GetHitable()
+    {
+        return true;
+    }
     public virtual bool IsEmpty()
     {
         return GetNbChildCards() == 0;
@@ -119,6 +117,7 @@ public class ObjectBase : MonoBehaviour
         //Vector3 p = this.transform.position;
         Vector3 p = new Vector3(0,0,0);
         p.z -= i * m_gameMaster.m_cardSpace;
+        p.y -= m_cardDecal * GetNbChildCards();
         return p;
     }
 
@@ -186,8 +185,10 @@ public class ObjectBaseSerialized
         CardScript s = me.GetComponent<CardScript>();
         if(s != null)
         {
+            s.transform.rotation = parent.transform.rotation;
             CardScript.Face f = this.recto ? CardScript.Face.recto : CardScript.Face.verso;
             s.MoveToParent(parent, f, 10);
+            s.SetHitable(true);
             //s.RestoreTo(parent, f);
         }
         int l = children.Count;

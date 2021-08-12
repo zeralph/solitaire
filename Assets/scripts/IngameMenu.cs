@@ -11,6 +11,8 @@ public class IngameMenu : MonoBehaviour
     public Button m_redo;
     public Button m_automate;
     public Button m_options;
+    public Button m_continue;
+    public Button m_boom;
     public Text m_score;
     public Text m_turn;
 
@@ -26,6 +28,8 @@ public class IngameMenu : MonoBehaviour
         m_redo.onClick.AddListener(m_gameMaster.Redo);
         m_automate.onClick.AddListener(m_gameMaster.Automate);
         m_options.onClick.AddListener(m_gameMaster.OpenOptionsMenu);
+        m_continue.onClick.AddListener(m_gameMaster.LoadFromSave);
+        m_boom.onClick.AddListener(m_gameMaster.GetComponent<CardsCreator>().BoomCards);
     }
 
     // Update is called once per frame
@@ -36,5 +40,7 @@ public class IngameMenu : MonoBehaviour
         m_redo.gameObject.SetActive(m_gameMaster.CanRedo());
         m_score.text = m_gameMaster.GetScrore().ToString() + "pts";
         m_turn.text = m_gameMaster.GetTurn().ToString();
+
+        m_continue.gameObject.SetActive(m_gameMaster.HasSave());
     }
 }

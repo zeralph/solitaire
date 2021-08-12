@@ -55,7 +55,6 @@ public class CardScript : ObjectBase
     public Transform m_symbol2Image;
     private Vector3 m_targetPos;
     private bool m_isMoving;
-    public float m_boomFactor = 100.0f;
     public float m_flipSpeed = 100.0f;
     private float m_speed;
     //[ReadOnly]
@@ -104,7 +103,7 @@ public class CardScript : ObjectBase
         float x = Random.Range(-1f, 1f);
         float y = Random.Range(-1f, 1f);
         float z = Random.Range(-1f, 0f);
-        float f = m_boomFactor;
+        float f = m_gameMaster.m_boomFactor;
         Vector3 t = new Vector3(x, y, z);
         Vector3 v = Camera.main.transform.position - transform.position;
         v.Normalize();
@@ -125,7 +124,7 @@ public class CardScript : ObjectBase
         //will play the animation
     }
 
-    public bool GetHitable()
+    public override bool GetHitable()
     {
         return this.gameObject.layer == LAYER_CARD;
     }
@@ -167,11 +166,6 @@ public class CardScript : ObjectBase
             m_speed = m_gameMaster.m_mouseSpeed;
             SetHitable(false);
         } 
-    }
-
-    public override float GetCardDecal()
-    {
-        return m_cardDecal;
     }
 
     public override bool IsMoving()
@@ -225,7 +219,6 @@ public class CardScript : ObjectBase
             {
                 //move back
                 ObjectBase parentObject = GetParent().GetComponent<ObjectBase>();
-                float d = parentObject.GetCardDecal();
                 MoveToParent(curP, m_face, m_gameMaster.m_moveBackSpeed);
                 newP = curP;
             }
@@ -313,22 +306,17 @@ public class CardScript : ObjectBase
     {
         return this.m_color != s.m_color && this.m_value == (s.m_value - 1) && s.m_face == Face.recto;
     }
-
+    /*
     public override Vector3 GetTargetPosition(ObjectBase b)
     {
         return new Vector3(0, 0, - m_gameMaster.m_cardSpace);
         //return new Vector3(m_targetPos.x, m_targetPos.y, m_targetPos.z - m_gameMaster.m_cardSpace);
     }
-
+    */
     public void RestoreTo(ObjectBase newparent, Face f)
     {
         newparent.Add(this);
-        Vector3 v = newparent.GetTargetPosition(this);
-        float decal = newparent.GetCardDecal();
-        v.y -= decal;
-        m_targetPos.x = v.x;
-        m_targetPos.y = v.y;
-        m_targetPos.z = v.z;// - m_gameMaster.m_cardSpace;
+        m_targetPos = newparent.GetTargetPosition(this);
         this.transform.position =  GetParent().transform.position + m_targetPos;
         
         if(f != Face.verso)
@@ -355,17 +343,12 @@ public class CardScript : ObjectBase
         {
             Tableau tab = curP.GetComponent<Tableau>();
             newparent.Add(this);
-            Vector3 v = newparent.GetTargetPosition(this);
+            m_targetPos = newparent.GetTargetPosition(this);
             flipTo(f, false);
             if (tab != null)
             {
                 tab.FlipTopcard();
             }
-            float decal = newparent.GetCardDecal();
-            v.y -= decal;
-            m_targetPos.x = v.x;
-            m_targetPos.y = v.y;
-            m_targetPos.z = v.z;// - m_gameMaster.m_cardSpace;
             m_isMoving = true;
             m_speed = speed;      
         }
@@ -374,10 +357,8 @@ public class CardScript : ObjectBase
 
     private void MoveWithMouse()
     {
-        //Vector3 f = Vector3.forward;
         Vector3 f = m_gameMaster.transform.forward;
         Plane plane = new Plane(f, m_gameMaster.transform.position);
-        //Plane plane = (Plane)m_gameMaster.m_mousePlane.GetComponent<MeshFilter>();
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         float point = 0f;
         if (plane.Raycast(ray, out point))
@@ -401,8 +382,12 @@ public class CardScript : ObjectBase
             //this.transform.position = Vector3.MoveTowards(this.transform.position, parentPos, m_speed * Time.deltaTime);
             this.transform.position = Vector3.MoveTowards(this.transform.position, parentPos, m_speed * Time.deltaTime);
             CardScript child = this.transform.GetComponentInChildren<CardScript>();
-            if (transform.position == parentPos)
+            //if( parentPos.Equals(this.transform.position) )
+
+            if( Mathf.Abs(Vector3.SqrMagnitude(transform.position - parentPos)) < 0.0005)
+            //if (transform.position == parentPos)
             {
+                transform.position = parentPos;
                 m_isMoving = false;
                 SetHitable(true);
             }
@@ -432,6 +417,7 @@ public class CardScript : ObjectBase
             m_symbol2Image.gameObject.SetActive(m_face == Face.recto);
             m_recto.gameObject.SetActive(m_face == Face.recto);
             //m_verso.gameObject.SetActive(m_face == Face.verso);
+            //GetParent().GetTargetPosition();
         }      
     }
 
@@ -439,53 +425,101 @@ public class CardScript : ObjectBase
     {
     }
 
-    public void Set(CardScript.Symbol symbol, CardScript.Name name)
+    public void Set(CardScript.Symbol symbol, CardScript.Name name, TexturePack tp)
     {
         m_face = Face.recto;
         m_name = name;
         m_symbol = symbol;
         m_value = (int)name;
-        m_color = (symbol == Symbol.club || symbol == Symbol.spade)?CardColor.black:CardColor.red;
+        m_color = (symbol == Symbol.club || symbol == Symbol.spade) ? CardColor.black : CardColor.red;
+        SetTexturePack(tp);
+    }
+
+    public void SetTexturePack(TexturePack tp)
+    { 
         Material m;
         if (m_color != CardColor.black)
         {
-            m = Resources.Load("redMaterial", typeof(Material)) as Material;
+            m = tp.m_redCardMaterial;
         }
         else
         {
-            m = Resources.Load("blackMaterial", typeof(Material)) as Material;
+            m = tp.m_blackCardMaterial;
         }
-        string valueTextureName = "cards/" + m_value + "";
-        string symboltextureName = "";
-        if(m_symbol == Symbol.diamond)
+        Texture valueT = null;
+        Texture symbolT = null;
+        switch (m_value)
         {
-            symboltextureName = "cards/diamond";
-        }
-        else if (m_symbol == Symbol.club)
-        {
-            symboltextureName = "cards/club";
-        }
-        else if (m_symbol == Symbol.spade)
-        {
-            symboltextureName = "cards/spade";
-        }
-        else if (m_symbol == Symbol.heart)
-        {
-            symboltextureName = "cards/heart";
-        }
-        Texture valueTexture = Resources.Load(valueTextureName, typeof(Texture)) as Texture;
-        m_value1Image.GetComponent<Renderer>().material.CopyPropertiesFromMaterial(m);
-        m_value1Image.GetComponent<Renderer>().material.SetTexture("_MainTex", valueTexture);
-        m_value2Image.GetComponent<Renderer>().material.CopyPropertiesFromMaterial(m);
-        m_value2Image.GetComponent<Renderer>().material.SetTexture("_MainTex", valueTexture);
+            case 1:
+                valueT = tp.m_texture1;
+                break;
+            case 2:
+                valueT = tp.m_texture2;
+                break;
+            case 3:
+                valueT = tp.m_texture3;
+                break;
+            case 4:
+                valueT = tp.m_texture4;
+                break;
+            case 5:
+                valueT = tp.m_texture5;
+                break;
+            case 6:
+                valueT = tp.m_texture6;
+                break;
+            case 7:
+                valueT = tp.m_texture7;
+                break;
+            case 8:
+                valueT = tp.m_texture8;
+                break;
+            case 9:
+                valueT = tp.m_texture9;
+                break;
+            case 10:
+                valueT = tp.m_texture10;
+                break;
+            case 11:
+                valueT = tp.m_textureJ;
+                break;
+            case 12:
+                valueT = tp.m_textureQ;
+                break;
+            case 13:
+                valueT = tp.m_textureK;
+                break;
 
-        Texture symbolTexture = Resources.Load(symboltextureName, typeof(Texture)) as Texture;
-        m_symbolImage.GetComponent<Renderer>().material.CopyPropertiesFromMaterial(m);
-        m_symbolImage.GetComponent<Renderer>().material.SetTexture("_MainTex", symbolTexture);
-        m_symbol1Image.GetComponent<Renderer>().material.CopyPropertiesFromMaterial(m);
-        m_symbol1Image.GetComponent<Renderer>().material.SetTexture("_MainTex", symbolTexture);
-        m_symbol2Image.GetComponent<Renderer>().material.CopyPropertiesFromMaterial(m);
-        m_symbol2Image.GetComponent<Renderer>().material.SetTexture("_MainTex", symbolTexture);
+        }
+        switch(m_symbol)
+        {
+            case Symbol.spade:
+                symbolT = tp.m_textureSpade;
+                break;
+            case Symbol.heart:
+                symbolT = tp.m_textureHeart;
+                break;
+            case Symbol.diamond:
+                symbolT = tp.m_textureDiamond;
+                break;
+            case Symbol.club:
+                symbolT = tp.m_textureClub;
+                break;
+        }
+        m_value1Image.GetComponent<Renderer>().material = m;//.CopyPropertiesFromMaterial(m);
+        m_value1Image.GetComponent<Renderer>().material.SetTexture("_MainTex", valueT);
+        m_value2Image.GetComponent<Renderer>().material = m;//.CopyPropertiesFromMaterial(m);
+        m_value2Image.GetComponent<Renderer>().material.SetTexture("_MainTex", valueT);
+
+        m_symbolImage.GetComponent<Renderer>().material = m;//.CopyPropertiesFromMaterial(m);
+        m_symbolImage.GetComponent<Renderer>().material.SetTexture("_MainTex", symbolT);
+        m_symbol1Image.GetComponent<Renderer>().material = m;//.CopyPropertiesFromMaterial(m);
+        m_symbol1Image.GetComponent<Renderer>().material.SetTexture("_MainTex", symbolT);
+        m_symbol2Image.GetComponent<Renderer>().material = m;//.CopyPropertiesFromMaterial(m);
+        m_symbol2Image.GetComponent<Renderer>().material.SetTexture("_MainTex", symbolT);
+
+        m_recto.GetComponent<Renderer>().material = tp.m_rectoMaterial;
+        m_verso.GetComponent<Renderer>().material = tp.m_versoMaterial;
     }
 
     private Transform GetObjectUnder()

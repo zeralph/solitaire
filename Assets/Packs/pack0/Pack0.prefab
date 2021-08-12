@@ -1,0 +1,66 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &3777517634350414113
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4462022488632577467}
+  - component: {fileID: 5190065948587850960}
+  m_Layer: 0
+  m_Name: Pack0
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4462022488632577467
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3777517634350414113}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &5190065948587850960
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3777517634350414113}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9b521b8f2ae0614438b9dfbb75143e53, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_redCardMaterial: {fileID: 2100000, guid: afbf982e65233426d8cd7c6354e8b370, type: 2}
+  m_blackCardMaterial: {fileID: 2100000, guid: 34b58e33503ca4acd8869b3a92e2a41e, type: 2}
+  m_versoMaterial: {fileID: 2100000, guid: 840a958101989be42a2889403b656c99, type: 2}
+  m_rectoMaterial: {fileID: 2100000, guid: 0d8dc7ad761f14707a94a0d34a0db56a, type: 2}
+  m_texture1: {fileID: 2800000, guid: 4570cf654d4d04b4289626f8c65d1dfd, type: 3}
+  m_texture2: {fileID: 2800000, guid: ed49bcd6708c2a64a9ff1f079c62d173, type: 3}
+  m_texture3: {fileID: 2800000, guid: 27a748a4a21e28e40b609a6c9f4800f9, type: 3}
+  m_texture4: {fileID: 2800000, guid: 1a1883a7624bc784aa1b3e47767c9c64, type: 3}
+  m_texture5: {fileID: 2800000, guid: 611811b8f20444847bcb66614d12c6d1, type: 3}
+  m_texture6: {fileID: 2800000, guid: 9672fa6036bdd4741aa49a3288a0cc56, type: 3}
+  m_texture7: {fileID: 2800000, guid: 9979e0b666ca1994793c20592ccb76b3, type: 3}
+  m_texture8: {fileID: 2800000, guid: 416b0dc24ecbdeb4a8f7a55040558655, type: 3}
+  m_texture9: {fileID: 2800000, guid: 25b48a65fcd9a4447b57e30bed92f2c8, type: 3}
+  m_texture10: {fileID: 2800000, guid: def670b4fdc36b2418cf4239e9ad58b0, type: 3}
+  m_textureJ: {fileID: 2800000, guid: 5dc9ab0abc042184db13b81447a649f5, type: 3}
+  m_textureQ: {fileID: 2800000, guid: aeea1e683c5017049bb52a6c5e2ed406, type: 3}
+  m_textureK: {fileID: 2800000, guid: 0692c9ffafcc8d2488fd13b04a174fc8, type: 3}
+  m_textureSpade: {fileID: 2800000, guid: b7cc77176dfa5fd438a94fc30bcdd158, type: 3}
+  m_textureDiamond: {fileID: 2800000, guid: 43bea29ee045199479ea0b85631d3fa6, type: 3}
+  m_textureHeart: {fileID: 2800000, guid: 8fd8f1c93ad9c5343831cac89a7a7e2c, type: 3}
+  m_textureClub: {fileID: 2800000, guid: 4c14019c30d10d9418a6852e15254726, type: 3}

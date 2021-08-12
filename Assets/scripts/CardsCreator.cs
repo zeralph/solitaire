@@ -59,7 +59,7 @@ public class CardsCreator : ObjectBase
         }
     }
 
-    public void DistributeCards(Vector3 fromPosition)
+    public void DistributeCards()
     {
         //shuffle
         for (int i = 0; i < m_cards.Count; i++)
@@ -69,19 +69,15 @@ public class CardsCreator : ObjectBase
             m_cards[i] = m_cards[r];
             m_cards[r] = s;
         }
-        DeckScript startDeck = m_gameMaster.m_StartDeck;
-        Vector3 p = startDeck.transform.position;      
+        DeckScript startDeck = m_gameMaster.m_StartDeck;    
         for (int i=0; i<m_cards.Count; i++)
         {
-            p.z -= 0.1f;
             m_cards[i].GetComponent<Rigidbody>().isKinematic = true;
             float mass = Random.Range(1f, 5f);
             m_cards[i].GetComponent<Rigidbody>().mass = mass;
-            m_cards[i].transform.rotation = Quaternion.identity;
-            m_cards[i].transform.position = p;
+            m_cards[i].transform.rotation = startDeck.transform.rotation;
+            m_cards[i].transform.position = startDeck.transform.position;
             startDeck.Add(m_cards[i]);
-            m_cards[i].transform.rotation = startDeck.m_container.transform.rotation;
-            //m_cards[i].transform.parent = startDeck.transform;
             m_cards[i].flipTo(CardScript.Face.verso, false);
         }
         //distribute
@@ -103,13 +99,13 @@ public class CardsCreator : ObjectBase
         bool bAdded = this.GetComponent<GameMaster>().DistributeCard(c);
         m_cardToDistributeIndex++;
     }
-    private CardScript CreateCard(CardScript.Symbol s, CardScript.Name n, bool flip)
+    private CardScript CreateCard(CardScript.Symbol s, CardScript.Name n, bool flip, TexturePack tp)
     {
         Vector3 v = m_gameMaster.m_StartDeck.transform.position;
         GameObject o = Instantiate(m_cardPrefab, v, Quaternion.identity);
         o.name = s.ToString() + "_" + n.ToString();
         CardScript card = o.GetComponent<CardScript>();
-        card.Set(s, n);
+        card.Set(s, n, tp);
         card.flipTo(CardScript.Face.verso, false);
         return card;
     }
@@ -125,7 +121,7 @@ public class CardsCreator : ObjectBase
             {
                 for(CardScript.Name j = CardScript.Name.ace; j< CardScript.Name.__MAX__; j++)
                 {
-                    CardScript card = CreateCard(i, j, true);
+                    CardScript card = CreateCard(i, j, true, m_gameMaster.m_texturePack);
                     m_cards.Add(card);
                     startDeck.Add(card);
                     card.transform.position = startDeck.transform.position;

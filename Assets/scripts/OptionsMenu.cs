@@ -101,8 +101,8 @@ public class OptionsMenu : MonoBehaviour
 
     public void LoadPrefs()
     {   
-        m_quality = PlayerPrefs.HasKey("Quality")?(QUALITY)PlayerPrefs.GetInt("Quality"): QUALITY.Medium;
-        m_resolution = PlayerPrefs.HasKey("Resolution") ? (RESOLUTION)PlayerPrefs.GetInt("Resolution") : RESOLUTION.Quarter;
+        m_quality = PlayerPrefs.HasKey("Quality")?(QUALITY)PlayerPrefs.GetInt("Quality"): QUALITY.High;
+        m_resolution = PlayerPrefs.HasKey("Resolution") ? (RESOLUTION)PlayerPrefs.GetInt("Resolution") : RESOLUTION.Half;
         m_framerate = PlayerPrefs.HasKey("Framerate") ? (FRAMERATE)PlayerPrefs.GetInt("Framerate") : FRAMERATE.Fps30;
 
         int fps = m_framerate == FRAMERATE.Fps60 ? 60 : 30;

@@ -40,7 +40,6 @@ public class GameMaster : MonoBehaviour
         0,//eFamilyToFamily,
     };
     public WorldMoveScript m_world; 
-    public Transform m_mousePlane;
     public ObjectBase m_board;
     public DeckScript m_StartDeck;
     public DeckScript m_deck;
@@ -59,6 +58,8 @@ public class GameMaster : MonoBehaviour
     public float m_automationSpeedDt = 0.2f;
     public float m_pickcardsFromdeckSpeedDt = 0.3f;
     public float m_refillSpeedDt = 0.1f;
+    public float m_boomFactor = 100.0f;
+    public TexturePack m_texturePack;
 
     [SerializeField]
     public List<Tableau> m_tableaux;
@@ -80,10 +81,11 @@ public class GameMaster : MonoBehaviour
     public void OnMovePlayed(eMoves move)
     {
         Debug.Log(move.ToString());
-        int s;
         m_score += SCORE[(int)move];
         m_turn ++;
         SaveState();
+        GetComponent<StateRecorder>().SaveGame();
+        m_canAutomate = Automate(false);
     }
 
     // Start is called before the first frame update
@@ -104,6 +106,7 @@ public class GameMaster : MonoBehaviour
         m_optionsMenu.GetComponent<OptionsMenu>().ReloadSettings();
         m_world.Reset();
         m_world.StartMove();
+        m_inGameMenu.gameObject.SetActive(true);
     }
 
     // Update is called once per frame
@@ -157,10 +160,6 @@ public class GameMaster : MonoBehaviour
                 m_doAutomate = Automate(true);
                 m_timer = 0;
             }    
-        }
-        else
-        {
-            m_canAutomate = Automate(false);
         }
         if (!m_win)
         {
@@ -365,7 +364,7 @@ public class GameMaster : MonoBehaviour
         CardsCreator cc = this.GetComponent<CardsCreator>();
         if(cc.CardCreated())
         {
-            cc.DistributeCards(m_StartDeck.transform.position);
+            cc.DistributeCards();
         }
     }
 
@@ -411,6 +410,19 @@ public class GameMaster : MonoBehaviour
     public void Redo()
     {
         GetComponent<StateRecorder>().LoadNextState(m_board);
+    }
+    #endregion
+
+    #region save
+
+    public void LoadFromSave()
+    {
+        GetComponent<StateRecorder>().LoadFromSave(m_board);
+    }
+
+    public bool HasSave()
+    {
+        return GetComponent<StateRecorder>().HasSave();
     }
     #endregion
 

@@ -461,7 +461,7 @@ MonoBehaviour:
   m_value2Image: {fileID: 1590207824}
   m_symbol1Image: {fileID: 1973379336863150440}
   m_symbol2Image: {fileID: 8420401083098346576}
-  m_boomFactor: 100
+  m_texturePack: {fileID: 0}
   m_flipSpeed: 100
   m_value: 0
   m_name: 0

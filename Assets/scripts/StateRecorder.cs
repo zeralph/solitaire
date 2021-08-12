@@ -29,6 +29,23 @@ public class StateRecorder : MonoBehaviour
         return m_curStateIndex < m_states.Count-1;
     }
 
+    public bool HasSave()
+    {
+        return PlayerPrefs.HasKey("Save");
+    }
+
+    public void LoadFromSave(ObjectBase b)
+    {
+        if (HasSave())
+        {
+            string save = PlayerPrefs.GetString("Save");
+            m_states.Clear();
+            m_states.Add(save);
+            m_curStateIndex = 1;
+            LoadPreviousState(b);
+        }
+    }
+
     public void Clear()
     {
         m_states.Clear();
@@ -55,6 +72,15 @@ public class StateRecorder : MonoBehaviour
         m_states.Add(s);
         m_curStateIndex = m_states.Count-1;
         //Debug.Log("state saved");
+    }
+
+    public void SaveGame()
+    {
+        if (m_states.Count > 0)
+        {
+            string s = m_states[m_curStateIndex];
+            PlayerPrefs.SetString("Save", s);
+        }
     }
 
     public void LoadPreviousState(ObjectBase b)

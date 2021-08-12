@@ -29,6 +29,11 @@ public class CardMover : ObjectBase
             return;
         }
         m_lastObject = GetClickedObject();
+        if(m_lastObject != null)
+        {
+            int h = 0;
+            h++;
+        }
         if (Input.GetMouseButtonDown(MOUSE)) //CLICK
         {
             DeckScript dek = null;
@@ -87,14 +92,12 @@ public class CardMover : ObjectBase
         {
             GUI.Label(new Rect(10, 10, 100, 20), m_card.name);
             GUI.Label(new Rect(10, 20, 100, 20), "HIT : "+ m_card.GetHitable());
-            GUI.Label(new Rect(10, 30, 100, 20), m_card.transform.position.ToString() ); 
         }
         if (m_lastObject != null)
         {
             GUI.Label(new Rect(10, 50, 100, 20), "LAST CARD");
             GUI.Label(new Rect(10, 60, 100, 20), m_lastObject.name);
-            //GUI.Label(new Rect(10, 70, 100, 20), "HIT : " + m_lastObject.GetHitable());
-            GUI.Label(new Rect(10, 80, 100, 20), m_lastObject.transform.position.ToString());
+            GUI.Label(new Rect(10, 70, 100, 20), "HIT : " + m_lastObject.GetHitable());
         }
     }
 
