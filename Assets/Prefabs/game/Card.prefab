@@ -461,7 +461,8 @@ MonoBehaviour:
   m_value2Image: {fileID: 1590207824}
   m_symbol1Image: {fileID: 1973379336863150440}
   m_symbol2Image: {fileID: 8420401083098346576}
-  m_texturePack: {fileID: 0}
+  m_cardDeal: {fileID: 8300000, guid: e47e1dcb70ee0ce4f8c92af8155d8563, type: 3}
+  m_cardFlip: {fileID: 8300000, guid: eeb38b835b760ff45ae0acaf2695af04, type: 3}
   m_flipSpeed: 100
   m_value: 0
   m_name: 0
@@ -605,6 +606,7 @@ GameObject:
   - component: {fileID: 7836853956656050578}
   - component: {fileID: 1090022915286065965}
   - component: {fileID: 783168902630832799}
+  - component: {fileID: 5176764841400932670}
   m_Layer: 0
   m_Name: recto
   m_TagString: Untagged
@@ -675,6 +677,24 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!114 &5176764841400932670
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5982442774479667409}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5fea29bb7c508c244a1f805a5fd3fc4d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  outlineMode: 0
+  outlineColor: {r: 0.05724919, g: 1, b: 0, a: 1}
+  outlineWidth: 0
+  precomputeOutline: 0
+  bakeKeys: []
+  bakeValues: []
 --- !u!1 &7066628412459320337
 GameObject:
   m_ObjectHideFlags: 0

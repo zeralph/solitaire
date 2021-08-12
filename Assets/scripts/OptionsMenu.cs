@@ -19,9 +19,10 @@ public class OptionsMenu : MonoBehaviour
         Quarter =4,
     };
     public enum FRAMERATE 
-    { 
-        Fps30=30, 
-        Fps60=60
+    {
+        Fps20 = 20,
+        Fps30 = 30, 
+        Fps60 = 60
     };
 
     public bool m_visible;
@@ -105,11 +106,12 @@ public class OptionsMenu : MonoBehaviour
         m_resolution = PlayerPrefs.HasKey("Resolution") ? (RESOLUTION)PlayerPrefs.GetInt("Resolution") : RESOLUTION.Half;
         m_framerate = PlayerPrefs.HasKey("Framerate") ? (FRAMERATE)PlayerPrefs.GetInt("Framerate") : FRAMERATE.Fps30;
 
-        int fps = m_framerate == FRAMERATE.Fps60 ? 60 : 30;
+        int fps = (int)m_framerate;
         QualitySettings.SetQualityLevel((int)m_quality, true);
         float h = (float)Display.main.systemHeight / (float)m_resolution; 
         float w = (float)Display.main.systemWidth / (float)m_resolution;
         Screen.SetResolution((int)w, (int)h, FullScreenMode.ExclusiveFullScreen, fps);
+        Application.targetFrameRate = fps;
         //Application.targetFrameRate = (int)m_framerate;
 
        // QualitySettings.vSyncCount = 0;

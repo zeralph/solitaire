@@ -28,12 +28,11 @@ public class CardMover : ObjectBase
         {
             return;
         }
-        m_lastObject = GetClickedObject();
         if(m_lastObject != null)
         {
-            int h = 0;
-            h++;
+            m_lastObject.OutLine(false);
         }
+        m_lastObject = GetClickedObject();
         if (Input.GetMouseButtonDown(MOUSE)) //CLICK
         {
             DeckScript dek = null;

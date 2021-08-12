@@ -111,6 +111,10 @@ public class ObjectBase : MonoBehaviour
         
     }
 
+    public virtual void OutLine(bool b)
+    {
+
+    }
     public virtual Vector3 GetTargetPosition(ObjectBase c)
     {
         int i = GetNbChildCards() + 1;

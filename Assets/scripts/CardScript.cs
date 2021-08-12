@@ -2,7 +2,6 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
-using TMPro;
 
 public class CardScript : ObjectBase
 {
@@ -53,6 +52,8 @@ public class CardScript : ObjectBase
     public Transform m_value2Image;
     public Transform m_symbol1Image;
     public Transform m_symbol2Image;
+    public AudioClip m_cardDeal;
+    public AudioClip m_cardFlip;
     private Vector3 m_targetPos;
     private bool m_isMoving;
     public float m_flipSpeed = 100.0f;
@@ -67,6 +68,7 @@ public class CardScript : ObjectBase
     public Symbol m_symbol;
     public Face m_face;
     private bool m_moveWithMouse;
+    private ObjectBase m_lastObjectUnder;
 
     public override void Start()
     {
@@ -75,6 +77,7 @@ public class CardScript : ObjectBase
         m_isMoving = false;
         m_moveWithMouse = false;
         m_speed = 0f;
+        OutLine(false);
     }
 
 
@@ -145,7 +148,10 @@ public class CardScript : ObjectBase
         return GetParent().GetComponent<DeckScript>() != null && GetParent().GetComponent<DeckScript>().name == "Discard";
     }
 
-
+    public override void OutLine(bool b)
+    {
+        this.m_recto.GetComponent<Outline>().enabled = b;
+    }
     public void SetHitable(bool b)
     {
         if(b)
@@ -178,14 +184,9 @@ public class CardScript : ObjectBase
         if(m_moveWithMouse)
         {
             m_moveWithMouse = false;
-            Transform t = null;
-            if (m_face == Face.recto)
-            {
-                t = GetObjectUnder();
-            }
             bool bFailed = true;
             ObjectBase curP = GetParent();
-            ObjectBase newP = (t!=null)?t.GetComponentInParent<ObjectBase>():null;
+            ObjectBase newP = m_lastObjectUnder;
             //GameMaster.eMoves move = GameMaster.eMoves.eNullMove;
             if (newP != null)
             {
@@ -350,7 +351,11 @@ public class CardScript : ObjectBase
                 tab.FlipTopcard();
             }
             m_isMoving = true;
-            m_speed = speed;      
+            m_speed = speed;
+            AudioSource audio = Camera.main.GetComponent<AudioSource>();
+            audio.clip = m_cardDeal;
+            //audio.
+            //audio.Play();
         }
     }
 
@@ -369,6 +374,18 @@ public class CardScript : ObjectBase
             m_targetPos = GetParent().transform.InverseTransformPoint(m_targetPos);
             m_isMoving = true;
             SetHitable(false);
+        }
+        if(m_lastObjectUnder != null)
+        {
+            m_lastObjectUnder.OutLine(false);
+        }
+        if (m_face == Face.recto)
+        {
+            m_lastObjectUnder = GetObjectUnder();
+        }
+        if (m_lastObjectUnder != null)
+        {
+            m_lastObjectUnder.OutLine(true);
         }
     }
 
@@ -418,6 +435,9 @@ public class CardScript : ObjectBase
             m_recto.gameObject.SetActive(m_face == Face.recto);
             //m_verso.gameObject.SetActive(m_face == Face.verso);
             //GetParent().GetTargetPosition();
+            AudioSource audio = Camera.main.GetComponent<AudioSource>();
+            audio.clip = m_cardFlip;
+            audio.Play();
         }      
     }
 
@@ -522,16 +542,26 @@ public class CardScript : ObjectBase
         m_verso.GetComponent<Renderer>().material = tp.m_versoMaterial;
     }
 
-    private Transform GetObjectUnder()
+    private ObjectBase GetObjectUnder()
     {
         int layerMask = 1 << 6;
-        //Vector3 f = Vector3.forward;
+        Vector3 s = this.transform.GetComponent<BoxCollider>().size;
         Vector3 f = m_gameMaster.transform.forward;
-        Ray ray = new Ray(this.transform.position, f);
+        Vector3 p = this.transform.position;
+        p.y += s.y / 2;
+        Ray r1 = new Ray(p, f);
+        p.y -= s.y;
+        Ray r2 = new Ray(p, f);
         RaycastHit hit;
-        if (Physics.Raycast(ray, out hit, Mathf.Infinity, layerMask))
+        if (Physics.Raycast(r1, out hit, Mathf.Infinity, layerMask))
         {
-            return hit.transform;
+            Transform t = hit.transform;
+            return t.GetComponentInParent<ObjectBase>();
+        }
+        if (Physics.Raycast(r2, out hit, Mathf.Infinity, layerMask))
+        {
+            Transform t = hit.transform;
+            return t.GetComponentInParent<ObjectBase>();
         }
         return null;
     }
