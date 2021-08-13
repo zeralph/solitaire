@@ -45,7 +45,7 @@ public class CardsCreator : ObjectBase
                 if(m_cardToDistributeIndex == m_cards.Count)
                 {
                     m_distributing = false;
-                    m_gameMaster.SaveState();
+                    GetGameMaster().SaveState(true);
                 }
             }
         }
@@ -69,7 +69,7 @@ public class CardsCreator : ObjectBase
             m_cards[i] = m_cards[r];
             m_cards[r] = s;
         }
-        DeckScript startDeck = m_gameMaster.m_StartDeck;    
+        DeckScript startDeck = GetGameMaster().m_StartDeck;    
         for (int i=0; i<m_cards.Count; i++)
         {
             m_cards[i].GetComponent<Rigidbody>().isKinematic = true;
@@ -101,7 +101,7 @@ public class CardsCreator : ObjectBase
     }
     private CardScript CreateCard(CardScript.Symbol s, CardScript.Name n, bool flip, TexturePack tp)
     {
-        Vector3 v = m_gameMaster.m_StartDeck.transform.position;
+        Vector3 v = GetGameMaster().m_StartDeck.transform.position;
         GameObject o = Instantiate(m_cardPrefab, v, Quaternion.identity);
         o.name = s.ToString() + "_" + n.ToString();
         CardScript card = o.GetComponent<CardScript>();
@@ -115,13 +115,13 @@ public class CardsCreator : ObjectBase
         if(!m_cardsCreated)
         {
             Debug.Log("CREATE CARDS");
-            DeckScript startDeck = m_gameMaster.m_StartDeck;
+            DeckScript startDeck = GetGameMaster().m_StartDeck;
             m_cards = new List<CardScript>();
             for (CardScript.Symbol i = CardScript.Symbol.spade; i< CardScript.Symbol.__MAX__; i++)
             {
                 for(CardScript.Name j = CardScript.Name.ace; j< CardScript.Name.__MAX__; j++)
                 {
-                    CardScript card = CreateCard(i, j, true, m_gameMaster.m_texturePack);
+                    CardScript card = CreateCard(i, j, true, GetGameMaster().m_texturePack);
                     m_cards.Add(card);
                     startDeck.Add(card);
                     card.transform.position = startDeck.transform.position;

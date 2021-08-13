@@ -1,0 +1,141 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &989870651829616820
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 989870651829616822}
+  - component: {fileID: 989870651829616816}
+  - component: {fileID: 989870651829616823}
+  - component: {fileID: 989870651829616817}
+  - component: {fileID: 989870651829616819}
+  - component: {fileID: 989870651829616818}
+  m_Layer: 0
+  m_Name: GameMaster
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &989870651829616822
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 989870651829616820}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: -14.454}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &989870651829616816
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 989870651829616820}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b799eda090a6e4784bccc9e5fac9d9a7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  SCORE: 000000000000000000000000ceffffff0a0000000a0000000a000000000000000a00000000000000ecffffff00000000000000000a00000000000000
+  m_world: {fileID: 0}
+  m_board: {fileID: 0}
+  m_StartDeck: {fileID: 0}
+  m_deck: {fileID: 0}
+  m_discardPile: {fileID: 0}
+  m_optionsMenu: {fileID: 0}
+  m_inGameMenu: {fileID: 0}
+  m_zWhenMoving: -0.2
+  m_cardSpace: 0.005
+  m_nbDrawnCardsFromDeck: 3
+  m_speed: 2.76
+  m_distributionSpeed: 10
+  m_deckToDrawnSpeed: 2.5
+  m_drawToDeckRefillSpeed: 6
+  m_mouseSpeed: 50
+  m_moveBackSpeed: 30
+  m_automationSpeedDt: 0.2
+  m_pickcardsFromdeckSpeedDt: 0.3
+  m_refillSpeedDt: 0.02
+  m_boomFactor: 100
+  m_texturePack: {fileID: 5190065948587850960, guid: 04c68e89ac396744a8250ed78243b000, type: 3}
+  m_tableaux:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  m_familyPiles:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+--- !u!114 &989870651829616823
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 989870651829616820}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f130f82b90b934836831f46bc580fe25, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_container: {fileID: 0}
+  m_cardDecal: 0
+  m_cardPrefab: {fileID: 5592622193794082588, guid: 661cd47d0e48948928456b184e31574a, type: 3}
+  m_deck: {fileID: 0}
+  m_distributionDeltaTime: 0.04
+--- !u!114 &989870651829616817
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 989870651829616820}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4e50f453e674e4e28a2ba15bd9a7d15e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_container: {fileID: 0}
+  m_cardDecal: 0
+--- !u!114 &989870651829616819
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 989870651829616820}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f2d80008ea7ba403fa0008b7947714e9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_enabled: 0
+--- !u!114 &989870651829616818
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 989870651829616820}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 19526436159a8491db50a4a67a0a6ef3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_states: []

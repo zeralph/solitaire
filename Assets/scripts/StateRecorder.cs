@@ -34,6 +34,11 @@ public class StateRecorder : MonoBehaviour
         return PlayerPrefs.HasKey("Save");
     }
 
+    public void ClearSave()
+    {
+        PlayerPrefs.DeleteKey("Save");
+    }
+
     public void LoadFromSave(ObjectBase b)
     {
         if (HasSave())
@@ -53,33 +58,19 @@ public class StateRecorder : MonoBehaviour
         Debug.Log("states cleared");
     }
 
-    public void AddState(ObjectBase o)
+    public void AddState(ObjectBase o, bool bSave)
     {
-        /*
-        string s = "";
-        for(int i=0; i<cards.Count; i++)
-        {
-            s += cards[i].name + ";" + cards[i].GetParent().name + ";" + cards[i].m_face + "|";
-        }
-        m_states.Add(s);
-        */
         ObjectBaseSerialized os = new ObjectBaseSerialized(o);
-        string s = JsonUtility.ToJson(os);
+        string state = JsonUtility.ToJson(os);
         for(int i = m_states.Count-1; i> m_curStateIndex; i--)
         {
             m_states.RemoveAt(i);
         }
-        m_states.Add(s);
+        m_states.Add(state);
         m_curStateIndex = m_states.Count-1;
-        //Debug.Log("state saved");
-    }
-
-    public void SaveGame()
-    {
-        if (m_states.Count > 0)
+        if(bSave)
         {
-            string s = m_states[m_curStateIndex];
-            PlayerPrefs.SetString("Save", s);
+            PlayerPrefs.SetString("Save", state);
         }
     }
 
@@ -95,20 +86,6 @@ public class StateRecorder : MonoBehaviour
         string s = m_states[m_curStateIndex];
         ObjectBaseSerialized o = JsonUtility.FromJson<ObjectBaseSerialized>(s);
         o.Restore(b);
-        /*
-        string[] ls = s.Split('|');
-        for(int i=0; i<ls.Length; i++)
-        {
-            string[] data = ls[i].Split(';');
-            CardScript c = (CardScript)gm.Find(data[0]);
-            ObjectBase p = gm.Find(data[1]);
-            if(c != null)
-            {
-                CardScript.Face f = (data[2] == "recto") ? CardScript.Face.recto : CardScript.Face.verso;
-                c.MoveToParent(p, f, true, 0, 100);
-            }
-        }
-        */
         Debug.Log("state loaded");
     }
 

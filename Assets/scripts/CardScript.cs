@@ -83,7 +83,7 @@ public class CardScript : ObjectBase
 
     void Update()
     {
-        if (m_gameMaster.IsPaused())
+        if (GetGameMaster().IsPaused())
         {
             return;
         }
@@ -106,7 +106,7 @@ public class CardScript : ObjectBase
         float x = Random.Range(-1f, 1f);
         float y = Random.Range(-1f, 1f);
         float z = Random.Range(-1f, 0f);
-        float f = m_gameMaster.m_boomFactor;
+        float f = GetGameMaster().m_boomFactor;
         Vector3 t = new Vector3(x, y, z);
         Vector3 v = Camera.main.transform.position - transform.position;
         v.Normalize();
@@ -169,7 +169,7 @@ public class CardScript : ObjectBase
         if(!m_isMoving)
         {
             m_moveWithMouse = true;
-            m_speed = m_gameMaster.m_mouseSpeed;
+            m_speed = GetGameMaster().m_mouseSpeed;
             SetHitable(false);
         } 
     }
@@ -196,13 +196,13 @@ public class CardScript : ObjectBase
                 DeckScript dek = newP.GetComponentInParent<DeckScript>();
                 if (s && CanAdd(s) && dek == null)
                 {
-                    MoveToParent(s, m_face, m_gameMaster.m_speed);
+                    MoveToParent(s, m_face, GetGameMaster().m_speed);
                     bFailed = false;
                     newP = s;
                 }
                 else if (tab != null && tab.IsEmpty() && this.m_name == Name.king)
                 {
-                    MoveToParent(tab, m_face, m_gameMaster.m_speed);
+                    MoveToParent(tab, m_face, GetGameMaster().m_speed);
                     bFailed = false;
                     newP = tab;
                 }
@@ -210,7 +210,7 @@ public class CardScript : ObjectBase
                 {
                     if (fam.CanAdd(this))
                     {
-                        this.MoveToParent(fam, CardScript.Face.recto, m_gameMaster.m_speed);
+                        this.MoveToParent(fam, CardScript.Face.recto, GetGameMaster().m_speed);
                         bFailed = false;
                         newP = fam;
                     }
@@ -220,7 +220,7 @@ public class CardScript : ObjectBase
             {
                 //move back
                 ObjectBase parentObject = GetParent().GetComponent<ObjectBase>();
-                MoveToParent(curP, m_face, m_gameMaster.m_moveBackSpeed);
+                MoveToParent(curP, m_face, GetGameMaster().m_moveBackSpeed);
                 newP = curP;
             }
             else
@@ -297,7 +297,7 @@ public class CardScript : ObjectBase
                 {
                     m = GameMaster.eMoves.eImpossibleMove;
                 }
-                m_gameMaster.OnMovePlayed(m);
+                GetGameMaster().OnMovePlayed(m);
             }
             SetHitable(true);
         }      
@@ -362,8 +362,8 @@ public class CardScript : ObjectBase
 
     private void MoveWithMouse()
     {
-        Vector3 f = m_gameMaster.transform.forward;
-        Plane plane = new Plane(f, m_gameMaster.transform.position);
+        Vector3 f = GetGameMaster().transform.forward;
+        Plane plane = new Plane(f, GetGameMaster().transform.position);
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         float point = 0f;
         if (plane.Raycast(ray, out point))
@@ -546,7 +546,7 @@ public class CardScript : ObjectBase
     {
         int layerMask = 1 << 6;
         Vector3 s = this.transform.GetComponent<BoxCollider>().size;
-        Vector3 f = m_gameMaster.transform.forward;
+        Vector3 f = GetGameMaster().transform.forward;
         Vector3 p = this.transform.position;
         p.y += s.y / 2;
         Ray r1 = new Ray(p, f);

@@ -19,7 +19,7 @@ public class DeckScript : ObjectBase
     // Update is called once per frame
     void Update()
     {
-        if (m_gameMaster.IsPaused())
+        if (GetGameMaster().IsPaused())
         {
             return;
         }

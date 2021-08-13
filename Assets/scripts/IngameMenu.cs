@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-
+using UnityEngine.SceneManagement;
 public class IngameMenu : MonoBehaviour
 {
     public GameMaster m_gameMaster;
@@ -11,8 +11,13 @@ public class IngameMenu : MonoBehaviour
     public Button m_redo;
     public Button m_automate;
     public Button m_options;
-    public Button m_continue;
+    public Button m_quit;
     public Button m_boom;
+    public GameObject PanelAskYesNo;
+    public GameObject PanelIngame;
+    public Button m_PanelAskYesNo_ButtonYes;
+    public Button m_PanelAskYesNo_ButtonNo;
+    public Text m_PanelAskYesNoText;
     public Text m_score;
     public Text m_turn;
 
@@ -23,14 +28,19 @@ public class IngameMenu : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        m_new.onClick.AddListener(m_gameMaster.NewGame);
+        PanelAskYesNo.SetActive(false);
+        PanelIngame.SetActive(true);
+        m_new.onClick.AddListener(OnAskRestart);
         m_undo.onClick.AddListener(m_gameMaster.Undo);
         m_redo.onClick.AddListener(m_gameMaster.Redo);
         m_automate.onClick.AddListener(m_gameMaster.Automate);
         m_options.onClick.AddListener(m_gameMaster.OpenOptionsMenu);
-        m_continue.onClick.AddListener(m_gameMaster.LoadFromSave);
+        //m_continue.onClick.AddListener(m_gameMaster.LoadFromSave);
         m_boom.onClick.AddListener(m_gameMaster.GetComponent<CardsCreator>().BoomCards);
+        m_quit.onClick.AddListener(OnAskQuit);
     }
+
+
 
     // Update is called once per frame
     void Update()
@@ -41,6 +51,50 @@ public class IngameMenu : MonoBehaviour
         m_score.text = m_gameMaster.GetScrore().ToString() + "pts";
         m_turn.text = m_gameMaster.GetTurn().ToString();
 
-        m_continue.gameObject.SetActive(m_gameMaster.HasSave());
+        //m_continue.gameObject.SetActive(m_gameMaster.HasSave());
+    }
+
+    private void OnAskRestart()
+    {
+        m_PanelAskYesNo_ButtonYes.onClick.RemoveAllListeners();
+        m_PanelAskYesNo_ButtonNo.onClick.RemoveAllListeners();
+        m_PanelAskYesNoText.text = "Restart ?";
+        m_PanelAskYesNo_ButtonYes.onClick.AddListener(OnNewGame);
+        m_PanelAskYesNo_ButtonNo.onClick.AddListener(OnCancelPanelYesNo);
+        m_gameMaster.Pause(true);
+        PanelAskYesNo.SetActive(true);
+        PanelIngame.SetActive(false);
+    }
+
+    private void OnAskQuit()
+    {
+        m_PanelAskYesNo_ButtonYes.onClick.RemoveAllListeners();
+        m_PanelAskYesNo_ButtonNo.onClick.RemoveAllListeners();
+        m_PanelAskYesNoText.text = "Quit ?";
+        m_PanelAskYesNo_ButtonYes.onClick.AddListener(OnQuit);
+        m_PanelAskYesNo_ButtonNo.onClick.AddListener(OnCancelPanelYesNo);
+        m_gameMaster.Pause(true);
+        PanelAskYesNo.SetActive(true);
+        PanelIngame.SetActive(false);
+    }
+
+    private void OnNewGame()
+    {
+        PanelAskYesNo.SetActive(false);
+        PanelIngame.SetActive(true);
+        m_gameMaster.Pause(false);
+        m_gameMaster.NewGame();
+    }
+
+    private void OnCancelPanelYesNo()
+    {
+        PanelAskYesNo.SetActive(false);
+        PanelIngame.SetActive(true);
+        m_gameMaster.Pause(false);
+    }
+
+    private void OnQuit()
+    {
+        SceneManager.LoadScene("MainMenu");
     }
 }

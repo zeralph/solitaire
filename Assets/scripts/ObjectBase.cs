@@ -7,7 +7,7 @@ public class ObjectBase : MonoBehaviour
 {
     public GameObject m_container;
     public float m_cardDecal;
-    protected GameMaster m_gameMaster;
+    private GameMaster m_gameMaster;
 
     private void Awake()
     {
@@ -26,11 +26,15 @@ public class ObjectBase : MonoBehaviour
     // Start is called before the first frame update
     public virtual void Start()
     {
-        m_gameMaster = GameObject.Find("GameMaster").GetComponent<GameMaster>();
+    }
+
+    public GameMaster GetGameMaster()
+    {
         if(m_gameMaster == null)
         {
-            Debug.LogError("No gameMaster found");
+            m_gameMaster = GameObject.Find("GameMaster").GetComponent<GameMaster>();
         }
+        return m_gameMaster;
     }
 
     public virtual bool CanAdd(ObjectBase o)
@@ -120,7 +124,7 @@ public class ObjectBase : MonoBehaviour
         int i = GetNbChildCards() + 1;
         //Vector3 p = this.transform.position;
         Vector3 p = new Vector3(0,0,0);
-        p.z -= i * m_gameMaster.m_cardSpace;
+        p.z -= i * GetGameMaster().m_cardSpace;
         p.y -= m_cardDecal * GetNbChildCards();
         return p;
     }

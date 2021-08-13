@@ -74,7 +74,7 @@ public class GameMaster : MonoBehaviour
     private bool m_pickfromDrawn;
     private int m_nbPickedCards = 0;
     private bool m_paused = false;
-
+    private bool m_doLoadSave;
     private int m_score;
     private int m_turn;
 
@@ -83,8 +83,7 @@ public class GameMaster : MonoBehaviour
         Debug.Log(move.ToString());
         m_score += SCORE[(int)move];
         m_turn ++;
-        SaveState();
-        GetComponent<StateRecorder>().SaveGame();
+        SaveState(true);
         m_canAutomate = Automate(false);
     }
 
@@ -107,11 +106,25 @@ public class GameMaster : MonoBehaviour
         m_world.Reset();
         m_world.StartMove();
         m_inGameMenu.gameObject.SetActive(true);
+        m_doLoadSave = false;
+        if (HasSave())
+        {
+            m_doLoadSave = true;
+        }
+        else
+        {
+            NewGame();
+        }
     }
 
     // Update is called once per frame
     void Update()
     {
+        if(m_doLoadSave)
+        {
+            m_doLoadSave = false;
+            LoadFromSave();
+        }
         if(IsPaused())
         {
             return;
@@ -184,10 +197,10 @@ public class GameMaster : MonoBehaviour
         }
     }
 
-    public void SaveState()
+    public void SaveState(bool bSave)
     {
         //List<CardScript> cl = GetComponent<CardsCreator>().GetCards();
-        GetComponent<StateRecorder>().AddState(m_board);
+        GetComponent<StateRecorder>().AddState(m_board, bSave);
     }
 
     public ObjectBase Find(string name)

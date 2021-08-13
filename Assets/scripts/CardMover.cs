@@ -24,7 +24,7 @@ public class CardMover : ObjectBase
 
     void Update()
     {
-        if (m_gameMaster.IsPaused())
+        if (GetGameMaster().IsPaused())
         {
             return;
         }
@@ -43,7 +43,7 @@ public class CardMover : ObjectBase
             }    
             if ((m_card && m_card.IsInDrawn()) || dek != null)
             {
-                m_gameMaster.OnClickOnDrawn();
+                GetGameMaster().OnClickOnDrawn();
                 pressed = false;
             }
         }
@@ -65,7 +65,7 @@ public class CardMover : ObjectBase
                     else if (m_card.IsInDrawn())
                     { 
                         {
-                            m_gameMaster.OnClickOnDrawn();
+                            GetGameMaster().OnClickOnDrawn();
                             pressed = false;
                             m_card = null;
                         }
