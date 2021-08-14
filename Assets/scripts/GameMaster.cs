@@ -20,8 +20,11 @@ public class GameMaster : MonoBehaviour
         eCardToTableau,
         eCardToFamily,
         eFamilyToFamily,
+        eRestore,
+        eDistributed,
+        __MAX__
     }
-    public int[] SCORE =
+    private readonly int[] SCORE = new int[(int)eMoves.__MAX__]
     {
         0,//eNotSet=0,
         0,//eImpossibleMove,
@@ -38,6 +41,8 @@ public class GameMaster : MonoBehaviour
         0,//eCardToTableau,
         10,//eCardToFamily,
         0,//eFamilyToFamily,
+        0,//Restore,
+        0,//distributed
     };
     public WorldMoveScript m_world; 
     public ObjectBase m_board;
@@ -55,7 +60,7 @@ public class GameMaster : MonoBehaviour
     public float m_drawToDeckRefillSpeed = 20f;
     public float m_mouseSpeed = 50.0f;
     public float m_moveBackSpeed = 10f;
-    public float m_automationSpeedDt = 0.2f;
+    public float m_automationSpeed = 10f;
     public float m_pickcardsFromdeckSpeedDt = 0.3f;
     public float m_refillSpeedDt = 0.1f;
     public float m_boomFactor = 100.0f;
@@ -80,11 +85,21 @@ public class GameMaster : MonoBehaviour
 
     public void OnMovePlayed(eMoves move)
     {
-        Debug.Log(move.ToString());
+        if(move == eMoves.eDistributed)
+        {
+            m_score = 0;
+            m_turn = 0;
+        }
+        Debug.Log("[OnMovePlayed] " + move.ToString());
         m_score += SCORE[(int)move];
         m_turn ++;
         SaveState(true);
-        m_canAutomate = Automate(false);
+        m_canAutomate = Automate(m_doAutomate);
+        m_doAutomate = m_doAutomate & m_canAutomate;
+        if (!m_win)
+        {
+            ChekForWin();
+        }
     }
 
     // Start is called before the first frame update
@@ -107,6 +122,7 @@ public class GameMaster : MonoBehaviour
         m_world.StartMove();
         m_inGameMenu.gameObject.SetActive(true);
         m_doLoadSave = false;
+        GetComponent<CardsCreator>().CreateCards();
         if (HasSave())
         {
             m_doLoadSave = true;
@@ -138,7 +154,7 @@ public class GameMaster : MonoBehaviour
                 CardScript c = m_discardPile.GetTopCard();
                 if(c)
                 {
-                    c.MoveToParent(m_deck, CardScript.Face.verso, m_drawToDeckRefillSpeed);
+                    c.MoveToParent(m_deck, CardScript.Face.verso, m_drawToDeckRefillSpeed, false);
                 }
                 else
                 {
@@ -155,7 +171,7 @@ public class GameMaster : MonoBehaviour
                 if(m_deck.GetNbChildCards() > 0 && m_nbPickedCards < m_nbDrawnCardsFromDeck)
                 {
                     CardScript c = m_deck.GetTopCard();
-                    c.MoveToParent(m_discardPile, CardScript.Face.recto, m_deckToDrawnSpeed);
+                    c.MoveToParent(m_discardPile, CardScript.Face.recto, m_deckToDrawnSpeed, false);
                     m_nbPickedCards++;
                 }
                 else
@@ -165,18 +181,6 @@ public class GameMaster : MonoBehaviour
                     OnMovePlayed(eMoves.eDrawnToDiscard);
                 }
             }
-        }
-        if(m_doAutomate)
-        {
-            if(m_timer > m_automationSpeedDt)
-            {
-                m_doAutomate = Automate(true);
-                m_timer = 0;
-            }    
-        }
-        if (!m_win)
-        {
-            ChekForWin();
         }
     }
 
@@ -271,13 +275,13 @@ public class GameMaster : MonoBehaviour
             {
                 f = CardScript.Face.recto;
             }
-            c.MoveToParent(tab, f, m_distributionSpeed);
+            c.MoveToParent(tab, f, m_distributionSpeed, false);
             m_tableauIndex++;
             return true;
         }
         else
         {
-            c.MoveToParent(m_deck, CardScript.Face.verso, m_distributionSpeed);
+            c.MoveToParent(m_deck, CardScript.Face.verso, m_distributionSpeed, false);
             m_tableauIndex = 0;
             return false;
         }
@@ -290,7 +294,7 @@ public class GameMaster : MonoBehaviour
     public void DrawFromDeck()
     {
         CardScript c = m_deck.GetTopCard();
-        c.MoveToParent(m_discardPile, CardScript.Face.recto, m_speed);
+        c.MoveToParent(m_discardPile, CardScript.Face.recto, m_speed, false);
     }
 
     public void Clear()
@@ -321,7 +325,7 @@ public class GameMaster : MonoBehaviour
                 {
                     if(bDo)
                     {
-                        topDrawn.MoveToParent(m_familyPiles[i], CardScript.Face.recto, m_speed);
+                        topDrawn.MoveToParent(m_familyPiles[i], CardScript.Face.recto, m_automationSpeed, false);
                     }
                     return true;
                 }
@@ -340,7 +344,7 @@ public class GameMaster : MonoBehaviour
                     {
                         if (bDo)
                         {
-                            topTableauCard.MoveToParent(m_familyPiles[j], CardScript.Face.recto, m_speed);
+                            topTableauCard.MoveToParent(m_familyPiles[j], CardScript.Face.recto, m_automationSpeed, false);
                         }
                         return true;
                     }
@@ -398,6 +402,8 @@ public class GameMaster : MonoBehaviour
     public void Automate()
     {
         m_doAutomate = true;
+        m_canAutomate = Automate(m_doAutomate);
+        m_doAutomate = m_canAutomate;
     }
 
     public bool CanAutomate()
@@ -431,6 +437,7 @@ public class GameMaster : MonoBehaviour
     public void LoadFromSave()
     {
         GetComponent<StateRecorder>().LoadFromSave(m_board);
+        OnMovePlayed(eMoves.eRestore);
     }
 
     public bool HasSave()

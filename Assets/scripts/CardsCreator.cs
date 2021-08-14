@@ -6,6 +6,7 @@ public class CardsCreator : ObjectBase
 {
     public GameObject m_cardPrefab;
     public DeckScript m_deck;
+    public TexturePack m_texturePack;
     public float m_distributionDeltaTime = 0.05f;
     private List<CardScript> m_cards;
     private int m_cardToDistributeIndex;
@@ -20,7 +21,6 @@ public class CardsCreator : ObjectBase
         Debug.LogWarning("START");
         base.Start();
         m_cardsCreated = false;
-        CreateCards();
         m_cardToDistributeIndex = 0;
         m_distributing = false;
         m_timer = 0;
@@ -46,6 +46,7 @@ public class CardsCreator : ObjectBase
                 {
                     m_distributing = false;
                     GetGameMaster().SaveState(true);
+                    GetGameMaster().OnMovePlayed(GameMaster.eMoves.eDistributed);
                 }
             }
         }
@@ -68,16 +69,18 @@ public class CardsCreator : ObjectBase
             CardScript s = m_cards[i];
             m_cards[i] = m_cards[r];
             m_cards[r] = s;
-        }
-        DeckScript startDeck = GetGameMaster().m_StartDeck;    
+        }  
         for (int i=0; i<m_cards.Count; i++)
         {
-            m_cards[i].GetComponent<Rigidbody>().isKinematic = true;
+            m_cards[i].DisablePhysic();
             float mass = Random.Range(1f, 5f);
             m_cards[i].GetComponent<Rigidbody>().mass = mass;
-            m_cards[i].transform.rotation = startDeck.transform.rotation;
-            m_cards[i].transform.position = startDeck.transform.position;
-            startDeck.Add(m_cards[i]);
+            if(m_deck)
+            {
+                m_cards[i].transform.rotation = m_deck.transform.rotation;
+                m_cards[i].transform.position = m_deck.transform.position;
+                m_deck.Add(m_cards[i]);
+            }
             m_cards[i].flipTo(CardScript.Face.verso, false);
         }
         //distribute
@@ -101,31 +104,36 @@ public class CardsCreator : ObjectBase
     }
     private CardScript CreateCard(CardScript.Symbol s, CardScript.Name n, bool flip, TexturePack tp)
     {
-        Vector3 v = GetGameMaster().m_StartDeck.transform.position;
+        Vector3 v = new Vector3(0,0,0);
+        if(m_deck != null)
+        {
+            v = m_deck.transform.position;
+        }
         GameObject o = Instantiate(m_cardPrefab, v, Quaternion.identity);
         o.name = s.ToString() + "_" + n.ToString();
         CardScript card = o.GetComponent<CardScript>();
         card.Set(s, n, tp);
-        card.flipTo(CardScript.Face.verso, false);
+        //card.flipTo(CardScript.Face.verso, false);
         return card;
     }
 
-    private void CreateCards()
+    public void CreateCards()
     {
         if(!m_cardsCreated)
         {
-            Debug.Log("CREATE CARDS");
-            DeckScript startDeck = GetGameMaster().m_StartDeck;
+            Debug.Log("CREATE CARDS");   
             m_cards = new List<CardScript>();
             for (CardScript.Symbol i = CardScript.Symbol.spade; i< CardScript.Symbol.__MAX__; i++)
             {
                 for(CardScript.Name j = CardScript.Name.ace; j< CardScript.Name.__MAX__; j++)
                 {
-                    CardScript card = CreateCard(i, j, true, GetGameMaster().m_texturePack);
+                    CardScript card = CreateCard(i, j, true, m_texturePack);
                     m_cards.Add(card);
-                    startDeck.Add(card);
-                    card.transform.position = startDeck.transform.position;
-                    //card.transform.parent = m_gameMaster.transform;
+                    if(m_deck != null)
+                    {
+                        m_deck.Add(card);
+                        card.transform.position = m_deck.transform.position;
+                    }
                 }
             }
         }

@@ -86,7 +86,7 @@ public class StateRecorder : MonoBehaviour
         string s = m_states[m_curStateIndex];
         ObjectBaseSerialized o = JsonUtility.FromJson<ObjectBaseSerialized>(s);
         o.Restore(b);
-        Debug.Log("state loaded");
+        Debug.Log("state loaded");  
     }
 
     public void LoadNextState(ObjectBase b)

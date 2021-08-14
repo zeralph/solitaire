@@ -5,7 +5,7 @@ using UnityEngine;
 [System.Serializable]
 public class ObjectBase : MonoBehaviour
 {
-    public GameObject m_container;
+    private GameObject m_container;
     public float m_cardDecal;
     private GameMaster m_gameMaster;
 
@@ -32,7 +32,11 @@ public class ObjectBase : MonoBehaviour
     {
         if(m_gameMaster == null)
         {
-            m_gameMaster = GameObject.Find("GameMaster").GetComponent<GameMaster>();
+            GameObject go = GameObject.Find("GameMaster");
+            if (go)
+            {
+                m_gameMaster = go.GetComponent<GameMaster>();
+            }
         }
         return m_gameMaster;
     }
@@ -195,7 +199,7 @@ public class ObjectBaseSerialized
         {
             s.transform.rotation = parent.transform.rotation;
             CardScript.Face f = this.recto ? CardScript.Face.recto : CardScript.Face.verso;
-            s.MoveToParent(parent, f, 10);
+            s.MoveToParent(parent, f, 10, true);
             s.SetHitable(true);
             //s.RestoreTo(parent, f);
         }

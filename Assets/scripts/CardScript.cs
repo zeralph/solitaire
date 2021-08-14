@@ -69,7 +69,8 @@ public class CardScript : ObjectBase
     public Face m_face;
     private bool m_moveWithMouse;
     private ObjectBase m_lastObjectUnder;
-
+    private GameMaster.eMoves m_lastMove;
+    private ObjectBase m_lastParent;
     public override void Start()
     {
         base.Start();
@@ -78,11 +79,17 @@ public class CardScript : ObjectBase
         m_moveWithMouse = false;
         m_speed = 0f;
         OutLine(false);
+        m_lastMove = GameMaster.eMoves.eNotSet;
+        m_lastParent = null;
     }
 
 
     void Update()
     {
+        if(!GetGameMaster())
+        {
+            return;
+        }
         if (GetGameMaster().IsPaused())
         {
             return;
@@ -99,10 +106,39 @@ public class CardScript : ObjectBase
         }
     }
 
-    public void Boom()
+    public void EnablePhysic(bool bWithGravity)
     {
+        m_mesh.GetComponent<Animation>().enabled = false;
         Rigidbody rb = this.GetComponent<Rigidbody>();
         rb.isKinematic = false;
+        if(bWithGravity)
+        {
+            rb.useGravity = true;
+        }
+    }
+
+    public bool IsInFrustrum()
+    {
+        return m_recto.GetComponent<Renderer>().isVisible || m_verso.GetComponent<Renderer>().isVisible;
+    }
+
+    public void DisablePhysic()
+    {
+        m_mesh.GetComponent<Animation>().enabled = true;
+        GetComponent<Rigidbody>().isKinematic = true;
+        GetComponent<Rigidbody>().useGravity = false;
+    }
+
+    public void AddForceAndTorque(Vector3 f, Vector3 t)
+    {
+        Rigidbody rb = this.GetComponent<Rigidbody>();
+        rb.AddForce(f);
+        rb.AddTorque(t, ForceMode.Impulse);
+    }
+
+    public void Boom()
+    {
+        EnablePhysic(false);
         float x = Random.Range(-1f, 1f);
         float y = Random.Range(-1f, 1f);
         float z = Random.Range(-1f, 0f);
@@ -113,8 +149,7 @@ public class CardScript : ObjectBase
         v.x *= f;// * x;
         v.y *= f;// * y;
         v.z *= f;// * z;
-        rb.AddForce(v);
-        rb.AddTorque(t, ForceMode.Impulse);
+        AddForceAndTorque(v, t);
     }
 
     public bool IsRecto()
@@ -146,11 +181,6 @@ public class CardScript : ObjectBase
     public bool IsInDiscard()
     {
         return GetParent().GetComponent<DeckScript>() != null && GetParent().GetComponent<DeckScript>().name == "Discard";
-    }
-
-    public override void OutLine(bool b)
-    {
-        this.m_recto.GetComponent<Outline>().enabled = b;
     }
     public void SetHitable(bool b)
     {
@@ -196,13 +226,13 @@ public class CardScript : ObjectBase
                 DeckScript dek = newP.GetComponentInParent<DeckScript>();
                 if (s && CanAdd(s) && dek == null)
                 {
-                    MoveToParent(s, m_face, GetGameMaster().m_speed);
+                    MoveToParent(s, m_face, GetGameMaster().m_speed, false);
                     bFailed = false;
                     newP = s;
                 }
                 else if (tab != null && tab.IsEmpty() && this.m_name == Name.king)
                 {
-                    MoveToParent(tab, m_face, GetGameMaster().m_speed);
+                    MoveToParent(tab, m_face, GetGameMaster().m_speed, false);
                     bFailed = false;
                     newP = tab;
                 }
@@ -210,7 +240,7 @@ public class CardScript : ObjectBase
                 {
                     if (fam.CanAdd(this))
                     {
-                        this.MoveToParent(fam, CardScript.Face.recto, GetGameMaster().m_speed);
+                        this.MoveToParent(fam, CardScript.Face.recto, GetGameMaster().m_speed, false);
                         bFailed = false;
                         newP = fam;
                     }
@@ -220,87 +250,92 @@ public class CardScript : ObjectBase
             {
                 //move back
                 ObjectBase parentObject = GetParent().GetComponent<ObjectBase>();
-                MoveToParent(curP, m_face, GetGameMaster().m_moveBackSpeed);
+                MoveToParent(curP, m_face, GetGameMaster().m_moveBackSpeed, false);
                 newP = curP;
             }
             else
             {
-                GameMaster.eMoves m = GameMaster.eMoves.eNotSet;
-                if(curP.IsDrawn())
-                {
-                    if(newP.IsDiscard())
-                    {
-                        m = GameMaster.eMoves.eDrawnToDiscard;
-                    }
-                    else
-                    {
-                        m = GameMaster.eMoves.eImpossibleMove;
-                    }
-                }
-                else if(curP.IsCard())
-                {
-                    if(newP.IsCard() )
-                    {
-                        m = GameMaster.eMoves.eCardToCard;
-                    }
-                    else if(newP.Istableau())
-                    {
-                        m = GameMaster.eMoves.eCardToTableau;
-                    }
-                    else if (newP.IsFamily())
-                    {
-                        m = GameMaster.eMoves.eCardToFamily;
-                    }
-                }
-                else if(curP.IsDiscard())
-                {
-                    if (newP.Istableau())
-                    {
-                        m = GameMaster.eMoves.eDiscardToTableau;
-                    }
-                    else if (newP.IsCard())
-                    {
-                        m = GameMaster.eMoves.eDiscardToCard;
-                    }
-                    else if (newP.IsFamily())
-                    {
-                        m = GameMaster.eMoves.eDiscardToFamily;
-                    }
-                }
-                else if(curP.IsFamily())
-                {
-                    if(newP.IsCard())
-                    {
-                        m = GameMaster.eMoves.eFamilyToCard;
-                    }
-                    if (newP.IsFamily())
-                    {
-                        m = GameMaster.eMoves.eFamilyToFamily;
-                    }
-                }
-                else if (curP.Istableau())
-                {
-                    if (newP.IsCard())
-                    {
-                        m = GameMaster.eMoves.eTableauToCard;
-                    }
-                    else if (newP.Istableau())
-                    {
-                        m = GameMaster.eMoves.eTableauToTableau;
-                    }
-                    else if (newP.IsFamily())
-                    {
-                        m = GameMaster.eMoves.eTableauToFamily;
-                    }
-                }
-                else
-                {
-                    m = GameMaster.eMoves.eImpossibleMove;
-                }
-                GetGameMaster().OnMovePlayed(m);
+                //ComputeMoveType(curP, newP);
             }
             SetHitable(true);
         }      
+    }
+
+    private GameMaster.eMoves ComputeMoveType(ObjectBase curP, ObjectBase newP)
+    {
+        GameMaster.eMoves m = GameMaster.eMoves.eNotSet;
+        if (curP.IsDrawn())
+        {
+            if (newP.IsDiscard())
+            {
+                m = GameMaster.eMoves.eDrawnToDiscard;
+            }
+            else
+            {
+                m = GameMaster.eMoves.eImpossibleMove;
+            }
+        }
+        else if (curP.IsCard())
+        {
+            if (newP.IsCard())
+            {
+                m = GameMaster.eMoves.eCardToCard;
+            }
+            else if (newP.Istableau())
+            {
+                m = GameMaster.eMoves.eCardToTableau;
+            }
+            else if (newP.IsFamily())
+            {
+                m = GameMaster.eMoves.eCardToFamily;
+            }
+        }
+        else if (curP.IsDiscard())
+        {
+            if (newP.Istableau())
+            {
+                m = GameMaster.eMoves.eDiscardToTableau;
+            }
+            else if (newP.IsCard())
+            {
+                m = GameMaster.eMoves.eDiscardToCard;
+            }
+            else if (newP.IsFamily())
+            {
+                m = GameMaster.eMoves.eDiscardToFamily;
+            }
+        }
+        else if (curP.IsFamily())
+        {
+            if (newP.IsCard())
+            {
+                m = GameMaster.eMoves.eFamilyToCard;
+            }
+            if (newP.IsFamily())
+            {
+                m = GameMaster.eMoves.eFamilyToFamily;
+            }
+        }
+        else if (curP.Istableau())
+        {
+            if (newP.IsCard())
+            {
+                m = GameMaster.eMoves.eTableauToCard;
+            }
+            else if (newP.Istableau())
+            {
+                m = GameMaster.eMoves.eTableauToTableau;
+            }
+            else if (newP.IsFamily())
+            {
+                m = GameMaster.eMoves.eTableauToFamily;
+            }
+        }
+        else
+        {
+            m = GameMaster.eMoves.eImpossibleMove;
+        }
+        return m;
     }
 
     private bool CanAdd(CardScript s)
@@ -333,29 +368,27 @@ public class CardScript : ObjectBase
         //flipTo(f, true);
     }
 
-    public void MoveToParent(ObjectBase newparent, Face f, float speed)
+    public void MoveToParent(ObjectBase newparent, Face f, float speed, bool bImmediateFlip)
     {
-        ObjectBase curP = GetParent();
-        if (curP == null)
+        m_lastParent = GetParent();
+        if (m_lastParent == null)
         {
             Debug.LogError(m_name + " has no parent. strange ?");
         }
         else
         {
-            Tableau tab = curP.GetComponent<Tableau>();
+            
             newparent.Add(this);
             m_targetPos = newparent.GetTargetPosition(this);
-            flipTo(f, false);
-            if (tab != null)
-            {
-                tab.FlipTopcard();
-            }
+            this.transform.rotation = newparent.transform.rotation;
+            flipTo(f, bImmediateFlip);
             m_isMoving = true;
             m_speed = speed;
             AudioSource audio = Camera.main.GetComponent<AudioSource>();
             audio.clip = m_cardDeal;
             //audio.
             //audio.Play();
+            m_lastMove = ComputeMoveType(m_lastParent, newparent);
         }
     }
 
@@ -395,38 +428,65 @@ public class CardScript : ObjectBase
         {
             SetHitable(false);
             
-            Vector3 parentPos = GetParent().transform.position + GetParent().transform.TransformVector(m_targetPos); ;
-            //this.transform.position = Vector3.MoveTowards(this.transform.position, parentPos, m_speed * Time.deltaTime);
+            Vector3 parentPos = GetParent().transform.position + GetParent().transform.TransformVector(m_targetPos);
             this.transform.position = Vector3.MoveTowards(this.transform.position, parentPos, m_speed * Time.deltaTime);
             CardScript child = this.transform.GetComponentInChildren<CardScript>();
-            //if( parentPos.Equals(this.transform.position) )
-
             if( Mathf.Abs(Vector3.SqrMagnitude(transform.position - parentPos)) < 0.0005)
-            //if (transform.position == parentPos)
             {
-                transform.position = parentPos;
-                m_isMoving = false;
-                SetHitable(true);
+                EndMove(parentPos);
             }
         }
     }
 
+    private void EndMove(Vector3 finalPos)
+    {
+        Tableau tab = m_lastParent.GetComponent<Tableau>();
+        if (tab != null)
+        {
+            tab.FlipTopcard();
+        }
+        transform.position = finalPos;
+        m_isMoving = false;
+        SetHitable(true);
+        if (m_lastMove != GameMaster.eMoves.eNotSet && m_lastMove != GameMaster.eMoves.eImpossibleMove)
+        {
+            GetGameMaster().OnMovePlayed(m_lastMove);
+            m_lastMove = GameMaster.eMoves.eNotSet;
+        }
+        m_lastParent = GetParent();
+    }
+
     public void flipTo(Face f, bool force)
     {
-        if(force || f != m_face)
+        if (force)
         {
             m_face = f;
-            Animation a = m_mesh.GetComponent<Animation>();
             if (m_face == Face.recto)
             {
-                a.Play("cardFlipVersoToRecto", PlayMode.StopAll);
-                //m_mesh.transform.rotation = Quaternion.Euler(0.0f, 0.0f, 0.0f);
+                m_mesh.transform.localRotation = Quaternion.Euler(0.0f, 0.0f, 0.0f);
             }
             else if (m_face == Face.verso)
             {
-                a.Play("cardFlipRectoToVerso", PlayMode.StopAll);
-                //m_mesh.transform.rotation = Quaternion.Euler(0.0f, 180.0f, 0.0f);
-            }          
+                m_mesh.transform.localRotation = Quaternion.Euler(0.0f, 180.0f, 0.0f);
+            }
+        }
+        else if (/*force ||*/ f != m_face)
+        {
+            m_face = f;
+            Animation a = m_mesh.GetComponent<Animation>();
+            //else
+            {
+                if (m_face == Face.recto)
+                {
+                    a.Play("cardFlipVersoToRecto", PlayMode.StopAll);
+                    //m_mesh.transform.rotation = Quaternion.Euler(0.0f, 0.0f, 0.0f);
+                }
+                else if (m_face == Face.verso)
+                {
+                    a.Play("cardFlipRectoToVerso", PlayMode.StopAll);
+                    //m_mesh.transform.rotation = Quaternion.Euler(0.0f, 180.0f, 0.0f);
+                }
+            }      
             m_symbolImage.gameObject.SetActive(m_face == Face.recto);
             m_value1Image.gameObject.SetActive(m_face == Face.recto);
             m_value2Image.gameObject.SetActive(m_face == Face.recto);
@@ -436,9 +496,17 @@ public class CardScript : ObjectBase
             //m_verso.gameObject.SetActive(m_face == Face.verso);
             //GetParent().GetTargetPosition();
             AudioSource audio = Camera.main.GetComponent<AudioSource>();
-            audio.clip = m_cardFlip;
-            audio.Play();
+            if(audio != null)
+            {
+                audio.clip = m_cardFlip;
+                audio.Play();
+            }
         }      
+    }
+
+    public void FixFlipAnimation()
+    {
+
     }
 
     public void EndAnimation()
