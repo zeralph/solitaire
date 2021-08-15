@@ -16,10 +16,9 @@ public class CardsCreator : ObjectBase
     
     // Start is called before the first frame update
 
-    public override void Start()
+    public override void Awake()
     {
-        Debug.LogWarning("START");
-        base.Start();
+        base.Awake();
         m_cardsCreated = false;
         m_cardToDistributeIndex = 0;
         m_distributing = false;

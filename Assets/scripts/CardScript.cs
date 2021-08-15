@@ -71,9 +71,10 @@ public class CardScript : ObjectBase
     private ObjectBase m_lastObjectUnder;
     private GameMaster.eMoves m_lastMove;
     private ObjectBase m_lastParent;
-    public override void Start()
+
+    public override void Awake()
     {
-        base.Start();
+        base.Awake();
         m_targetPos = transform.position;
         m_isMoving = false;
         m_moveWithMouse = false;

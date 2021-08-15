@@ -9,7 +9,7 @@ public class ObjectBase : MonoBehaviour
     public float m_cardDecal;
     private GameMaster m_gameMaster;
 
-    private void Awake()
+    public virtual void Awake()
     {
         Transform t = this.transform.Find("Container");
         if(t == null)
@@ -189,7 +189,7 @@ public class ObjectBaseSerialized
         }
     }
 
-    public void Restore(ObjectBase parent)
+    public bool Restore(ObjectBase parent)
     {
         GameObject go = GameObject.Find(this.name);
         Transform me = go.transform;
@@ -204,10 +204,12 @@ public class ObjectBaseSerialized
             //s.RestoreTo(parent, f);
         }
         int l = children.Count;
+        bool bOK = true;
         for (int i = 0; i < l; i++)
         {
             ObjectBaseSerialized o2 = children[i];
-            o2.Restore(b);
+            bOK &= o2.Restore(b);
         }
+        return bOK;
     }
 }

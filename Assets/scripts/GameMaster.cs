@@ -79,21 +79,41 @@ public class GameMaster : MonoBehaviour
     private bool m_pickfromDrawn;
     private int m_nbPickedCards = 0;
     private bool m_paused = false;
-    private bool m_doLoadSave;
-    private int m_score;
-    private int m_turn;
+    public int m_score;
+    public int m_turn;
+    private bool m_doInit = true;
+    private int m_drawnToDiscardMoveCount = 0;
 
     public void OnMovePlayed(eMoves move)
     {
-        if(move == eMoves.eDistributed)
-        {
-            m_score = 0;
-            m_turn = 0;
-        }
         Debug.Log("[OnMovePlayed] " + move.ToString());
-        m_score += SCORE[(int)move];
-        m_turn ++;
-        SaveState(true);
+        if(move == eMoves.eDiscardToDrawn)
+        {
+            return;
+        }
+        if(move == eMoves.eDrawnToDiscard)
+        {
+            m_drawnToDiscardMoveCount++;
+            if((m_deck.GetNbChildCards() >0) && (m_drawnToDiscardMoveCount % m_nbDrawnCardsFromDeck) != 0)
+            {
+                return;
+            }
+        }
+        m_drawnToDiscardMoveCount = 0;
+        if (move != eMoves.eRestore )
+        {
+            SaveState(true);
+            if (move == eMoves.eDistributed)
+            {
+                m_score = 0;
+                m_turn = 0;
+            }
+            else
+            {
+                m_score += SCORE[(int)move];
+                m_turn++;
+            }
+        }   
         m_canAutomate = Automate(m_doAutomate);
         m_doAutomate = m_doAutomate & m_canAutomate;
         if (!m_win)
@@ -121,26 +141,31 @@ public class GameMaster : MonoBehaviour
         m_world.Reset();
         m_world.StartMove();
         m_inGameMenu.gameObject.SetActive(true);
-        m_doLoadSave = false;
-        GetComponent<CardsCreator>().CreateCards();
-        if (HasSave())
+        m_doInit = true;
+        m_drawnToDiscardMoveCount = 0;
+    }
+
+    private void DoInit()
+    {
+        if (m_doInit)
         {
-            m_doLoadSave = true;
-        }
-        else
-        {
-            NewGame();
+            m_doInit = false;
+            GetComponent<CardsCreator>().CreateCards();
+            if (HasSave())
+            {
+                LoadFromSave();
+            }
+            else
+            {
+                NewGame();
+            }
         }
     }
 
     // Update is called once per frame
     void Update()
     {
-        if(m_doLoadSave)
-        {
-            m_doLoadSave = false;
-            LoadFromSave();
-        }
+        DoInit();
         if(IsPaused())
         {
             return;
@@ -160,6 +185,7 @@ public class GameMaster : MonoBehaviour
                 {
                     m_refillDrawn = false;
                     OnMovePlayed(eMoves.eDiscardToDrawn);
+                    m_pickfromDrawn = true;
                 }
             }
         }
@@ -178,7 +204,6 @@ public class GameMaster : MonoBehaviour
                 {
                     m_pickfromDrawn = false;
                     m_nbPickedCards = 0;
-                    OnMovePlayed(eMoves.eDrawnToDiscard);
                 }
             }
         }
@@ -383,6 +408,11 @@ public class GameMaster : MonoBehaviour
         {
             cc.DistributeCards();
         }
+        else
+        {
+            Debug.LogError("[GameMaster] : no cards created !");
+        }
+        
     }
 
     public void OpenOptionsMenu()
@@ -424,11 +454,13 @@ public class GameMaster : MonoBehaviour
     public void Undo()
     {
         GetComponent<StateRecorder>().LoadPreviousState(m_board);
+        OnMovePlayed(eMoves.eRestore);
     }
 
     public void Redo()
     {
         GetComponent<StateRecorder>().LoadNextState(m_board);
+        OnMovePlayed(eMoves.eRestore);
     }
     #endregion
 
@@ -445,5 +477,4 @@ public class GameMaster : MonoBehaviour
         return GetComponent<StateRecorder>().HasSave();
     }
     #endregion
-
 }

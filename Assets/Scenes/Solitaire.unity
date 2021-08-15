@@ -2073,7 +2073,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 989870651829616816, guid: 8f9d9e07606410548999d6f05bf82302, type: 3}
       propertyPath: m_nbDrawnCardsFromDeck
-      value: 1
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 989870651829616816, guid: 8f9d9e07606410548999d6f05bf82302, type: 3}
       propertyPath: m_tableaux.Array.data[0]
