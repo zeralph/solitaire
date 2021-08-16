@@ -225,19 +225,7 @@ public class CardScript : ObjectBase
                 Tableau tab = newP.GetComponentInParent<Tableau>();
                 FamilyPile fam = newP.GetComponentInParent<FamilyPile>();
                 DeckScript dek = newP.GetComponentInParent<DeckScript>();
-                if (s && CanAdd(s) && dek == null)
-                {
-                    MoveToParent(s, m_face, GetGameMaster().m_speed, false);
-                    bFailed = false;
-                    newP = s;
-                }
-                else if (tab != null && tab.IsEmpty() && this.m_name == Name.king)
-                {
-                    MoveToParent(tab, m_face, GetGameMaster().m_speed, false);
-                    bFailed = false;
-                    newP = tab;
-                }
-                else if (fam != null)
+                if (fam != null)
                 {
                     if (fam.CanAdd(this))
                     {
@@ -245,6 +233,18 @@ public class CardScript : ObjectBase
                         bFailed = false;
                         newP = fam;
                     }
+                }
+                else if (tab != null && tab.IsEmpty() && this.m_name == Name.king)
+                {
+                    MoveToParent(tab, m_face, GetGameMaster().m_speed, false);
+                    bFailed = false;
+                    newP = tab;
+                }
+                else if (s && s.CanAdd(this) && dek == null)    //card is not in deck
+                {
+                    MoveToParent(s, m_face, GetGameMaster().m_speed, false);
+                    bFailed = false;
+                    newP = s;
                 }
             }
             if (bFailed)
@@ -341,7 +341,7 @@ public class CardScript : ObjectBase
 
     private bool CanAdd(CardScript s)
     {
-        return this.m_color != s.m_color && this.m_value == (s.m_value - 1) && s.m_face == Face.recto;
+        return this.m_color != s.m_color && this.m_value == (s.m_value + 1) && s.m_face == Face.recto;
     }
     /*
     public override Vector3 GetTargetPosition(ObjectBase b)
@@ -432,7 +432,7 @@ public class CardScript : ObjectBase
             Vector3 parentPos = GetParent().transform.position + GetParent().transform.TransformVector(m_targetPos);
             this.transform.position = Vector3.MoveTowards(this.transform.position, parentPos, m_speed * Time.deltaTime);
             CardScript child = this.transform.GetComponentInChildren<CardScript>();
-            if( Mathf.Abs(Vector3.SqrMagnitude(transform.position - parentPos)) < 0.0005)
+            if( !m_moveWithMouse && Mathf.Abs(Vector3.SqrMagnitude(transform.position - parentPos)) < 0.0005)
             {
                 EndMove(parentPos);
             }
@@ -440,12 +440,7 @@ public class CardScript : ObjectBase
     }
 
     private void EndMove(Vector3 finalPos)
-    {
-        Tableau tab = m_lastParent.GetComponent<Tableau>();
-        if (tab != null)
-        {
-            tab.FlipTopcard();
-        }
+    {                              
         transform.position = finalPos;
         m_isMoving = false;
         SetHitable(true);
@@ -455,6 +450,28 @@ public class CardScript : ObjectBase
             m_lastMove = GameMaster.eMoves.eNotSet;
         }
         m_lastParent = GetParent();
+    }
+
+    public void Swap(CardScript cs)
+    {
+        Debug.Assert(this.GetNbChildCards() == 0, "bad1");
+        Debug.Assert(cs.GetNbChildCards() == 0, "bad2");
+        ObjectBase thisParent = this.GetParent();
+        ObjectBase otherParent = cs.GetParent();
+        Vector3 thisPos = this.transform.position;
+        Vector3 otherPos = cs.transform.position;
+        Face thisFace = this.m_face;
+        Face otherFace = cs.m_face;
+        int thisindex = this.transform.GetSiblingIndex();
+        int otherIndex = cs.transform.GetSiblingIndex();
+        thisParent.Add(cs);
+        otherParent.Add(this);
+        this.transform.SetSiblingIndex(otherIndex);
+        cs.transform.SetSiblingIndex(thisindex);
+        this.transform.position = otherPos;
+        cs.transform.position = thisPos;
+        this.flipTo(otherFace, true);
+        cs.flipTo(thisFace, true);
     }
 
     public void flipTo(Face f, bool force)
@@ -470,32 +487,31 @@ public class CardScript : ObjectBase
             {
                 m_mesh.transform.localRotation = Quaternion.Euler(0.0f, 180.0f, 0.0f);
             }
-        }
-        else if (/*force ||*/ f != m_face)
-        {
-            m_face = f;
-            Animation a = m_mesh.GetComponent<Animation>();
-            //else
-            {
-                if (m_face == Face.recto)
-                {
-                    a.Play("cardFlipVersoToRecto", PlayMode.StopAll);
-                    //m_mesh.transform.rotation = Quaternion.Euler(0.0f, 0.0f, 0.0f);
-                }
-                else if (m_face == Face.verso)
-                {
-                    a.Play("cardFlipRectoToVerso", PlayMode.StopAll);
-                    //m_mesh.transform.rotation = Quaternion.Euler(0.0f, 180.0f, 0.0f);
-                }
-            }      
             m_symbolImage.gameObject.SetActive(m_face == Face.recto);
             m_value1Image.gameObject.SetActive(m_face == Face.recto);
             m_value2Image.gameObject.SetActive(m_face == Face.recto);
             m_symbol1Image.gameObject.SetActive(m_face == Face.recto);
             m_symbol2Image.gameObject.SetActive(m_face == Face.recto);
             m_recto.gameObject.SetActive(m_face == Face.recto);
-            //m_verso.gameObject.SetActive(m_face == Face.verso);
-            //GetParent().GetTargetPosition();
+        }
+        else if (/*force ||*/ f != m_face)
+        {
+            m_face = f;
+            Animation a = m_mesh.GetComponent<Animation>();
+            if (m_face == Face.recto)
+            {
+                a.Play("cardFlipVersoToRecto", PlayMode.StopAll);
+            }
+            else if (m_face == Face.verso)
+            {
+                a.Play("cardFlipRectoToVerso", PlayMode.StopAll);
+            }   
+            m_symbolImage.gameObject.SetActive(m_face == Face.recto);
+            m_value1Image.gameObject.SetActive(m_face == Face.recto);
+            m_value2Image.gameObject.SetActive(m_face == Face.recto);
+            m_symbol1Image.gameObject.SetActive(m_face == Face.recto);
+            m_symbol2Image.gameObject.SetActive(m_face == Face.recto);
+            m_recto.gameObject.SetActive(m_face == Face.recto);
             AudioSource audio = Camera.main.GetComponent<AudioSource>();
             if(audio != null)
             {

@@ -13,6 +13,7 @@ public class IngameMenu : MonoBehaviour
     public Button m_options;
     public Button m_quit;
     public Button m_boom;
+    public Button m_cheat;
     public GameObject PanelAskYesNo;
     public GameObject PanelIngame;
     public Button m_PanelAskYesNo_ButtonYes;
@@ -38,6 +39,7 @@ public class IngameMenu : MonoBehaviour
         //m_continue.onClick.AddListener(m_gameMaster.LoadFromSave);
         m_boom.onClick.AddListener(m_gameMaster.GetComponent<CardsCreator>().BoomCards);
         m_quit.onClick.AddListener(OnAskQuit);
+        m_cheat.onClick.AddListener(OnCheat);
     }
 
 
@@ -48,9 +50,9 @@ public class IngameMenu : MonoBehaviour
         m_automate.gameObject.SetActive(m_gameMaster.CanAutomate());
         m_undo.gameObject.SetActive(m_gameMaster.CanUndo());
         m_redo.gameObject.SetActive(m_gameMaster.CanRedo());
+        m_cheat.gameObject.SetActive(m_gameMaster.CanCheat());
         m_score.text = m_gameMaster.GetScrore().ToString() + "pts";
         m_turn.text = m_gameMaster.GetTurn().ToString();
-
         //m_continue.gameObject.SetActive(m_gameMaster.HasSave());
     }
 
@@ -64,6 +66,12 @@ public class IngameMenu : MonoBehaviour
         m_gameMaster.Pause(true);
         PanelAskYesNo.SetActive(true);
         PanelIngame.SetActive(false);
+    }
+
+    private void OnCheat()
+    {
+        m_cheat.gameObject.SetActive(false);
+        m_gameMaster.Cheat();
     }
 
     private void OnAskQuit()

@@ -22,6 +22,7 @@ public class GameMaster : MonoBehaviour
         eFamilyToFamily,
         eRestore,
         eDistributed,
+        eCheat,
         __MAX__
     }
     private readonly int[] SCORE = new int[(int)eMoves.__MAX__]
@@ -43,6 +44,7 @@ public class GameMaster : MonoBehaviour
         0,//eFamilyToFamily,
         0,//Restore,
         0,//distributed
+        -500,//cheat
     };
     public WorldMoveScript m_world; 
     public ObjectBase m_board;
@@ -83,10 +85,16 @@ public class GameMaster : MonoBehaviour
     public int m_turn;
     private bool m_doInit = true;
     private int m_drawnToDiscardMoveCount = 0;
+    private bool m_canCheat;
 
     public void OnMovePlayed(eMoves move)
     {
         Debug.Log("[OnMovePlayed] " + move.ToString());
+        ComputeCanCheat();
+        for (int i=0; i<m_tableaux.Count; i++)
+        {
+            m_tableaux[i].FlipTopcard();
+        }
         if(move == eMoves.eDiscardToDrawn)
         {
             return;
@@ -143,6 +151,145 @@ public class GameMaster : MonoBehaviour
         m_inGameMenu.gameObject.SetActive(true);
         m_doInit = true;
         m_drawnToDiscardMoveCount = 0;
+        m_canCheat = false;
+    }
+
+    public bool CanCheat()
+    {
+        return m_canCheat;
+    }
+
+    private void ComputeCanCheat()
+    {
+        bool a = m_discardPile.GetTopCard() != null;
+        bool b = CheatWithDiscard(true);
+        bool c = CheatWithDrawn(true);
+        bool d = CheatWithTableaux(true);
+        m_canCheat = a && (b || c || d);
+        Debug.Log("Cheat : "+a+" "+b+" "+c+" "+d);
+    }
+
+    public void Cheat()
+    {
+        if(m_canCheat)
+        {
+            m_canCheat = false;
+            List<int> l = new List<int>();
+            if (CheatWithDiscard(true))
+            {
+                l.Add(0);
+            }
+            if (CheatWithDrawn(true))
+            {
+                l.Add(1);
+            }
+            if (CheatWithTableaux(true))
+            {
+                l.Add(2);
+            }
+            int i = Random.Range(0, l.Count);
+            i = l[i];
+            bool bOk = false;
+            if (i == 0)
+            {
+                bOk = CheatWithDiscard(false);
+            }
+            else if (i == 1)
+            {
+                bOk = CheatWithDrawn(false);
+            }
+            else if (i == 2)
+            {
+                bOk = CheatWithTableaux(false);
+            }
+            if(!bOk)
+            {
+                Debug.LogWarning("cheat failed");
+            }
+            OnMovePlayed(GameMaster.eMoves.eCheat);
+        }
+
+    }
+
+    private bool CheatWithDiscard(bool btestOnly)
+    {
+        CardScript cs1 = m_discardPile.GetTopCard();
+        if (cs1 != null)
+        {
+            if (m_discardPile.GetNbChildCards() > 2)
+            {
+                int i = Random.Range(0, m_discardPile.GetNbChildCards() - 1);
+                ObjectBase o = m_discardPile.GetChild(i);
+                CardScript cs2 = o.GetComponent<CardScript>();
+                if(cs2 != null)
+                {
+                    if(!btestOnly)
+                    {
+                        cs1.Swap(cs2);
+                        Debug.Log($"[CHEAT] : swapped {cs1.name} with {cs2.name} from discard ");
+                    }         
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    private bool CheatWithDrawn(bool btestOnly)
+    {
+        CardScript cs1 = m_discardPile.GetTopCard();
+        if (cs1 != null)
+        {
+            if (m_deck.GetNbChildCards() > 0)
+            {
+                int i = Random.Range(0, m_deck.GetNbChildCards());
+                ObjectBase o = m_deck.GetChild(i);
+                CardScript cs2 = o.GetComponent<CardScript>();
+                if (cs2 != null)
+                {
+                    if (!btestOnly)
+                    {
+                        cs1.Swap(cs2);
+                        Debug.Log($"[CHEAT] : swapped {cs1.name} with {cs2.name} from drawn ");
+                    }
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    private bool CheatWithTableaux(bool btestOnly)
+    {
+        CardScript cs1 = m_discardPile.GetTopCard();
+        if (cs1 != null)
+        {
+            List<int> l = new List<int>();
+            for(int i=0; i<m_tableaux.Count; i++)
+            {
+                if(m_tableaux[i].GetAntHiddenCard() != null)
+                {
+                    l.Add(i);
+                }
+            }
+            if(l.Count > 0)
+            {
+                int j = Random.Range(0, l.Count);
+                j = l[j];
+                Tableau t = m_tableaux[j];
+                CardScript cs2 = t.GetAntHiddenCard();
+                if (cs2 != null)
+                {
+                    if (!btestOnly)
+                    {
+                        cs1.Swap(cs2);
+                        Debug.Log($"[CHEAT] : swapped {cs1.name} with {cs2.name} from tableau {t.name}");
+                    }
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     private void DoInit()

@@ -76,7 +76,8 @@ public class ObjectBase : MonoBehaviour
         int count = m_container.transform.childCount;
         if (count > 0)
         {
-            return m_container.transform.GetChild(count -1).GetComponent<CardScript>();
+            CardScript cs = m_container.transform.GetChild(count -1).GetComponent<CardScript>();
+            return cs;
         }
         return null;
     }
@@ -208,7 +209,7 @@ public class ObjectBaseSerialized
         for (int i = 0; i < l; i++)
         {
             ObjectBaseSerialized o2 = children[i];
-            bOK &= o2.Restore(b);
+            o2.Restore(b);
         }
         return bOK;
     }
