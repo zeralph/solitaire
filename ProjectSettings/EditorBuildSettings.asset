@@ -6,10 +6,22 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/Scenes/mainMenu.unity
-    guid: c0cb980d17087ab4299d02786b15d257
+    path: Assets/Scenes/StartScene.unity
+    guid: 9abbeed537f69174788fb2ed6c42c5cf
   - enabled: 1
-    path: Assets/Scenes/Solitaire.unity
+    path: Assets/Scenes/Menus/mainMenuCosmicCoolCloud.unity
+    guid: 03bd9b9849f2c374b9dbc6ca3272d371
+  - enabled: 1
+    path: Assets/Scenes/Menus/mainMenuDarkStorm.unity
+    guid: 5a1d758b7aa45784aa43576eb660ac8b
+  - enabled: 1
+    path: Assets/Scenes/Menus/mainMenuPlanetaryEarth.unity
+    guid: 976d5b36a6fda1e4f82eb3cc65af6b99
+  - enabled: 1
+    path: Assets/Scenes/Menus/mainMenuDayInClouds.unity
+    guid: fa86b18354e67be499becd283584765e
+  - enabled: 1
+    path: Assets/Scenes/Game/Solitaire.unity
     guid: 9fc0d4010bbf28b4594072e72b8655ab
   m_configObjects:
     com.unity.adaptiveperformance.loader_settings: {fileID: 11400000, guid: dd427388e2c004f8abbbef95aafa9476, type: 2}
