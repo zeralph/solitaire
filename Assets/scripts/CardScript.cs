@@ -341,7 +341,7 @@ public class CardScript : ObjectBase
 
     private bool CanAdd(CardScript s)
     {
-        return this.m_color != s.m_color && this.m_value == (s.m_value + 1) && s.m_face == Face.recto;
+        return this.m_color != s.m_color && this.m_value == (s.m_value + 1) && s.m_face == Face.recto && this.m_face == Face.recto;
     }
     /*
     public override Vector3 GetTargetPosition(ObjectBase b)

@@ -11,7 +11,7 @@ public class WorldMoveScript : MonoBehaviour
     public float m_speed = 0.07f;
 
     // Start is called before the first frame update
-    void Start()
+    void Awake()
     {
         m_startMove = false;
         m_startAngle = this.transform.rotation;

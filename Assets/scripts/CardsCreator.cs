@@ -8,6 +8,7 @@ public class CardsCreator : ObjectBase
     public DeckScript m_deck;
     public TexturePack m_texturePack;
     public float m_distributionDeltaTime = 0.05f;
+    public bool m_shuffle = true;
     private List<CardScript> m_cards;
     private int m_cardToDistributeIndex;
     private bool m_distributing;
@@ -59,16 +60,50 @@ public class CardsCreator : ObjectBase
         }
     }
 
+    private int FindIndex(string name)
+    {
+        for (int i = 0; i < m_cards.Count; i++)
+        {
+            if (m_cards[i].name == name)
+            {
+                return i;
+            }          
+        }
+        return -1;
+    }
+
+    public void Swap(int idx1, int idx2)
+    {
+        CardScript t = m_cards[idx1];
+        CardScript t2 = m_cards[idx2];
+        m_cards[idx1] = t2;
+        m_cards[idx2] = t;
+    }
+
     public void DistributeCards()
     {
         //shuffle
-        for (int i = 0; i < m_cards.Count; i++)
+        if(m_shuffle)
         {
-            int r = (int)Random.Range(i, m_cards.Count);
-            CardScript s = m_cards[i];
-            m_cards[i] = m_cards[r];
-            m_cards[r] = s;
-        }  
+            for (int i = 0; i < m_cards.Count; i++)
+            {
+                int r = (int)Random.Range(i, m_cards.Count);
+                CardScript s = m_cards[i];
+                m_cards[i] = m_cards[r];
+                m_cards[r] = s;
+            }  
+        }
+        else
+        {
+            int i = FindIndex("heart_queen");
+            Swap(0, i);
+            i = FindIndex("heart_two");
+            Swap(1, i);
+            i = FindIndex("spade_ace");
+            Swap(7, i);
+            i = FindIndex("spade_eight");
+            i = FindIndex("spade_ace");
+        }
         for (int i=0; i<m_cards.Count; i++)
         {
             m_cards[i].DisablePhysic();
@@ -138,4 +173,26 @@ public class CardsCreator : ObjectBase
         }
         m_cardsCreated = true;
     }    
+
+    public void CreateRandomCards(int nbcards)
+    {
+        if (!m_cardsCreated)
+        {
+            Debug.Log("CREATE RANDOM CARDS");
+            m_cards = new List<CardScript>();
+            for (int i=0; i<nbcards; i++)
+            {
+                int s = Random.Range(0, (int)CardScript.Symbol.__MAX__);
+                int n = Random.Range(1, (int)CardScript.Name.__MAX__);
+                CardScript card = CreateCard((CardScript.Symbol)s, (CardScript.Name)n, true, m_texturePack);
+                m_cards.Add(card);
+                if (m_deck != null)
+                {
+                    m_deck.Add(card);
+                    card.transform.position = m_deck.transform.position;
+                }
+            }
+        }
+        m_cardsCreated = true;
+    }
 }

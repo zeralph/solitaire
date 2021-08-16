@@ -18,9 +18,9 @@ public class IngameMenu : MonoBehaviour
     public GameObject PanelIngame;
     public Button m_PanelAskYesNo_ButtonYes;
     public Button m_PanelAskYesNo_ButtonNo;
-    public Text m_PanelAskYesNoText;
-    public Text m_score;
-    public Text m_turn;
+    public SolitaireText m_PanelAskYesNoText;
+    public SolitaireText m_score;
+    public SolitaireText m_turn;
 
     private void OnMouseUpAsButton()
     {
@@ -51,8 +51,8 @@ public class IngameMenu : MonoBehaviour
         m_undo.gameObject.SetActive(m_gameMaster.CanUndo());
         m_redo.gameObject.SetActive(m_gameMaster.CanRedo());
         m_cheat.gameObject.SetActive(m_gameMaster.CanCheat());
-        m_score.text = m_gameMaster.GetScrore().ToString() + "pts";
-        m_turn.text = m_gameMaster.GetTurn().ToString();
+        m_score.SetText(m_gameMaster.GetScrore().ToString() + "pts");
+        m_turn.SetText(m_gameMaster.GetTurn().ToString());
         //m_continue.gameObject.SetActive(m_gameMaster.HasSave());
     }
 
@@ -60,7 +60,7 @@ public class IngameMenu : MonoBehaviour
     {
         m_PanelAskYesNo_ButtonYes.onClick.RemoveAllListeners();
         m_PanelAskYesNo_ButtonNo.onClick.RemoveAllListeners();
-        m_PanelAskYesNoText.text = "Restart ?";
+        m_PanelAskYesNoText.SetText("Restart ?");
         m_PanelAskYesNo_ButtonYes.onClick.AddListener(OnNewGame);
         m_PanelAskYesNo_ButtonNo.onClick.AddListener(OnCancelPanelYesNo);
         m_gameMaster.Pause(true);
@@ -78,7 +78,7 @@ public class IngameMenu : MonoBehaviour
     {
         m_PanelAskYesNo_ButtonYes.onClick.RemoveAllListeners();
         m_PanelAskYesNo_ButtonNo.onClick.RemoveAllListeners();
-        m_PanelAskYesNoText.text = "Quit ?";
+        m_PanelAskYesNoText.SetText("Quit ?");
         m_PanelAskYesNo_ButtonYes.onClick.AddListener(OnQuit);
         m_PanelAskYesNo_ButtonNo.onClick.AddListener(OnCancelPanelYesNo);
         m_gameMaster.Pause(true);
@@ -103,6 +103,6 @@ public class IngameMenu : MonoBehaviour
 
     private void OnQuit()
     {
-        SceneManager.LoadScene("MainMenu");
+        SceneManager.LoadScene("StartScene");
     }
 }

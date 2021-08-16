@@ -37,7 +37,8 @@ public class MainMenu : MonoBehaviour
         CardsCreator cc = GetComponent<CardsCreator>();
         if(!cc.CardCreated())
         {
-            cc.CreateCards();
+            //cc.CreateCards();
+            cc.CreateRandomCards(200);
             m_cards = cc.GetCards();
             for (int i = 0; i < m_cards.Count; i++)
             {
