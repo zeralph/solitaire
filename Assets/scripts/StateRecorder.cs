@@ -6,6 +6,7 @@ public class StateRecorder : MonoBehaviour
 {
     public static readonly int SAVE_VERSION = 1;
     public List<string> m_states;
+    public ScoreSerialized[] m_scores;
     private int m_curStateIndex;
     // Start is called before the first frame update
     void Start()
@@ -18,6 +19,11 @@ public class StateRecorder : MonoBehaviour
     void Update()
     {
         
+    }
+
+    public void AddScore(int score, int turn)
+    {
+
     }
 
     public bool CanUndo()
@@ -114,6 +120,14 @@ public class StateRecorder : MonoBehaviour
         o.Restore(b);
         Debug.Log("state loaded");
     }
+}
+
+[System.Serializable]
+public class ScoreSerialized
+{
+    public int score;
+    public int turn;
+    //public date;
 }
 
 [System.Serializable]

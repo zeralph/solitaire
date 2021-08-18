@@ -2218,7 +2218,7 @@ PrefabInstance:
       objectReference: {fileID: 1506802760}
     - target: {fileID: 989870651829616823, guid: 8f9d9e07606410548999d6f05bf82302, type: 3}
       propertyPath: m_shuffle
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 989870651829616823, guid: 8f9d9e07606410548999d6f05bf82302, type: 3}
       propertyPath: m_texturePack

@@ -21,6 +21,9 @@ public class IngameMenu : MonoBehaviour
     public SolitaireText m_PanelAskYesNoText;
     public SolitaireText m_score;
     public SolitaireText m_turn;
+    public GameObject PanelWin;
+    public Button m_winQuit;
+    public SolitaireText m_winScore;
 
     private void OnMouseUpAsButton()
     {
@@ -30,6 +33,7 @@ public class IngameMenu : MonoBehaviour
     void Start()
     {
         PanelAskYesNo.SetActive(false);
+        PanelWin.SetActive(false);
         PanelIngame.SetActive(true);
         m_new.onClick.AddListener(OnAskRestart);
         m_undo.onClick.AddListener(m_gameMaster.Undo);
@@ -40,6 +44,7 @@ public class IngameMenu : MonoBehaviour
         m_boom.onClick.AddListener(m_gameMaster.GetComponent<CardsCreator>().BoomCards);
         m_quit.onClick.AddListener(OnAskQuit);
         m_cheat.onClick.AddListener(OnCheat);
+        m_winQuit.onClick.AddListener(OnQuit);
     }
 
 
@@ -51,10 +56,17 @@ public class IngameMenu : MonoBehaviour
         m_undo.gameObject.SetActive(m_gameMaster.CanUndo());
         m_redo.gameObject.SetActive(m_gameMaster.CanRedo());
         m_cheat.gameObject.SetActive(m_gameMaster.CanCheat());
-        m_score.SetText(m_gameMaster.GetScrore().ToString() + "pts");
+        m_score.SetText($"  {m_gameMaster.GetScrore().ToString()} pts  ");
         m_turn.SetText(m_gameMaster.GetTurn().ToString());
         //m_continue.gameObject.SetActive(m_gameMaster.HasSave());
     }
+
+    public void OpenWin(int score)
+    {
+        PanelWin.SetActive(true);
+        m_winScore.SetText($"{score} pts");
+    }
+
 
     private void OnAskRestart()
     {

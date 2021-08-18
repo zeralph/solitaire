@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+
 public class CardsCreator : ObjectBase
 {
     public GameObject m_cardPrefab;
@@ -29,6 +30,24 @@ public class CardsCreator : ObjectBase
     public bool CardCreated()
     {
         return m_cardsCreated;
+    }
+
+    public CardScript FindCard( CardScript.Face face = CardScript.Face.notSet,
+                                CardScript.CardColor color = CardScript.CardColor.notSet,
+                                CardScript.Figure figure = CardScript.Figure.notSet,
+                                CardScript.Symbol symbol = CardScript.Symbol.notSet)
+    {
+        return m_cards.Find(
+            delegate (CardScript cc)
+            {
+                
+                bool a = (color != CardScript.CardColor.notSet) ? cc.m_color == color : true;
+                bool b = (figure != CardScript.Figure.notSet) ? cc.m_figure == figure : true;
+                bool c = (symbol != CardScript.Symbol.notSet) ? cc.m_symbol == symbol : true;
+                bool d = (face != CardScript.Face.notSet) ? cc.m_face == face : true;
+                return a && b && c && d ;
+            }
+        );
     }
 
     // Update is called once per frame
@@ -136,7 +155,7 @@ public class CardsCreator : ObjectBase
         bool bAdded = this.GetComponent<GameMaster>().DistributeCard(c);
         m_cardToDistributeIndex++;
     }
-    private CardScript CreateCard(CardScript.Symbol s, CardScript.Name n, bool flip, TexturePack tp)
+    private CardScript CreateCard(CardScript.Symbol s, CardScript.Figure n, bool flip, TexturePack tp)
     {
         Vector3 v = new Vector3(0,0,0);
         if(m_deck != null)
@@ -159,7 +178,7 @@ public class CardsCreator : ObjectBase
             m_cards = new List<CardScript>();
             for (CardScript.Symbol i = CardScript.Symbol.spade; i< CardScript.Symbol.__MAX__; i++)
             {
-                for(CardScript.Name j = CardScript.Name.ace; j< CardScript.Name.__MAX__; j++)
+                for(CardScript.Figure j = CardScript.Figure.ace; j< CardScript.Figure.__MAX__; j++)
                 {
                     CardScript card = CreateCard(i, j, true, m_texturePack);
                     m_cards.Add(card);
@@ -182,9 +201,9 @@ public class CardsCreator : ObjectBase
             m_cards = new List<CardScript>();
             for (int i=0; i<nbcards; i++)
             {
-                int s = Random.Range(0, (int)CardScript.Symbol.__MAX__);
-                int n = Random.Range(1, (int)CardScript.Name.__MAX__);
-                CardScript card = CreateCard((CardScript.Symbol)s, (CardScript.Name)n, true, m_texturePack);
+                int s = Random.Range(1, (int)CardScript.Symbol.__MAX__);
+                int n = Random.Range(1, (int)CardScript.Figure.__MAX__);
+                CardScript card = CreateCard((CardScript.Symbol)s, (CardScript.Figure)n, true, m_texturePack);
                 m_cards.Add(card);
                 if (m_deck != null)
                 {

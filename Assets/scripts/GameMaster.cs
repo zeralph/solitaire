@@ -161,135 +161,77 @@ public class GameMaster : MonoBehaviour
 
     private void ComputeCanCheat()
     {
-        bool a = m_discardPile.GetTopCard() != null;
-        bool b = CheatWithDiscard(true);
-        bool c = CheatWithDrawn(true);
-        bool d = CheatWithTableaux(true);
-        m_canCheat = a && (b || c || d);
-        Debug.Log("Cheat : "+a+" "+b+" "+c+" "+d);
+        m_canCheat = false;
+        if (m_discardPile.GetTopCard() != null)
+        {
+            if(GetComponent<CardsCreator>().FindCard(CardScript.Face.verso))
+            {
+                m_canCheat = true;
+            }
+        }
     }
 
     public void Cheat()
     {
-        if(m_canCheat)
+        if (m_canCheat)
         {
             m_canCheat = false;
-            List<int> l = new List<int>();
-            if (CheatWithDiscard(true))
+            CardScript cs1 = m_discardPile.GetTopCard();
+            if (cs1 != null)
             {
-                l.Add(0);
-            }
-            if (CheatWithDrawn(true))
-            {
-                l.Add(1);
-            }
-            if (CheatWithTableaux(true))
-            {
-                l.Add(2);
-            }
-            int i = Random.Range(0, l.Count);
-            i = l[i];
-            bool bOk = false;
-            if (i == 0)
-            {
-                bOk = CheatWithDiscard(false);
-            }
-            else if (i == 1)
-            {
-                bOk = CheatWithDrawn(false);
-            }
-            else if (i == 2)
-            {
-                bOk = CheatWithTableaux(false);
-            }
-            if(!bOk)
-            {
-                Debug.LogWarning("cheat failed");
-            }
-            OnMovePlayed(GameMaster.eMoves.eCheat);
-        }
-
-    }
-
-    private bool CheatWithDiscard(bool btestOnly)
-    {
-        CardScript cs1 = m_discardPile.GetTopCard();
-        if (cs1 != null)
-        {
-            if (m_discardPile.GetNbChildCards() > 2)
-            {
-                int i = Random.Range(0, m_discardPile.GetNbChildCards() - 1);
-                ObjectBase o = m_discardPile.GetChild(i);
-                CardScript cs2 = o.GetComponent<CardScript>();
-                if(cs2 != null)
+                CardScript cs2 = null;
+                //first : get an ace if familie are not all created
+                if(!AllFamiliesAreCreated())
                 {
-                    if(!btestOnly)
-                    {
-                        cs1.Swap(cs2);
-                        Debug.Log($"[CHEAT] : swapped {cs1.name} with {cs2.name} from discard ");
-                    }         
-                    return true;
+                    cs2 = GetComponent<CardsCreator>().FindCard(CardScript.Face.verso, CardScript.CardColor.notSet, CardScript.Figure.ace);
                 }
-            }
-        }
-        return false;
-    }
-
-    private bool CheatWithDrawn(bool btestOnly)
-    {
-        CardScript cs1 = m_discardPile.GetTopCard();
-        if (cs1 != null)
-        {
-            if (m_deck.GetNbChildCards() > 0)
-            {
-                int i = Random.Range(0, m_deck.GetNbChildCards());
-                ObjectBase o = m_deck.GetChild(i);
-                CardScript cs2 = o.GetComponent<CardScript>();
+                //get an ace if empty slot
+                if (cs2 == null)
+                {
+                    for (int i = 0; i < m_tableaux.Count; i++)
+                    {
+                        Tableau t = m_tableaux[i];                      
+                        if (t.IsEmpty())
+                        {
+                            cs2 = GetComponent<CardsCreator>().FindCard(CardScript.Face.verso, CardScript.CardColor.notSet, CardScript.Figure.king);
+                            if (cs2 != null)
+                            {
+                                break;
+                            }
+                        }
+                    }
+                }
+                //else try to fill
+                if (cs2 == null)
+                {
+                    for (int i = 0; i < m_tableaux.Count; i++)
+                    {
+                        Tableau t = m_tableaux[i];
+                        CardScript cc = t.GetTopVisibleCard();
+                        if (cc != null && cc.m_figure > CardScript.Figure.two)
+                        {
+                            CardScript.CardColor color = (cc.m_color == CardScript.CardColor.red) ? CardScript.CardColor.black : CardScript.CardColor.red;
+                            CardScript.Figure figure = (CardScript.Figure)((int)cc.m_figure - 1);
+                            cs2 = GetComponent<CardsCreator>().FindCard(CardScript.Face.verso, color, figure);
+                            if (cs2 != null)
+                            {
+                                break;
+                            }
+                        }
+                    }
+                }
                 if (cs2 != null)
                 {
-                    if (!btestOnly)
-                    {
-                        cs1.Swap(cs2);
-                        Debug.Log($"[CHEAT] : swapped {cs1.name} with {cs2.name} from drawn ");
-                    }
-                    return true;
+                    cs1.Swap(cs2);
+                    Debug.Log($"[CHEAT] : swapped {cs1.name} with {cs2.name} from {cs2.GetParent().name} ");
+                    OnMovePlayed(GameMaster.eMoves.eCheat);
+                }
+                else
+                {
+                    Debug.LogWarning($"[CHEAT] cheat failed !");
                 }
             }
         }
-        return false;
-    }
-
-    private bool CheatWithTableaux(bool btestOnly)
-    {
-        CardScript cs1 = m_discardPile.GetTopCard();
-        if (cs1 != null)
-        {
-            List<int> l = new List<int>();
-            for(int i=0; i<m_tableaux.Count; i++)
-            {
-                if(m_tableaux[i].GetAntHiddenCard() != null)
-                {
-                    l.Add(i);
-                }
-            }
-            if(l.Count > 0)
-            {
-                int j = Random.Range(0, l.Count);
-                j = l[j];
-                Tableau t = m_tableaux[j];
-                CardScript cs2 = t.GetAntHiddenCard();
-                if (cs2 != null)
-                {
-                    if (!btestOnly)
-                    {
-                        cs1.Swap(cs2);
-                        Debug.Log($"[CHEAT] : swapped {cs1.name} with {cs2.name} from tableau {t.name}");
-                    }
-                    return true;
-                }
-            }
-        }
-        return false;
     }
 
     private void DoInit()
@@ -307,6 +249,16 @@ public class GameMaster : MonoBehaviour
                 NewGame();
             }
         }
+    }
+
+    private bool AllFamiliesAreCreated()
+    {
+        bool b = true;
+        for(int i=0; i< m_familyPiles.Count; i++)
+        {
+            b &= !m_familyPiles[i].IsEmpty();
+        }
+        return b;
     }
 
     // Update is called once per frame
@@ -369,6 +321,8 @@ public class GameMaster : MonoBehaviour
             if(m_win)
             {
                 GetComponent<CardsCreator>().BoomCards();
+                m_inGameMenu.OpenWin(m_score);
+                GetComponent<StateRecorder>().AddScore(m_score, m_turn);
             }
         }
     }

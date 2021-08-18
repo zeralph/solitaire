@@ -7,25 +7,29 @@ public class CardScript : ObjectBase
 {
     public enum CardColor
     {
-        red=0,
-        black=1,
+        notSet=0,
+        red=1,
+        black=2,
         __MAX__
     }
     public enum Symbol
     {
-        spade=0,
-        heart=1,
-        diamond=2,
-        club=3,
+        notSet=0,
+        spade=1,
+        heart=2,
+        diamond=3,
+        club=4,
         __MAX__
     }
     public enum Face
     {
-        recto=0,
-        verso=1
+        notSet=0,
+        recto=1,
+        verso=2
     }
-    public enum Name
+    public enum Figure
     {
+        notSet=0,
         ace=1,
         two=2,
         three=3,
@@ -61,7 +65,7 @@ public class CardScript : ObjectBase
     //[ReadOnly]
     public int m_value;
     //[ReadOnly]
-    public Name m_name;
+    public Figure m_figure;
     //[ReadOnly]
     public CardColor m_color;
     //[ReadOnly]
@@ -234,7 +238,7 @@ public class CardScript : ObjectBase
                         newP = fam;
                     }
                 }
-                else if (tab != null && tab.IsEmpty() && this.m_name == Name.king)
+                else if (tab != null && tab.IsEmpty() && this.m_figure == Figure.king)
                 {
                     MoveToParent(tab, m_face, GetGameMaster().m_speed, false);
                     bFailed = false;
@@ -374,7 +378,7 @@ public class CardScript : ObjectBase
         m_lastParent = GetParent();
         if (m_lastParent == null)
         {
-            Debug.LogError(m_name + " has no parent. strange ?");
+            Debug.LogError(m_figure + " has no parent. strange ?");
         }
         else
         {
@@ -530,10 +534,10 @@ public class CardScript : ObjectBase
     {
     }
 
-    public void Set(CardScript.Symbol symbol, CardScript.Name name, TexturePack tp)
+    public void Set(CardScript.Symbol symbol, CardScript.Figure name, TexturePack tp)
     {
         m_face = Face.recto;
-        m_name = name;
+        m_figure = name;
         m_symbol = symbol;
         m_value = (int)name;
         m_color = (symbol == Symbol.club || symbol == Symbol.spade) ? CardColor.black : CardColor.red;

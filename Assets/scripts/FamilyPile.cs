@@ -19,7 +19,7 @@ public class FamilyPile : ObjectBase
         {
             if(nbChildren == 0)
             {
-                if (cs.m_name == CardScript.Name.ace)
+                if (cs.m_figure == CardScript.Figure.ace)
                 {
                     return true;
                 }
