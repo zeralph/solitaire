@@ -6,7 +6,6 @@ public class StateRecorder : MonoBehaviour
 {
     public static readonly int SAVE_VERSION = 1;
     public List<string> m_states;
-    public ScoreSerialized[] m_scores;
     private int m_curStateIndex;
     // Start is called before the first frame update
     void Start()
@@ -18,12 +17,50 @@ public class StateRecorder : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+
+    }
+    public ScoreSerialized[] GetScores()
+    {
+        if (PlayerPrefs.HasKey("Scores"))
+        {
+            string s = PlayerPrefs.GetString("Scores");
+            ScoreListSerialized sl = JsonUtility.FromJson<ScoreListSerialized>(s);
+            Debug.Log("SCORE LIST : " + s);
+            return sl.scoreList;
+        }
+        return new ScoreSerialized[100];
     }
 
     public void AddScore(int score, int turn)
     {
-
+        ScoreSerialized[] scoreList = GetScores();
+        int minScore = -10000000;
+        int idxMinScore = 0;
+        bool bInserted = false;
+        for (int i = 0; i < scoreList.Length; i++)
+        {
+            if (!scoreList[i].set)
+            {
+                scoreList[i].set = true;
+                scoreList[i].turn = turn;
+                scoreList[i].score = score;
+                bInserted = true;
+                break;
+            }
+            else if(minScore> scoreList[i].score)
+            {
+                minScore = scoreList[i].score;
+                idxMinScore = i;
+            }
+        }
+        if(!bInserted)
+        {
+            scoreList[idxMinScore].set = true;
+            scoreList[idxMinScore].turn = turn;
+            scoreList[idxMinScore].score = score;
+        }
+        string s = JsonUtility.ToJson(scoreList);
+        PlayerPrefs.SetString("Scores", s);
     }
 
     public bool CanUndo()
@@ -123,10 +160,17 @@ public class StateRecorder : MonoBehaviour
 }
 
 [System.Serializable]
+public class ScoreListSerialized
+{
+    public ScoreSerialized[] scoreList = new ScoreSerialized[100]; 
+}
+
+[System.Serializable]
 public class ScoreSerialized
 {
-    public int score;
-    public int turn;
+    public int score = 0;
+    public int turn = 0;
+    public bool set = false;
     //public date;
 }
 

@@ -204,13 +204,15 @@ public class ObjectBaseSerialized
             s.SetHitable(true);
             //s.RestoreTo(parent, f);
         }
-        int l = children.Count;
-        bool bOK = true;
-        for (int i = 0; i < l; i++)
+        if(this.children != null)
         {
-            ObjectBaseSerialized o2 = children[i];
-            o2.Restore(b);
+            int l = children.Count;
+            for (int i = 0; i < l; i++)
+            {
+                ObjectBaseSerialized o2 = children[i];
+                o2.Restore(b);
+            }
         }
-        return bOK;
+        return true;
     }
 }

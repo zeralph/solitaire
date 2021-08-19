@@ -35,7 +35,8 @@ public class CardsCreator : ObjectBase
     public CardScript FindCard( CardScript.Face face = CardScript.Face.notSet,
                                 CardScript.CardColor color = CardScript.CardColor.notSet,
                                 CardScript.Figure figure = CardScript.Figure.notSet,
-                                CardScript.Symbol symbol = CardScript.Symbol.notSet)
+                                CardScript.Symbol symbol = CardScript.Symbol.notSet,
+                                Queue<CardScript> m_exculded = null)
     {
         return m_cards.Find(
             delegate (CardScript cc)
@@ -45,7 +46,12 @@ public class CardsCreator : ObjectBase
                 bool b = (figure != CardScript.Figure.notSet) ? cc.m_figure == figure : true;
                 bool c = (symbol != CardScript.Symbol.notSet) ? cc.m_symbol == symbol : true;
                 bool d = (face != CardScript.Face.notSet) ? cc.m_face == face : true;
-                return a && b && c && d ;
+                bool e = true;
+                if(m_exculded != null)
+                {
+                    e = !m_exculded.Contains(cc);
+                }
+                return a && b && c && d && e;
             }
         );
     }

@@ -86,7 +86,7 @@ public class GameMaster : MonoBehaviour
     private bool m_doInit = true;
     private int m_drawnToDiscardMoveCount = 0;
     private bool m_canCheat;
-
+    private Queue<CardScript> m_cheatExcludedCards;
     public void OnMovePlayed(eMoves move)
     {
         Debug.Log("[OnMovePlayed] " + move.ToString());
@@ -128,6 +128,21 @@ public class GameMaster : MonoBehaviour
         {
             ChekForWin();
         }
+        CheckForBugs();
+    }
+
+    void CheckForBugs()
+    {
+        List<CardScript> l = GetComponent<CardsCreator>().GetCards();
+        for (int i=0; i<l.Count; i++)
+        {
+            CardScript c = l[i];
+            if(c.GetParent() == m_StartDeck)
+            {
+                Debug.LogError("here");
+                Debug.Break();
+            }
+        }
     }
 
     // Start is called before the first frame update
@@ -152,6 +167,7 @@ public class GameMaster : MonoBehaviour
         m_doInit = true;
         m_drawnToDiscardMoveCount = 0;
         m_canCheat = false;
+        m_cheatExcludedCards = new Queue<CardScript>(5);
     }
 
     public bool CanCheat()
@@ -183,7 +199,7 @@ public class GameMaster : MonoBehaviour
                 //first : get an ace if familie are not all created
                 if(!AllFamiliesAreCreated())
                 {
-                    cs2 = GetComponent<CardsCreator>().FindCard(CardScript.Face.verso, CardScript.CardColor.notSet, CardScript.Figure.ace);
+                    cs2 = GetComponent<CardsCreator>().FindCard(CardScript.Face.verso, CardScript.CardColor.notSet, CardScript.Figure.ace, CardScript.Symbol.notSet,m_cheatExcludedCards);
                 }
                 //get an ace if empty slot
                 if (cs2 == null)
@@ -193,7 +209,7 @@ public class GameMaster : MonoBehaviour
                         Tableau t = m_tableaux[i];                      
                         if (t.IsEmpty())
                         {
-                            cs2 = GetComponent<CardsCreator>().FindCard(CardScript.Face.verso, CardScript.CardColor.notSet, CardScript.Figure.king);
+                            cs2 = GetComponent<CardsCreator>().FindCard(CardScript.Face.verso, CardScript.CardColor.notSet, CardScript.Figure.king, CardScript.Symbol.notSet, m_cheatExcludedCards);
                             if (cs2 != null)
                             {
                                 break;
@@ -212,7 +228,7 @@ public class GameMaster : MonoBehaviour
                         {
                             CardScript.CardColor color = (cc.m_color == CardScript.CardColor.red) ? CardScript.CardColor.black : CardScript.CardColor.red;
                             CardScript.Figure figure = (CardScript.Figure)((int)cc.m_figure - 1);
-                            cs2 = GetComponent<CardsCreator>().FindCard(CardScript.Face.verso, color, figure);
+                            cs2 = GetComponent<CardsCreator>().FindCard(CardScript.Face.verso, color, figure, CardScript.Symbol.notSet, m_cheatExcludedCards);
                             if (cs2 != null)
                             {
                                 break;
@@ -222,12 +238,14 @@ public class GameMaster : MonoBehaviour
                 }
                 if (cs2 != null)
                 {
+                    m_cheatExcludedCards.Enqueue(cs2);
                     cs1.Swap(cs2);
                     Debug.Log($"[CHEAT] : swapped {cs1.name} with {cs2.name} from {cs2.GetParent().name} ");
                     OnMovePlayed(GameMaster.eMoves.eCheat);
                 }
                 else
                 {
+                    m_cheatExcludedCards.Clear();
                     Debug.LogWarning($"[CHEAT] cheat failed !");
                 }
             }
