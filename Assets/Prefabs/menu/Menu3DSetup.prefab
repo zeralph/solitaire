@@ -520,6 +520,10 @@ PrefabInstance:
       propertyPath: m_deck
       value: 
       objectReference: {fileID: 3184846152743392384}
+    - target: {fileID: 1498636739, guid: 3091161698207e6458fa8fd95609c590, type: 3}
+      propertyPath: m_startDeck
+      value: 
+      objectReference: {fileID: 3184846152743392384}
     - target: {fileID: 197215727249490873, guid: 3091161698207e6458fa8fd95609c590, type: 3}
       propertyPath: m_Pivot.x
       value: 0

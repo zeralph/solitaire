@@ -6,7 +6,7 @@ using UnityEngine;
 public class CardsCreator : ObjectBase
 {
     public GameObject m_cardPrefab;
-    public DeckScript m_deck;
+    public DeckScript m_startDeck;
     public TexturePack m_texturePack;
     public float m_distributionDeltaTime = 0.05f;
     public bool m_shuffle = true;
@@ -65,7 +65,8 @@ public class CardsCreator : ObjectBase
             if (m_timer > m_distributionDeltaTime)
             {
                 m_timer = 0;
-                DistributeCard(m_cards[m_cardToDistributeIndex]);
+                int idx = m_cards.Count - 1 - m_cardToDistributeIndex;
+                DistributeCard(m_cards[idx]);
                 //Debug.Log("ditributing card " + m_cardToDistributeIndex);
                 if(m_cardToDistributeIndex == m_cards.Count)
                 {
@@ -134,11 +135,9 @@ public class CardsCreator : ObjectBase
             m_cards[i].DisablePhysic();
             float mass = Random.Range(1f, 5f);
             m_cards[i].GetComponent<Rigidbody>().mass = mass;
-            if(m_deck)
+            if(m_startDeck)
             {
-                m_cards[i].transform.rotation = m_deck.transform.rotation;
-                m_cards[i].transform.position = m_deck.transform.position;
-                m_deck.Add(m_cards[i]);
+                m_cards[i].RestoreTo(m_startDeck, CardScript.Face.verso);
             }
             m_cards[i].flipTo(CardScript.Face.verso, false);
         }
@@ -164,9 +163,9 @@ public class CardsCreator : ObjectBase
     private CardScript CreateCard(CardScript.Symbol s, CardScript.Figure n, bool flip, TexturePack tp)
     {
         Vector3 v = new Vector3(0,0,0);
-        if(m_deck != null)
+        if(m_startDeck != null)
         {
-            v = m_deck.transform.position;
+            v = m_startDeck.transform.position;
         }
         GameObject o = Instantiate(m_cardPrefab, v, Quaternion.identity);
         o.name = s.ToString() + "_" + n.ToString();
@@ -188,10 +187,10 @@ public class CardsCreator : ObjectBase
                 {
                     CardScript card = CreateCard(i, j, true, m_texturePack);
                     m_cards.Add(card);
-                    if(m_deck != null)
+                    if(m_startDeck != null)
                     {
-                        m_deck.Add(card);
-                        card.transform.position = m_deck.transform.position;
+                        m_startDeck.Add(card);
+                        card.transform.position = m_startDeck.transform.position;
                     }
                 }
             }
@@ -211,10 +210,10 @@ public class CardsCreator : ObjectBase
                 int n = Random.Range(1, (int)CardScript.Figure.__MAX__);
                 CardScript card = CreateCard((CardScript.Symbol)s, (CardScript.Figure)n, true, m_texturePack);
                 m_cards.Add(card);
-                if (m_deck != null)
+                if (m_startDeck != null)
                 {
-                    m_deck.Add(card);
-                    card.transform.position = m_deck.transform.position;
+                    m_startDeck.Add(card);
+                    card.transform.position = m_startDeck.transform.position;
                 }
             }
         }

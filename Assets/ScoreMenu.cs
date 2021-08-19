@@ -15,11 +15,11 @@ public class ScoreMenu : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        ScoreSerialized[] scoresList = GetComponent<StateRecorder>().GetScores();
+        ScoreListSerialized scoresList = GetComponent<StateRecorder>().GetScores();
         int w=0;
         int h=0;
         RectTransform parent = m_verticalLayoutGroup.GetComponent<RectTransform>();
-        for (int i = 0; i < scoresList.Length; ++i)
+        for (int i = 0; i < scoresList.scoreList.Length; ++i)
         {
             GameObject g = Instantiate(m_ListItem.gameObject, new Vector3(0, 0, 0), Quaternion.identity);
             SolitaireListItem l = g.GetComponent<SolitaireListItem>();
@@ -27,7 +27,7 @@ public class ScoreMenu : MonoBehaviour
             r.SetParent(parent);
             w = (int)r.sizeDelta.x;
             h += (int)r.sizeDelta.y;
-            ScoreSerialized ss = scoresList[i];
+            ScoreSerialized ss = scoresList.scoreList[i];
             if (ss !=null && ss.set)
             {
                 l.SetText($"{ss.score} pts {ss.turn} turns");

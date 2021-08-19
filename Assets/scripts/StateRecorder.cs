@@ -19,45 +19,49 @@ public class StateRecorder : MonoBehaviour
     {
 
     }
-    public ScoreSerialized[] GetScores()
+    public ScoreListSerialized GetScores()
     {
         if (PlayerPrefs.HasKey("Scores"))
         {
             string s = PlayerPrefs.GetString("Scores");
             ScoreListSerialized sl = JsonUtility.FromJson<ScoreListSerialized>(s);
             Debug.Log("SCORE LIST : " + s);
-            return sl.scoreList;
+            return sl;
         }
-        return new ScoreSerialized[100];
+        else
+        {
+            ScoreListSerialized sl  = new ScoreListSerialized();
+            return sl;
+        }
     }
 
     public void AddScore(int score, int turn)
     {
-        ScoreSerialized[] scoreList = GetScores();
+        ScoreListSerialized scoreList = GetScores();
         int minScore = -10000000;
         int idxMinScore = 0;
         bool bInserted = false;
-        for (int i = 0; i < scoreList.Length; i++)
+        for (int i = 0; i < scoreList.scoreList.Length; i++)
         {
-            if (!scoreList[i].set)
+            if (!scoreList.scoreList[i].set)
             {
-                scoreList[i].set = true;
-                scoreList[i].turn = turn;
-                scoreList[i].score = score;
+                scoreList.scoreList[i].set = true;
+                scoreList.scoreList[i].turn = turn;
+                scoreList.scoreList[i].score = score;
                 bInserted = true;
                 break;
             }
-            else if(minScore> scoreList[i].score)
+            else if(minScore> scoreList.scoreList[i].score)
             {
-                minScore = scoreList[i].score;
+                minScore = scoreList.scoreList[i].score;
                 idxMinScore = i;
             }
         }
         if(!bInserted)
         {
-            scoreList[idxMinScore].set = true;
-            scoreList[idxMinScore].turn = turn;
-            scoreList[idxMinScore].score = score;
+            scoreList.scoreList[idxMinScore].set = true;
+            scoreList.scoreList[idxMinScore].turn = turn;
+            scoreList.scoreList[idxMinScore].score = score;
         }
         string s = JsonUtility.ToJson(scoreList);
         PlayerPrefs.SetString("Scores", s);
@@ -65,7 +69,7 @@ public class StateRecorder : MonoBehaviour
 
     public bool CanUndo()
     {
-        return m_curStateIndex > 0;
+        return m_curStateIndex > 1;
     }
 
     public bool CanRedo()
@@ -132,14 +136,14 @@ public class StateRecorder : MonoBehaviour
         StateSerialized ss = JsonUtility.FromJson<StateSerialized>(s);
         if(ss.version != StateRecorder.SAVE_VERSION)
         {
-            Debug.LogWarning("[StateRecorder] : load state failes because of version mismatch");
+            Debug.LogWarning("[LoadPreviousState] : load state failes because of version mismatch");
         }
         else
         {
             gm.m_turn = ss.turn;
             gm.m_score = ss.score;
             ss.o.Restore(b);
-            Debug.Log("state loaded");
+            Debug.Log("[LoadPreviousState] state loaded");
         } 
     }
 
@@ -153,16 +157,32 @@ public class StateRecorder : MonoBehaviour
         }
         gm.PutCardsInStartDeck();
         string s = m_states[m_curStateIndex];
-        ObjectBaseSerialized o = JsonUtility.FromJson<ObjectBaseSerialized>(s);
-        o.Restore(b);
-        Debug.Log("state loaded");
+        StateSerialized ss = JsonUtility.FromJson<StateSerialized>(s);
+        if (ss.version != StateRecorder.SAVE_VERSION)
+        {
+            Debug.LogWarning("[LoadNextState] : load state failes because of version mismatch");
+        }
+        else
+        {
+            gm.m_turn = ss.turn;
+            gm.m_score = ss.score;
+            ss.o.Restore(b);
+            Debug.Log("[LoadNextState] state loaded");
+        }
     }
 }
 
 [System.Serializable]
 public class ScoreListSerialized
 {
-    public ScoreSerialized[] scoreList = new ScoreSerialized[100]; 
+    public ScoreSerialized[] scoreList = new ScoreSerialized[100];
+    public ScoreListSerialized()
+    {
+        for(int i=0; i<100; i++)
+        {
+            scoreList[i] = new ScoreSerialized();
+        }
+    }
 }
 
 [System.Serializable]

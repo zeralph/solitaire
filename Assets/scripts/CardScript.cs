@@ -250,6 +250,12 @@ public class CardScript : ObjectBase
                     bFailed = false;
                     newP = s;
                 }
+                else if(dek != null && dek.name == "StartDeck" && !this.GetParent().Istableau())
+                {
+                    this.RestoreTo(curP, m_face);
+                    GetGameMaster().Cheat(this);
+                    bFailed = false;
+                }
             }
             if (bFailed)
             {
@@ -358,19 +364,10 @@ public class CardScript : ObjectBase
     {
         newparent.Add(this);
         m_targetPos = newparent.GetTargetPosition(this);
-        this.transform.position =  GetParent().transform.position + m_targetPos;
-        
-        if(f != Face.verso)
-        {
-            m_mesh.transform.rotation = Quaternion.Euler(0.0f, 180.0f, 0.0f);
-        }
-        else
-        {
-            m_mesh.transform.rotation = Quaternion.Euler(0.0f, 0.0f, 0.0f);
-        }
-        m_face = f;
-        
-        //flipTo(f, true);
+        Vector3 parentPos = GetParent().transform.position + GetParent().transform.TransformVector(m_targetPos);
+        this.transform.position = parentPos;
+        this.transform.rotation = newparent.transform.rotation;
+        flipTo(f, true);
     }
 
     public void MoveToParent(ObjectBase newparent, Face f, float speed, bool bImmediateFlip)

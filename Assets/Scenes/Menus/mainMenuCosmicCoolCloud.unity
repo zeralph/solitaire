@@ -216,6 +216,17 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: -114.244, y: 272.355, z: -58.786987}
+--- !u!114 &1557334332 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 3184846152743392384, guid: 168a4b36f4d55f74e9be4c59192f40b6, type: 3}
+  m_PrefabInstance: {fileID: 1811132865}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9cf1a3be1fbf6456da9e3238d5ae23cb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &1811132865
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -223,6 +234,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 3354757427516102898, guid: 168a4b36f4d55f74e9be4c59192f40b6, type: 3}
+      propertyPath: m_startDeck
+      value: 
+      objectReference: {fileID: 1557334332}
     - target: {fileID: 5068699367885582750, guid: 168a4b36f4d55f74e9be4c59192f40b6, type: 3}
       propertyPath: m_Name
       value: Menu3DSetup

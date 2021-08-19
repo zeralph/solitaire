@@ -187,13 +187,13 @@ public class GameMaster : MonoBehaviour
         }
     }
 
-    public void Cheat()
+    public void Cheat(CardScript cs1)
     {
-        if (m_canCheat)
+        if (true || m_canCheat)
         {
             m_canCheat = false;
-            CardScript cs1 = m_discardPile.GetTopCard();
-            if (cs1 != null)
+            //CardScript cs1 = m_discardPile.GetTopCard();
+            if (cs1 != null && !cs1.GetParent().Istableau())
             {
                 CardScript cs2 = null;
                 //first : get an ace if familie are not all created
@@ -238,9 +238,12 @@ public class GameMaster : MonoBehaviour
                 }
                 if (cs2 != null)
                 {
-                    m_cheatExcludedCards.Enqueue(cs2);
+                    Debug.Log($"[CHEAT] : swapped {cs1.name} from from {cs1.GetParent().name} with {cs2.name} from {cs2.GetParent().name} ");
+                    //m_cheatExcludedCards.Enqueue(cs2);
+                    //m_StartDeck.Add(cs1);
                     cs1.Swap(cs2);
-                    Debug.Log($"[CHEAT] : swapped {cs1.name} with {cs2.name} from {cs2.GetParent().name} ");
+                    //cs2.RestoreTo(m_discardPile, CardScript.Face.recto);
+                    //cs1.MoveToParent(m_discardPile, CardScript.Face.recto, 10, false);
                     OnMovePlayed(GameMaster.eMoves.eCheat);
                 }
                 else
@@ -503,8 +506,8 @@ public class GameMaster : MonoBehaviour
         List<CardScript> cards = GetComponent<CardsCreator>().GetCards();
         for(int i=0; i<cards.Count; i++)
         {
-            m_StartDeck.Add(cards[i]);
-            //cards[i].RestoreTo(m_StartDeck, cards[i].m_face);
+            //m_StartDeck.Add(cards[i]);
+            cards[i].RestoreTo(m_StartDeck, cards[i].m_face);
         }
     }
 

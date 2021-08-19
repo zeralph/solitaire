@@ -83,7 +83,7 @@ public class IngameMenu : MonoBehaviour
     private void OnCheat()
     {
         m_cheat.gameObject.SetActive(false);
-        m_gameMaster.Cheat();
+        //m_gameMaster.Cheat();
     }
 
     private void OnAskQuit()

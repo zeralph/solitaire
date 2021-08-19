@@ -41,7 +41,12 @@ public class CardMover : ObjectBase
                 m_card = (m_lastObject != null) ? m_lastObject.GetComponent<CardScript>() : null;
                 dek = (m_lastObject != null) ? m_lastObject.GetComponent<DeckScript>() : null;
             }    
-            if ((m_card && m_card.IsInDrawn()) || dek != null)
+            if ((m_card && m_card.IsInDrawn()))
+            {
+                GetGameMaster().OnClickOnDrawn();
+                pressed = false;
+            }
+            else if (dek != null && dek.name == "Drawn")
             {
                 GetGameMaster().OnClickOnDrawn();
                 pressed = false;

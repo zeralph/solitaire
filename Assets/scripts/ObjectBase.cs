@@ -193,6 +193,10 @@ public class ObjectBaseSerialized
     public bool Restore(ObjectBase parent)
     {
         GameObject go = GameObject.Find(this.name);
+        if(go == null)
+        {
+            Debug.LogError($"{this.name} not found !");
+        }
         Transform me = go.transform;
         ObjectBase b = me.GetComponent<ObjectBase>();
         CardScript s = me.GetComponent<CardScript>();
