@@ -63,6 +63,7 @@ public class IngameMenu : MonoBehaviour
 
     public void OpenWin(int score)
     {
+        PanelIngame.SetActive(false);
         PanelWin.SetActive(true);
         m_winScore.SetText($"{score} pts");
     }

@@ -386,10 +386,11 @@ public class CardScript : ObjectBase
             flipTo(f, bImmediateFlip);
             m_isMoving = true;
             m_speed = speed;
-            AudioSource audio = Camera.main.GetComponent<AudioSource>();
-            audio.clip = m_cardDeal;
-            //audio.
-            //audio.Play();
+            AudioSource audio = this.GetComponent<AudioSource>();
+            if (audio != null)
+            {
+                audio.PlayOneShot(m_cardDeal);
+            }
             m_lastMove = ComputeMoveType(m_lastParent, newparent);
         }
     }
@@ -459,8 +460,8 @@ public class CardScript : ObjectBase
         Debug.Assert(cs.GetNbChildCards() == 0, "bad2");
         ObjectBase thisParent = this.GetParent();
         ObjectBase otherParent = cs.GetParent();
-        Vector3 thisPos = this.transform.position;
-        Vector3 otherPos = cs.transform.position;
+        Vector3 thisPos = this.transform.localPosition;
+        Vector3 otherPos = cs.transform.localPosition;
         Face thisFace = this.m_face;
         Face otherFace = cs.m_face;
         int thisindex = this.transform.GetSiblingIndex();
@@ -469,10 +470,14 @@ public class CardScript : ObjectBase
         otherParent.Add(this);
         this.transform.SetSiblingIndex(otherIndex);
         cs.transform.SetSiblingIndex(thisindex);
-        this.transform.position = otherPos;
-        cs.transform.position = thisPos;
+        this.transform.localPosition = otherPos;
+        cs.transform.localPosition = thisPos;
         this.flipTo(otherFace, true);
         cs.flipTo(thisFace, true);
+        this.m_isMoving = false;
+        cs.m_isMoving = false;
+        thisParent.RecomputeChildrenZ();
+        otherParent.RecomputeChildrenZ();
     }
 
     public void flipTo(Face f, bool force)
@@ -513,11 +518,10 @@ public class CardScript : ObjectBase
             m_symbol1Image.gameObject.SetActive(m_face == Face.recto);
             m_symbol2Image.gameObject.SetActive(m_face == Face.recto);
             m_recto.gameObject.SetActive(m_face == Face.recto);
-            AudioSource audio = Camera.main.GetComponent<AudioSource>();
+            AudioSource audio = this.GetComponent<AudioSource>();
             if(audio != null)
             {
-                audio.clip = m_cardFlip;
-                audio.Play();
+                audio.PlayOneShot(m_cardFlip);
             }
         }      
     }

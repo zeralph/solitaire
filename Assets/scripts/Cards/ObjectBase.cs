@@ -124,6 +124,30 @@ public class ObjectBase : MonoBehaviour
     {
 
     }
+
+    public virtual void RecomputeChildrenZ()
+    {
+        int l = m_container.transform.childCount;
+        for(int i=0; i<l; i++)
+        {
+            ObjectBase o = m_container.transform.GetChild(i).GetComponent<ObjectBase>();
+            if(o!=null)
+            {
+                Vector3 p = new Vector3(0, 0, 0);
+                p.z -= (i + 1) * GetGameMaster().m_cardSpace;
+                p.y -= m_cardDecal * i;
+                //o.transform.localPosition = p;
+                Vector3 parentPos = o.GetParent().transform.position + o.GetParent().transform.TransformVector(p);
+                o.transform.position = parentPos;
+                Debug.LogWarning($"object : {o.name}, parent {o.transform.parent.name} has a Z of {p.z}");
+            }
+            else
+            {
+                Debug.LogWarning("object : " + this.transform.GetChild(i).name);
+            }
+        }
+    }
+
     public virtual Vector3 GetTargetPosition(ObjectBase c)
     {
         int i = GetNbChildCards() + 1;

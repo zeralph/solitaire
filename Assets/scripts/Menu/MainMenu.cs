@@ -11,10 +11,11 @@ public class MainMenu : MonoBehaviour
     public Button m_Scores;
     public Button m_Options;
     public Button m_Quit;
-
+    public NewGameMenu m_newGameMenu;
 
     void Start()
     {
+        m_newGameMenu.gameObject.SetActive(false);
         m_newGame.onClick.AddListener(NewGame);
         m_Continue.onClick.AddListener(Continue);
         m_Scores.onClick.AddListener(OnScores);
@@ -24,8 +25,8 @@ public class MainMenu : MonoBehaviour
     }
     private void NewGame()
     {
-        GetComponent<StateRecorder>().ClearSave();
-        SceneManager.LoadScene("Solitaire");
+        this.gameObject.SetActive(false);
+        m_newGameMenu.gameObject.SetActive(true);
     }
     private void Continue()
     {

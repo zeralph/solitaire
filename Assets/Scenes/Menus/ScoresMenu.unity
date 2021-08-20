@@ -289,11 +289,23 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7551518618733416118, guid: 05ac85d3f90254880a869b16d212cd1e, type: 3}
       propertyPath: m_ChildScaleHeight
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7551518618733416118, guid: 05ac85d3f90254880a869b16d212cd1e, type: 3}
+      propertyPath: m_ChildControlWidth
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7551518618733416118, guid: 05ac85d3f90254880a869b16d212cd1e, type: 3}
       propertyPath: m_ChildControlHeight
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7551518618733416118, guid: 05ac85d3f90254880a869b16d212cd1e, type: 3}
+      propertyPath: m_ChildForceExpandWidth
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7551518618733416118, guid: 05ac85d3f90254880a869b16d212cd1e, type: 3}
+      propertyPath: m_ChildForceExpandHeight
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8196281387283611006, guid: 05ac85d3f90254880a869b16d212cd1e, type: 3}
       propertyPath: m_AnchorMax.y
