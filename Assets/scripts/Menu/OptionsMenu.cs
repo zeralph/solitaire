@@ -7,43 +7,34 @@ using UnityEngine.UI;
 
 public class OptionsMenu : MonoBehaviour
 {
-    public enum QUALITY  
-    { 
-        Low=0, 
-        Medium=1, 
-        High=2
-    };
-    public enum RESOLUTION
-    { 
-        Full = 1,
-        Half=2,
-        Quarter =4,
-    };
-    public enum FRAMERATE 
-    {
-        Fps20 = 20,
-        Fps30 = 30, 
-        Fps60 = 60
-    };
-
     public bool m_visible;
 
-    public QUALITY m_quality;
-    public RESOLUTION m_resolution;
-    public FRAMERATE m_framerate;
     public GameMaster m_gameMaster;
     public Button m_back;
+
+    public SolitaireListView m_resolutionListView;
+    public SolitaireListView m_qualityListView;
+    public SolitaireListView m_framerateListView;
 
     // Start is called before the first frame update
     void Awake()
     {
-        SetButtonText("ButtonFramerate", m_framerate.ToString());
-        GetButton("ButtonFramerate").onClick.AddListener(OnClickFramerate);
-        SetButtonText("ButtonResolution", m_resolution.ToString() );
-        GetButton("ButtonResolution").onClick.AddListener(OnClickResolution);
-        SetButtonText("ButtonQuality", m_quality.ToString());
-        GetButton("ButtonQuality").onClick.AddListener(OnClickQuality);
+        //SetButtonText("ButtonFramerate", m_framerate.ToString());
+        //GetButton("ButtonFramerate").onClick.AddListener(OnClickFramerate);
+        //SetButtonText("ButtonResolution", m_resolution.ToString() );
+        //GetButton("ButtonResolution").onClick.AddListener(OnClickResolution);
+        //SetButtonText("ButtonQuality", m_quality.ToString());
+        //GetButton("ButtonQuality").onClick.AddListener(OnClickQuality);
         //m_back.onClick.AddListener(m_gameMaster.CloseOptionsMenu);
+    }
+
+    private void Start()
+    {
+
+        m_resolutionListView.AddOnChangeFunction(OnChangeResolution);
+        m_qualityListView.AddOnChangeFunction(OnChangeQuality);
+        m_framerateListView.AddOnChangeFunction(OnChangeFramerate);
+        LoadPrefs();
     }
 
     public void BindCloseButton(UnityAction closeFunction)
@@ -53,11 +44,6 @@ public class OptionsMenu : MonoBehaviour
             throw new ArgumentNullException(nameof(closeFunction));
         }
         m_back.onClick.AddListener(closeFunction);
-    }
-
-    private void Start()
-    {
-        ReloadSettings();
     }
 
     // Update is called once per frame
@@ -96,85 +82,63 @@ public class OptionsMenu : MonoBehaviour
         }
     }
 
-    public void ReloadSettings()
-    {
-        LoadPrefs();
-
-    }
-
     private void OnGUI()
     {
     }
 
     public void SavePrefs()
     {
-        PlayerPrefs.SetInt("Quality", (int)m_quality);
-        PlayerPrefs.SetInt("Resolution", (int)m_resolution);
-        PlayerPrefs.SetInt("Framerate", (int)m_framerate);
+        PlayerPrefs.SetString("Quality", m_qualityListView.GetValue());
+        PlayerPrefs.SetString("Resolution", m_resolutionListView.GetValue());
+        PlayerPrefs.SetString("Framerate", m_framerateListView.GetValue());
         PlayerPrefs.Save();
     }
 
     public void LoadPrefs()
-    {   
-        m_quality = PlayerPrefs.HasKey("Quality")?(QUALITY)PlayerPrefs.GetInt("Quality"): QUALITY.High;
-        m_resolution = PlayerPrefs.HasKey("Resolution") ? (RESOLUTION)PlayerPrefs.GetInt("Resolution") : RESOLUTION.Half;
-        m_framerate = PlayerPrefs.HasKey("Framerate") ? (FRAMERATE)PlayerPrefs.GetInt("Framerate") : FRAMERATE.Fps30;
-
-        int fps = (int)m_framerate;
-        QualitySettings.SetQualityLevel((int)m_quality, true);
-        float h = (float)Display.main.systemHeight / (float)m_resolution; 
-        float w = (float)Display.main.systemWidth / (float)m_resolution;
-        Screen.SetResolution((int)w, (int)h, FullScreenMode.ExclusiveFullScreen, fps);
-        Application.targetFrameRate = fps;
-        //Application.targetFrameRate = (int)m_framerate;
-
-       // QualitySettings.vSyncCount = 0;
+    {
+        string quality = PlayerPrefs.GetString("Quality"); 
+        string resolution = PlayerPrefs.GetString("Resolution");
+        string framerate = PlayerPrefs.GetString("Framerate");
+        if(string.IsNullOrEmpty(quality))
+        {
+            quality = "High";
+        }
+        if(string.IsNullOrEmpty("Resolution"))
+        {
+            resolution = "High";
+        }
+        if (string.IsNullOrEmpty("Framerate"))
+        {
+            framerate = "High";
+        }
+        m_qualityListView.SetValue(quality);
+        m_resolutionListView.SetValue(resolution);
+        m_framerateListView.SetValue(framerate);
     }
 
 
     //------------
-    void OnClickResolution()
+    void OnChangeResolution(string s)
     {
-        int n = Enum.GetValues(typeof(RESOLUTION)).Length;
-        int i = Array.IndexOf(Enum.GetValues(typeof(RESOLUTION)), m_resolution);
-        i++;
-        if(i == n)
-        {
-            i = 0;
-        }
-        m_resolution = (RESOLUTION)Enum.GetValues(typeof(RESOLUTION)).GetValue(i);
-        SetButtonText("ButtonResolution", m_resolution.ToString());
+        PlayerPrefs.SetString("Resolution", s);
         SavePrefs();
+        GetComponent<StateRecorder>().LoadQualitySettings();
         LoadPrefs();
     }
 
-    void OnClickQuality()
+    void OnChangeQuality(string s)
     {
-        int n = Enum.GetValues(typeof(QUALITY)).Length;
-        int i = Array.IndexOf(Enum.GetValues(typeof(QUALITY)), m_quality);
-        i++;
-        if (i == n)
-        {
-            i = 0;
-        }
-        m_quality = (QUALITY)Enum.GetValues(typeof(QUALITY)).GetValue(i);
-        SetButtonText("ButtonQuality", m_quality.ToString());
+        PlayerPrefs.SetString("Quality", s);
         SavePrefs();
+        GetComponent<StateRecorder>().LoadQualitySettings();
         LoadPrefs();
     }
 
-    void OnClickFramerate()
+    void OnChangeFramerate(string s)
     {
-        int n = Enum.GetValues(typeof(FRAMERATE)).Length;
-        int i = Array.IndexOf(Enum.GetValues(typeof(FRAMERATE)), m_framerate);
-        i++;
-        if (i == n)
-        {
-            i = 0;
-        }
-        m_framerate = (FRAMERATE)Enum.GetValues(typeof(FRAMERATE)).GetValue(i);
-        SetButtonText("ButtonFramerate", m_framerate.ToString());
+        PlayerPrefs.SetString("Framerate", s);
         SavePrefs();
+        GetComponent<StateRecorder>().LoadQualitySettings();
         LoadPrefs();
     }
 }

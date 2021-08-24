@@ -8,7 +8,7 @@ public class StateRecorder : MonoBehaviour
     public List<string> m_states;
     private int m_curStateIndex;
     // Start is called before the first frame update
-    void Start()
+    void Awake()
     {
         m_states = new List<string>();
         m_curStateIndex = 0;
@@ -170,6 +170,60 @@ public class StateRecorder : MonoBehaviour
             Debug.Log("[LoadNextState] state loaded");
         }
     }
+
+    public void LoadQualitySettings()
+    {
+
+        string quality = PlayerPrefs.GetString("Quality");
+        string resolution = PlayerPrefs.GetString("Resolution");
+        string framerate = PlayerPrefs.GetString("Framerate");
+        if (string.IsNullOrEmpty(quality))
+        {
+            quality = "High";
+        }
+        if (string.IsNullOrEmpty("Resolution"))
+        {
+            resolution = "High";
+        }
+        if (string.IsNullOrEmpty("Framerate"))
+        {
+            framerate = "High";
+        }
+        int qualityValue = 2;
+        if(quality == "Medium")
+        {
+            qualityValue = 1;
+        }
+        else if(quality == "Low")
+        {
+            qualityValue = 0;
+        }
+        int resScale = 1;
+        if(resolution == "Medium")
+        {
+            resScale = 2;
+        }
+        else if(resolution == "Low")
+        {
+            resScale = 4;
+        }
+        int frameRateValue = 60;
+        if(framerate == "Medium")
+        {
+            frameRateValue = 30;
+        }
+        else if(framerate == "Low")
+        {
+            frameRateValue = 20;
+        }
+        QualitySettings.vSyncCount = 0;
+        QualitySettings.SetQualityLevel(qualityValue, true);
+        float h = (float)Display.main.systemHeight / (float)resScale;
+        float w = (float)Display.main.systemWidth / (float)resScale;
+        Screen.SetResolution((int)w, (int)h, FullScreenMode.ExclusiveFullScreen, frameRateValue);
+        Application.targetFrameRate = frameRateValue;
+    }
+
 }
 
 [System.Serializable]

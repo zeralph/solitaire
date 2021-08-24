@@ -145,6 +145,13 @@ public class GameMaster : MonoBehaviour
         }
     }
 
+    public void SetDifficulty(string s)
+    {
+        int i = int.Parse(s);
+        m_nbDrawnCardsFromDeck = i;
+        PlayerPrefs.SetString("Difficulty", s); 
+    }
+
     // Start is called before the first frame update
     void Start()
     {
@@ -160,7 +167,7 @@ public class GameMaster : MonoBehaviour
         m_optionsMenu.gameObject.SetActive(false);
         m_paused = false;
         m_optionsMenu.gameObject.SetActive(false);
-        m_optionsMenu.GetComponent<OptionsMenu>().ReloadSettings();
+        //m_optionsMenu.GetComponent<OptionsMenu>().ReloadSettings();
         m_world.Reset();
         m_world.StartMove();
         m_inGameMenu.gameObject.SetActive(true);
@@ -168,6 +175,11 @@ public class GameMaster : MonoBehaviour
         m_drawnToDiscardMoveCount = 0;
         m_canCheat = false;
         m_cheatExcludedCards = new Queue<CardScript>(5);
+        string d = PlayerPrefs.GetString("Difficulty");
+        if(!string.IsNullOrEmpty(d))
+        {
+            SetDifficulty(d);
+        }
     }
 
     public bool CanCheat()

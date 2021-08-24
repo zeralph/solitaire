@@ -26,6 +26,14 @@ public class NewGameMenu : MonoBehaviour
         m_difficulty.AddItem("1", true, true);
         m_difficulty.AddItem("3", true, true);
         m_level.AddItem("tree", true, true);
+        m_difficulty.AddOnChangeFunction(this.OnChangeDifficulty);
+        string d = PlayerPrefs.GetString("Difficulty");
+        if (string.IsNullOrEmpty(d))
+        {
+            d = "3";
+        }
+        m_difficulty.SetValue(d);
+        PlayerPrefs.SetString("Difficulty", d);
     }
 
     private void Update()
@@ -43,5 +51,11 @@ public class NewGameMenu : MonoBehaviour
     {
         this.gameObject.SetActive(false);
         m_mainMenu.gameObject.SetActive(true);
+    }
+
+    public void OnChangeDifficulty(string s)
+    {
+        Debug.Log($"[OnChangeDifficulty] : {s}");
+        PlayerPrefs.SetString("Difficulty", s);
     }
 }

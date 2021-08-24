@@ -10,4 +10,9 @@ public class SolitaireListItem : MonoBehaviour
     {
         m_text.text = s;
     }
+    public string GetText()
+    {
+        return m_text.text;
+    }
+
 }

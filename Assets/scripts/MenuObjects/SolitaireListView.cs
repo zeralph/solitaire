@@ -4,6 +4,7 @@ using UnityEngine.EventSystems;
 using UnityEngine;
 using UnityEngine.UI;
 using System;
+using UnityEngine.Events;
 
 public class SolitaireListView : MonoBehaviour, IDragHandler, IEndDragHandler
 {
@@ -33,6 +34,7 @@ public class SolitaireListView : MonoBehaviour, IDragHandler, IEndDragHandler
     public bool snapInV = true;
     bool dragInit = true;
     int dragStartNearest;
+    UnityAction<string> m_onChange;
     //End drag system
 
     void Awake()
@@ -47,7 +49,17 @@ public class SolitaireListView : MonoBehaviour, IDragHandler, IEndDragHandler
         m_stepSize = m_containerWidth;
         ComputePoints();
         m_values = new List<string>();
-        //End drag system
+        for(int i=0; i< m_layoutGroup.transform.childCount; i++)
+        {
+            SolitaireListItem it = m_layoutGroup.transform.GetChild(i).GetComponent<SolitaireListItem>();
+            AddItemlInternal(it, true, true, null);
+        }
+        m_onChange = null;
+    }
+
+    public void AddOnChangeFunction(UnityAction<string> onChange)
+    {
+        m_onChange = onChange;
     }
 
     public string GetValue()
@@ -60,44 +72,79 @@ public class SolitaireListView : MonoBehaviour, IDragHandler, IEndDragHandler
         return "";
     }
 
+    public bool SetValue(string v)
+    {
+        int i = m_values.IndexOf(v);
+        if(i>=0)
+        {
+            m_scroll.horizontalNormalizedPosition = m_points[i];
+            return true;
+        }
+        return false;
+    }
+
     public void AddItem(string text, bool fillH, bool fillV, Func<bool> func = null)
     {
-        m_layoutGroup = this.GetComponentInChildren<HorizontalOrVerticalLayoutGroup>();
         RectTransform parent = m_layoutGroup.GetComponent<RectTransform>();
-        Vector2 parentSize = parent.rect.size;
         GameObject o = Instantiate(m_itemPrefab.gameObject, parent);
         SolitaireListItem it = o.GetComponent<SolitaireListItem>();
         o.SetActive(true);
         it.SetText(text);
-        RectTransform r = o.GetComponent<RectTransform>();
+        AddItemlInternal(it, fillH, fillV);
+
+    }
+    void AddItemlInternal(SolitaireListItem it, bool fillH, bool fillV, Func<bool> func = null)
+    {
+        m_layoutGroup = this.GetComponentInChildren<HorizontalOrVerticalLayoutGroup>();
+        RectTransform parent = m_layoutGroup.GetComponent<RectTransform>();
+        Vector2 parentSize = parent.rect.size;
+        RectTransform r = it.GetComponent<RectTransform>();
         r.SetParent(parent);
         Vector2 itemSize = r.rect.size;
-        float ax = (parentSize.x - itemSize.x)/2;
-        float ay = (parentSize.y - itemSize.y)/2;
+        float ax = (parentSize.x - itemSize.x) / 2;
+        float ay = (parentSize.y - itemSize.y) / 2;
         r.anchoredPosition = new Vector2(ax, ay);
         Vector2 size = parent.sizeDelta;
         size.x += r.sizeDelta.x;
         size.y += r.sizeDelta.y;
         parent.sizeDelta = size;
         m_stepSize = r.sizeDelta.x;
-        m_values.Add(text);
+        m_values.Add(it.GetText());
         m_screens++;
         ComputePoints();
     }
-
     void Update()
     {
         if (LerpH)
         {
             m_scroll.horizontalNormalizedPosition = Mathf.Lerp(m_scroll.horizontalNormalizedPosition, targetH, snapSpeed * Time.deltaTime);
-            if (Mathf.Approximately(m_scroll.horizontalNormalizedPosition, targetH))
+            //if (Mathf.Approximately(m_scroll.horizontalNormalizedPosition, targetH))
+            if(Mathf.Abs(m_scroll.horizontalNormalizedPosition - targetH) < 0.01f)
+            {
+                m_scroll.horizontalNormalizedPosition = targetH;
+                CallOnChange();
                 LerpH = false;
+            }     
         }
         if (LerpV)
         {
             m_scroll.verticalNormalizedPosition = Mathf.Lerp(m_scroll.verticalNormalizedPosition, targetV, snapSpeed * Time.deltaTime);
             if (Mathf.Approximately(m_scroll.verticalNormalizedPosition, targetV))
+            {
+                m_scroll.verticalNormalizedPosition = targetV;
+                CallOnChange();
                 LerpV = false;
+            }
+        }
+    }
+
+    void CallOnChange()
+    {
+        string v = GetValue();
+        Debug.Log($"[CallOnChange] : calling {m_onChange}, parameter {v} ");
+        if (m_onChange != null)
+        {
+            m_onChange(v);
         }
     }
 
