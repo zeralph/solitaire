@@ -358,10 +358,22 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1281905914272683129, guid: 168a4b36f4d55f74e9be4c59192f40b6, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: -23290.787
+      objectReference: {fileID: 0}
+    - target: {fileID: 2394672204474551703, guid: 168a4b36f4d55f74e9be4c59192f40b6, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: -23290.787
+      objectReference: {fileID: 0}
     - target: {fileID: 3184846152740874044, guid: 168a4b36f4d55f74e9be4c59192f40b6, type: 3}
       propertyPath: m_CustomSkybox
       value: 
       objectReference: {fileID: 2100000, guid: 269967744bbed1849a317b8175dc3f43, type: 2}
+    - target: {fileID: 3751650614566384581, guid: 168a4b36f4d55f74e9be4c59192f40b6, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: -23290.787
+      objectReference: {fileID: 0}
     - target: {fileID: 4016021366339951984, guid: 168a4b36f4d55f74e9be4c59192f40b6, type: 3}
       propertyPath: m_Size.z
       value: 0.6
@@ -373,6 +385,14 @@ PrefabInstance:
     - target: {fileID: 5068699367885582750, guid: 168a4b36f4d55f74e9be4c59192f40b6, type: 3}
       propertyPath: m_Name
       value: Menu3DSetup
+      objectReference: {fileID: 0}
+    - target: {fileID: 5584961199653299154, guid: 168a4b36f4d55f74e9be4c59192f40b6, type: 3}
+      propertyPath: m_Padding.m_Top
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 5584961199653299154, guid: 168a4b36f4d55f74e9be4c59192f40b6, type: 3}
+      propertyPath: m_Padding.m_Left
+      value: 24
       objectReference: {fileID: 0}
     - target: {fileID: 5931304077760424498, guid: 168a4b36f4d55f74e9be4c59192f40b6, type: 3}
       propertyPath: m_RootOrder
@@ -416,6 +436,26 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5931304077760424498, guid: 168a4b36f4d55f74e9be4c59192f40b6, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6389160274154446208, guid: 168a4b36f4d55f74e9be4c59192f40b6, type: 3}
+      propertyPath: m_Padding.m_Top
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 6389160274154446208, guid: 168a4b36f4d55f74e9be4c59192f40b6, type: 3}
+      propertyPath: m_Padding.m_Left
+      value: 24
+      objectReference: {fileID: 0}
+    - target: {fileID: 9038847130611726908, guid: 168a4b36f4d55f74e9be4c59192f40b6, type: 3}
+      propertyPath: m_Padding.m_Top
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 9038847130611726908, guid: 168a4b36f4d55f74e9be4c59192f40b6, type: 3}
+      propertyPath: m_Padding.m_Left
+      value: 24
+      objectReference: {fileID: 0}
+    - target: {fileID: 9038847130611726908, guid: 168a4b36f4d55f74e9be4c59192f40b6, type: 3}
+      propertyPath: m_Padding.m_Right
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []

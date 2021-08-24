@@ -12,16 +12,19 @@ public class MainMenu : MonoBehaviour
     public Button m_Options;
     public Button m_Quit;
     public NewGameMenu m_newGameMenu;
+    public OptionsMenu m_optionsMenu;
 
     void Start()
     {
         m_newGameMenu.gameObject.SetActive(false);
+        m_optionsMenu.gameObject.SetActive(false);
         m_newGame.onClick.AddListener(NewGame);
         m_Continue.onClick.AddListener(Continue);
         m_Scores.onClick.AddListener(OnScores);
         m_Options.onClick.AddListener(OnOptions);
         m_Quit.onClick.AddListener(Quit);
         m_Continue.gameObject.SetActive(GetComponent<StateRecorder>().HasSave());
+        m_optionsMenu.BindCloseButton(OnCloseOptions);
     }
     private void NewGame()
     {
@@ -40,8 +43,14 @@ public class MainMenu : MonoBehaviour
     {
         SceneManager.LoadScene("ScoresMenu");
     }
+    public void OnCloseOptions()
+    {
+        this.gameObject.SetActive(true);
+        m_optionsMenu.gameObject.SetActive(false);
+    }
     private void OnOptions()
     {
-
+        this.gameObject.SetActive(false);
+        m_optionsMenu.gameObject.SetActive(true);
     }
 }

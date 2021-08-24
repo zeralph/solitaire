@@ -24,7 +24,7 @@ public class IngameMenu : MonoBehaviour
     public GameObject PanelWin;
     public Button m_winQuit;
     public SolitaireText m_winScore;
-
+    public OptionsMenu m_optionsMenu;
     private void OnMouseUpAsButton()
     {
         
@@ -45,6 +45,7 @@ public class IngameMenu : MonoBehaviour
         m_quit.onClick.AddListener(OnAskQuit);
         m_cheat.onClick.AddListener(OnCheat);
         m_winQuit.onClick.AddListener(OnQuit);
+        m_optionsMenu.BindCloseButton(m_gameMaster.CloseOptionsMenu);
     }
 
 

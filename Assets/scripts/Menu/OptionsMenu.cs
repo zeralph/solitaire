@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.UI;
 
 public class OptionsMenu : MonoBehaviour
@@ -36,25 +37,38 @@ public class OptionsMenu : MonoBehaviour
     // Start is called before the first frame update
     void Awake()
     {
-        PlayerPrefs.DeleteAll();
-        ReloadSettings();
         SetButtonText("ButtonFramerate", m_framerate.ToString());
         GetButton("ButtonFramerate").onClick.AddListener(OnClickFramerate);
         SetButtonText("ButtonResolution", m_resolution.ToString() );
         GetButton("ButtonResolution").onClick.AddListener(OnClickResolution);
         SetButtonText("ButtonQuality", m_quality.ToString());
         GetButton("ButtonQuality").onClick.AddListener(OnClickQuality);
-        m_back.onClick.AddListener(m_gameMaster.CloseOptionsMenu);
+        //m_back.onClick.AddListener(m_gameMaster.CloseOptionsMenu);
+    }
+
+    public void BindCloseButton(UnityAction closeFunction)
+    {
+        if (closeFunction is null)
+        {
+            throw new ArgumentNullException(nameof(closeFunction));
+        }
+        m_back.onClick.AddListener(closeFunction);
     }
 
     private void Start()
     {
+        ReloadSettings();
     }
 
     // Update is called once per frame
     void Update()
     {
 
+    }
+
+    private void DeleteAllSave()
+    {
+        PlayerPrefs.DeleteAll();
     }
 
     private Button GetButton(string btnName)
