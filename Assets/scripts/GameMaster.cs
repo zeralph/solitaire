@@ -87,10 +87,10 @@ public class GameMaster : MonoBehaviour
     private int m_drawnToDiscardMoveCount = 0;
     private bool m_canCheat;
     private Queue<CardScript> m_cheatExcludedCards;
+    public ParticleSystem m_cheatEffect;
     public void OnMovePlayed(eMoves move)
     {
         Debug.Log("[OnMovePlayed] " + move.ToString());
-        ComputeCanCheat();
         for (int i=0; i<m_tableaux.Count; i++)
         {
             m_tableaux[i].FlipTopcard();
@@ -152,6 +152,11 @@ public class GameMaster : MonoBehaviour
         PlayerPrefs.SetString("Difficulty", s); 
     }
 
+    private void Awake()
+    {
+        m_cheatExcludedCards = new Queue<CardScript>(5);
+    }
+
     // Start is called before the first frame update
     void Start()
     {
@@ -174,7 +179,6 @@ public class GameMaster : MonoBehaviour
         m_doInit = true;
         m_drawnToDiscardMoveCount = 0;
         m_canCheat = false;
-        m_cheatExcludedCards = new Queue<CardScript>(5);
         string d = PlayerPrefs.GetString("Difficulty");
         if(!string.IsNullOrEmpty(d))
         {
@@ -185,18 +189,6 @@ public class GameMaster : MonoBehaviour
     public bool CanCheat()
     {
         return m_canCheat;
-    }
-
-    private void ComputeCanCheat()
-    {
-        m_canCheat = false;
-        if (m_discardPile.GetTopCard() != null)
-        {
-            if(GetComponent<CardsCreator>().FindCard(CardScript.Face.verso))
-            {
-                m_canCheat = true;
-            }
-        }
     }
 
     public void Cheat(CardScript cs1)
@@ -251,11 +243,13 @@ public class GameMaster : MonoBehaviour
                 if (cs2 != null)
                 {
                     Debug.Log($"[CHEAT] : swapped {cs1.name} from from {cs1.GetParent().name} with {cs2.name} from {cs2.GetParent().name} ");
-                    //m_cheatExcludedCards.Enqueue(cs2);
+                    m_cheatExcludedCards.Enqueue(cs2);
                     //m_StartDeck.Add(cs1);
-                    cs1.Swap(cs2);
+                    m_cheatEffect.Play();
+                    cs1.RestoreTo(m_StartDeck, CardScript.Face.recto);
+                    cs1.Swap(cs2, m_discardPile);
                     //cs2.RestoreTo(m_discardPile, CardScript.Face.recto);
-                    //cs1.MoveToParent(m_discardPile, CardScript.Face.recto, 10, false);
+                    cs2.MoveToParent(m_discardPile, CardScript.Face.recto, 10, false);
                     OnMovePlayed(GameMaster.eMoves.eCheat);
                 }
                 else

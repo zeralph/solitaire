@@ -193,6 +193,10 @@ public class ObjectBaseSerialized
     //public CardScript.Face m_face;
     public ObjectBaseSerialized(ObjectBase o)
     {
+        if(o == null)
+        {
+            Debug.LogError("err");
+        }
         name = o.name;
         CardScript cs = o.GetComponent<CardScript>();
         if(cs!=null)

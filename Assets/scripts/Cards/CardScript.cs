@@ -75,7 +75,7 @@ public class CardScript : ObjectBase
     private ObjectBase m_lastObjectUnder;
     private GameMaster.eMoves m_lastMove;
     private ObjectBase m_lastParent;
-
+    
     public override void Awake()
     {
         base.Awake();
@@ -454,7 +454,7 @@ public class CardScript : ObjectBase
         m_lastParent = GetParent();
     }
 
-    public void Swap(CardScript cs)
+    public void Swap(CardScript cs, ObjectBase swapTo)
     {
         Debug.Assert(this.GetNbChildCards() == 0, "bad1");
         Debug.Assert(cs.GetNbChildCards() == 0, "bad2");

@@ -20,12 +20,40 @@ PrefabInstance:
       value: 225
       objectReference: {fileID: 0}
     - target: {fileID: 2957095893699680729, guid: d9e51d8ee89534774b125b5e8b29c9c3, type: 3}
+      propertyPath: m_Pivot.x
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2957095893699680729, guid: d9e51d8ee89534774b125b5e8b29c9c3, type: 3}
+      propertyPath: m_Pivot.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2957095893699680729, guid: d9e51d8ee89534774b125b5e8b29c9c3, type: 3}
       propertyPath: m_SizeDelta.x
-      value: 800
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2957095893699680729, guid: d9e51d8ee89534774b125b5e8b29c9c3, type: 3}
       propertyPath: m_SizeDelta.y
-      value: 600
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2957095893699680729, guid: d9e51d8ee89534774b125b5e8b29c9c3, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2957095893699680729, guid: d9e51d8ee89534774b125b5e8b29c9c3, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2957095893699680729, guid: d9e51d8ee89534774b125b5e8b29c9c3, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2957095893699680729, guid: d9e51d8ee89534774b125b5e8b29c9c3, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2957095893699680729, guid: d9e51d8ee89534774b125b5e8b29c9c3, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3086779768125060839, guid: d9e51d8ee89534774b125b5e8b29c9c3, type: 3}
       propertyPath: m_Name
@@ -37,6 +65,34 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5692307586315745742, guid: d9e51d8ee89534774b125b5e8b29c9c3, type: 3}
       propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7164480710770842175, guid: d9e51d8ee89534774b125b5e8b29c9c3, type: 3}
+      propertyPath: m_Pivot.x
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7164480710770842175, guid: d9e51d8ee89534774b125b5e8b29c9c3, type: 3}
+      propertyPath: m_Pivot.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7164480710770842175, guid: d9e51d8ee89534774b125b5e8b29c9c3, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7164480710770842175, guid: d9e51d8ee89534774b125b5e8b29c9c3, type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7164480710770842175, guid: d9e51d8ee89534774b125b5e8b29c9c3, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7164480710770842175, guid: d9e51d8ee89534774b125b5e8b29c9c3, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7164480710770842175, guid: d9e51d8ee89534774b125b5e8b29c9c3, type: 3}
+      propertyPath: m_AnchoredPosition.x
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7759772547072748788, guid: d9e51d8ee89534774b125b5e8b29c9c3, type: 3}
@@ -69,11 +125,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7759772547072748788, guid: d9e51d8ee89534774b125b5e8b29c9c3, type: 3}
       propertyPath: m_SizeDelta.x
-      value: 250
+      value: 800
       objectReference: {fileID: 0}
     - target: {fileID: 7759772547072748788, guid: d9e51d8ee89534774b125b5e8b29c9c3, type: 3}
       propertyPath: m_SizeDelta.y
-      value: 100
+      value: 400
       objectReference: {fileID: 0}
     - target: {fileID: 7759772547072748788, guid: d9e51d8ee89534774b125b5e8b29c9c3, type: 3}
       propertyPath: m_LocalPosition.x
