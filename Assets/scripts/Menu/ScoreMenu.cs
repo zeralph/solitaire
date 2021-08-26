@@ -32,6 +32,8 @@ public class ScoreMenu : MonoBehaviour
     
     private void QuitToMainMenu()
     {
-        SceneManager.LoadScene("StartScene");
+        //SceneManager.LoadScene("StartScene");
+        SceneLoader sl = FindObjectsOfType<SceneLoader>()[0];
+        sl.LoadScene(false, true, false);
     }
 }

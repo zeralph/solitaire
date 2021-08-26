@@ -33,7 +33,9 @@ public class MainMenu : MonoBehaviour
     }
     private void Continue()
     {
-        SceneManager.LoadScene("Solitaire");
+        //SceneManager.LoadScene("Solitaire");
+        SceneLoader sl = FindObjectsOfType<SceneLoader>()[0];
+        sl.LoadScene(false, false, true);
     }
     private void Quit()
     {
@@ -41,7 +43,9 @@ public class MainMenu : MonoBehaviour
     }
     private void OnScores()
     {
-        SceneManager.LoadScene("ScoresMenu");
+        //SceneManager.LoadScene("ScoresMenu");
+        SceneLoader sl = FindObjectsOfType<SceneLoader>()[0];
+        sl.LoadScene(false, false, true);
     }
     public void OnCloseOptions()
     {

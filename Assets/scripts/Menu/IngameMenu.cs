@@ -117,6 +117,8 @@ public class IngameMenu : MonoBehaviour
 
     private void OnQuit()
     {
-        SceneManager.LoadScene("StartScene");
+        //sl.LoadScene("StartScene");
+        SceneLoader sl = FindObjectsOfType<SceneLoader>()[0];
+        sl.LoadScene(false, true, false);
     }
 }

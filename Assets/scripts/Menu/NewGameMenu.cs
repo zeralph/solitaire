@@ -44,7 +44,9 @@ public class NewGameMenu : MonoBehaviour
     {
         GetComponent<StateRecorder>().ClearSave();
         string l = m_level.GetValue();
-        SceneManager.LoadScene("Solitaire");
+        //SceneManager.LoadScene("Solitaire");
+        SceneLoader sl = FindObjectsOfType<SceneLoader>()[0];
+        sl.LoadScene(true, false, false);
     }
 
     void OnBack()

@@ -398,8 +398,8 @@ public class CardScript : ObjectBase
 
     private void MoveWithMouse()
     {
-        Vector3 f = GetGameMaster().transform.forward;
-        Plane plane = new Plane(f, GetGameMaster().transform.position);
+        Vector3 f = GetGameMaster().m_planeForCardsMove.transform.forward;
+        Plane plane = new Plane(f, GetGameMaster().m_planeForCardsMove.transform.position);
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         float point = 0f;
         if (plane.Raycast(ray, out point))

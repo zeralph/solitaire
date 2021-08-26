@@ -7,6 +7,7 @@ public class StartGame : MonoBehaviour
 {
     public string[] m_scenes;
     // Start is called before the first frame update
+
     void Start()
     {
 
