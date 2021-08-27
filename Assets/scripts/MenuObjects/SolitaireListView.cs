@@ -17,7 +17,7 @@ public class SolitaireListView : MonoBehaviour, IDragHandler, IEndDragHandler
 
     //Drag system
     float[] m_points;
-    List<string> m_values;
+    ///List<string> m_values;
     private int m_screens = 0;
     [Tooltip("How quickly the GUI snaps to each panel")]
     public float snapSpeed;
@@ -48,7 +48,7 @@ public class SolitaireListView : MonoBehaviour, IDragHandler, IEndDragHandler
         m_scroll.inertia = true;
         m_stepSize = m_containerWidth;
         ComputePoints();
-        m_values = new List<string>();
+        //m_values = new List<string>();
         for(int i=0; i< m_layoutGroup.transform.childCount; i++)
         {
             SolitaireListItem it = m_layoutGroup.transform.GetChild(i).GetComponent<SolitaireListItem>();
@@ -65,24 +65,32 @@ public class SolitaireListView : MonoBehaviour, IDragHandler, IEndDragHandler
     public string GetValue()
     {
         int i = FindNearest(m_scroll.horizontalNormalizedPosition, m_points);
+        /*
         if(i>=0 && i< m_values.Count)
         {
             return m_values[i];
         }
         return "";
+        */
+        SolitaireListItem it = m_layoutGroup.transform.GetChild(i).GetComponent<SolitaireListItem>();
+        return it.GetValue();
     }
-
+    
     public bool SetValue(string v)
     {
-        int i = m_values.IndexOf(v);
-        if(i>=0)
+        int l = m_layoutGroup.transform.childCount;
+        for(int i=0; i<l; i++)
         {
-            m_scroll.horizontalNormalizedPosition = m_points[i];
-            return true;
+            SolitaireListItem it = m_layoutGroup.transform.GetChild(i).GetComponent<SolitaireListItem>();
+            if(it.GetValue() == v)
+            {
+                m_scroll.horizontalNormalizedPosition = m_points[i];
+                return true;
+            }
         }
         return false;
     }
-
+    
     public void AddItem(string text, string value, bool fillH, bool fillV, Func<bool> func = null)
     {
         RectTransform parent = m_layoutGroup.GetComponent<RectTransform>();
@@ -109,7 +117,7 @@ public class SolitaireListView : MonoBehaviour, IDragHandler, IEndDragHandler
         size.y += r.sizeDelta.y;
         parent.sizeDelta = size;
         m_stepSize = r.sizeDelta.x;
-        m_values.Add(it.GetValue());
+        //m_values.Add(it.GetValue());
         m_screens++;
         ComputePoints();
     }

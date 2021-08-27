@@ -269,6 +269,7 @@ MonoBehaviour:
   PanelWin: {fileID: 2880272788080072199}
   m_winQuit: {fileID: 2621169458959837910}
   m_winScore: {fileID: 1674760706507077992}
+  m_optionsMenu: {fileID: 0}
 --- !u!223 &4588462464108305115
 Canvas:
   m_ObjectHideFlags: 0
@@ -790,7 +791,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2253793912336423050, guid: 47441206738ff4e21a884a9eec014e82, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 246.92105
+      value: 461
       objectReference: {fileID: 0}
     - target: {fileID: 2253793912336423050, guid: 47441206738ff4e21a884a9eec014e82, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -1173,7 +1174,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2253793912336423050, guid: 47441206738ff4e21a884a9eec014e82, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 2.806503
+      value: 150
       objectReference: {fileID: 0}
     - target: {fileID: 2253793912336423050, guid: 47441206738ff4e21a884a9eec014e82, type: 3}
       propertyPath: m_AnchoredPosition.y

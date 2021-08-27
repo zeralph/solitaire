@@ -35,7 +35,7 @@ public class MainMenu : MonoBehaviour
     {
         //SceneManager.LoadScene("Solitaire");
         SceneLoader sl = FindObjectsOfType<SceneLoader>()[0];
-        sl.LoadScene(false, false, true);
+        sl.LoadScene(true, false, false);
     }
     private void Quit()
     {
