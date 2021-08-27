@@ -25,10 +25,7 @@ public class IngameMenu : MonoBehaviour
     public Button m_winQuit;
     public SolitaireText m_winScore;
     public OptionsMenu m_optionsMenu;
-    private void OnMouseUpAsButton()
-    {
-        
-    }
+
     // Start is called before the first frame update
     void Start()
     {

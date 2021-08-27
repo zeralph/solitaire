@@ -44,11 +44,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_scenes:
-  - mainMenuCosmicCoolCloud
-  - mainMenuDarkStorm
-  - mainMenuDayInClouds
-  - mainMenuPlanetaryEarth
-  - ScoresMenu
+  - UnderWater
+  - Storm
+  - DayClouds
+  - Earth
+  - DawnClouds
   - MegaSun
   m_gameWorld: {fileID: 1215912152992551479, guid: b9724553af144f2458140997bbbcf7b2, type: 3}
   m_mainMenu: {fileID: 5068699367885582750, guid: 168a4b36f4d55f74e9be4c59192f40b6, type: 3}

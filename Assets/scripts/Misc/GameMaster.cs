@@ -146,6 +146,10 @@ public class GameMaster : MonoBehaviour
         }
     }
 
+    public bool CanPlayerInteract()
+    {
+        return !m_refillDrawn && !m_pickfromDrawn && !GetComponent<CardsCreator>().IsDistributing();
+    }
     public void SetDifficulty(string s)
     {
         int i = int.Parse(s);

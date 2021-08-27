@@ -26,7 +26,7 @@ public class ScoreMenu : MonoBehaviour
             {
                 s = $"{ss.score} pts {ss.turn} turns";
             }
-            m_scoreList.AddItem(s, true, false);
+            m_scoreList.AddItem(s, s, true, false);
         }
     }
     

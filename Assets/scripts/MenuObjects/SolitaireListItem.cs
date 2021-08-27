@@ -6,13 +6,21 @@ using UnityEngine.UI;
 public class SolitaireListItem : MonoBehaviour
 {
     public Text m_text;
-    public void SetText(string s)
+    public string m_value;
+
+    public void Set(string text, string value)
     {
-        m_text.text = s;
+        m_text.text = text;
+        m_value = value;
     }
     public string GetText()
     {
         return m_text.text;
     }
 
+    public string GetValue()
+    {
+        return m_value;
+    }
 }
+

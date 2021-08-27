@@ -546,7 +546,7 @@ PrefabInstance:
     - target: {fileID: 989870651829616823, guid: 8f9d9e07606410548999d6f05bf82302, type: 3}
       propertyPath: m_texturePack
       value: 
-      objectReference: {fileID: 5190065948587850960, guid: 04c68e89ac396744a8250ed78243b000, type: 3}
+      objectReference: {fileID: 5190065948587850960, guid: f4b75f1c4dbb2da41a45465fc68fbb31, type: 3}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 8f9d9e07606410548999d6f05bf82302, type: 3}
 --- !u!4 &1215912153700986373 stripped

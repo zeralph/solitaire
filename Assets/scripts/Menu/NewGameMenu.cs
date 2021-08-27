@@ -22,10 +22,6 @@ public class NewGameMenu : MonoBehaviour
 
     void Start()
     {
-        m_deckPack.AddItem("Standart", true, true);
-        m_difficulty.AddItem("1", true, true);
-        m_difficulty.AddItem("3", true, true);
-        m_level.AddItem("tree", true, true);
         m_difficulty.AddOnChangeFunction(this.OnChangeDifficulty);
         string d = PlayerPrefs.GetString("Difficulty");
         if (string.IsNullOrEmpty(d))
@@ -34,6 +30,11 @@ public class NewGameMenu : MonoBehaviour
         }
         m_difficulty.SetValue(d);
         PlayerPrefs.SetString("Difficulty", d);
+        string n = PlayerPrefs.GetString(SceneLoader.LAST_SCENE_NAME);
+        if (!string.IsNullOrEmpty(n))
+        {
+            m_level.SetValue(n);
+        }
     }
 
     private void Update()
@@ -46,7 +47,8 @@ public class NewGameMenu : MonoBehaviour
         string l = m_level.GetValue();
         //SceneManager.LoadScene("Solitaire");
         SceneLoader sl = FindObjectsOfType<SceneLoader>()[0];
-        sl.LoadScene(true, false, false);
+        string level = m_level.GetValue();
+        sl.LoadScene(true, false, false, level);
     }
 
     void OnBack()

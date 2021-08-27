@@ -15,10 +15,12 @@ public class SceneLoader : MonoBehaviour
 
     public bool m_isStartGameScene = false;
 
-    private readonly string SCENE_TYPE_KEY = "nextSceneType";
-    private readonly string MAIN_MENU = "mainMenu";
-    private readonly string GAME_WORLD = "gameWorld";
-    private readonly string SCORES_MENU = "scoresMenu";
+    public static readonly string SCENE_TYPE_KEY = "nextSceneType";
+    public static readonly string MAIN_MENU = "mainMenu";
+    public static readonly string GAME_WORLD = "gameWorld";
+    public static readonly string SCORES_MENU = "scoresMenu";
+    public static readonly string LAST_SCENE_NUMBER = "lastSceneNumber";
+    public static readonly string LAST_SCENE_NAME = "lastSceneName";
 
     // Start is called before the first frame update
     void Awake()
@@ -55,7 +57,7 @@ public class SceneLoader : MonoBehaviour
         }
     }
 
-    public void LoadScene(bool loadGameWorld, bool loadMainMenu, bool loadScoreMenu)
+    public void LoadScene(bool loadGameWorld, bool loadMainMenu, bool loadScoreMenu, string level = null)
     {
         if(loadScoreMenu)
         {
@@ -69,9 +71,17 @@ public class SceneLoader : MonoBehaviour
         {
             PlayerPrefs.SetString(SCENE_TYPE_KEY, MAIN_MENU);
         }
-        int idx = Random.Range(0, m_scenes.Length);
-        //idx = 5;
-        Debug.Log($"Chosen index  {idx}, loading {m_scenes[idx]}");
-        SceneManager.LoadScene(m_scenes[idx]);
+        if(string.IsNullOrEmpty(level))
+        {
+            int idx = 0;
+            if (PlayerPrefs.HasKey(LAST_SCENE_NUMBER))
+            {
+                idx = (PlayerPrefs.GetInt(LAST_SCENE_NUMBER) + 1) % m_scenes.Length;
+            }
+            PlayerPrefs.SetInt(LAST_SCENE_NUMBER, idx);
+            level = m_scenes[idx];
+        }
+        PlayerPrefs.SetString(LAST_SCENE_NAME, level);
+        SceneManager.LoadScene(level);
     }
 }

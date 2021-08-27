@@ -75,7 +75,7 @@ public class CardScript : ObjectBase
     private ObjectBase m_lastObjectUnder;
     private GameMaster.eMoves m_lastMove;
     private ObjectBase m_lastParent;
-    
+    private AudioSource m_audio;
     public override void Awake()
     {
         base.Awake();
@@ -86,11 +86,16 @@ public class CardScript : ObjectBase
         OutLine(false);
         m_lastMove = GameMaster.eMoves.eNotSet;
         m_lastParent = null;
+        m_audio = this.GetComponent<AudioSource>();
     }
 
 
     void Update()
-    {
+    {  
+        if(m_audio.isActiveAndEnabled && !m_audio.isPlaying)
+        {
+            m_audio.enabled = false;
+        }
         if(!GetGameMaster())
         {
             return;
@@ -201,7 +206,7 @@ public class CardScript : ObjectBase
 
     public void StartMoveWithMouse()
     {
-        if(!m_isMoving)
+        if(!m_isMoving && GetGameMaster().CanPlayerInteract())
         {
             m_moveWithMouse = true;
             m_speed = GetGameMaster().m_mouseSpeed;
@@ -353,13 +358,7 @@ public class CardScript : ObjectBase
     {
         return this.m_color != s.m_color && this.m_value == (s.m_value + 1) && s.m_face == Face.recto && this.m_face == Face.recto;
     }
-    /*
-    public override Vector3 GetTargetPosition(ObjectBase b)
-    {
-        return new Vector3(0, 0, - m_gameMaster.m_cardSpace);
-        //return new Vector3(m_targetPos.x, m_targetPos.y, m_targetPos.z - m_gameMaster.m_cardSpace);
-    }
-    */
+
     public void RestoreTo(ObjectBase newparent, Face f)
     {
         newparent.Add(this);
@@ -386,10 +385,10 @@ public class CardScript : ObjectBase
             flipTo(f, bImmediateFlip);
             m_isMoving = true;
             m_speed = speed;
-            AudioSource audio = this.GetComponent<AudioSource>();
-            if (audio != null)
+            if (m_audio != null)
             {
-                audio.PlayOneShot(m_cardDeal);
+                m_audio.enabled = true;
+                m_audio.PlayOneShot(m_cardDeal);
             }
             m_lastMove = ComputeMoveType(m_lastParent, newparent);
         }

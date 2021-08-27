@@ -83,13 +83,13 @@ public class SolitaireListView : MonoBehaviour, IDragHandler, IEndDragHandler
         return false;
     }
 
-    public void AddItem(string text, bool fillH, bool fillV, Func<bool> func = null)
+    public void AddItem(string text, string value, bool fillH, bool fillV, Func<bool> func = null)
     {
         RectTransform parent = m_layoutGroup.GetComponent<RectTransform>();
         GameObject o = Instantiate(m_itemPrefab.gameObject, parent);
         SolitaireListItem it = o.GetComponent<SolitaireListItem>();
         o.SetActive(true);
-        it.SetText(text);
+        it.Set(text, value);
         AddItemlInternal(it, fillH, fillV);
 
     }
@@ -109,7 +109,7 @@ public class SolitaireListView : MonoBehaviour, IDragHandler, IEndDragHandler
         size.y += r.sizeDelta.y;
         parent.sizeDelta = size;
         m_stepSize = r.sizeDelta.x;
-        m_values.Add(it.GetText());
+        m_values.Add(it.GetValue());
         m_screens++;
         ComputePoints();
     }

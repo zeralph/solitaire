@@ -32,6 +32,11 @@ public class CardsCreator : ObjectBase
         return m_cardsCreated;
     }
 
+    public bool IsDistributing()
+    {
+        return m_distributing;
+    }
+
     public CardScript FindCard( CardScript.Face face = CardScript.Face.notSet,
                                 CardScript.CardColor color = CardScript.CardColor.notSet,
                                 CardScript.Figure figure = CardScript.Figure.notSet,
