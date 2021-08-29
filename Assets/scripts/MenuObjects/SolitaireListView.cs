@@ -14,7 +14,6 @@ public class SolitaireListView : MonoBehaviour, IDragHandler, IEndDragHandler
     public Button m_next;
     private float m_containerWidth;
     private float m_containerHeight;
-
     //Drag system
     float[] m_points;
     ///List<string> m_values;
@@ -22,7 +21,7 @@ public class SolitaireListView : MonoBehaviour, IDragHandler, IEndDragHandler
     [Tooltip("How quickly the GUI snaps to each panel")]
     public float snapSpeed;
     public float inertiaCutoffMagnitude;
-    public float m_stepSize;
+    private float m_stepSize;
     ScrollRect m_scroll;
     bool LerpH;
     float targetH;
@@ -190,9 +189,10 @@ public class SolitaireListView : MonoBehaviour, IDragHandler, IEndDragHandler
                 target = dragStartNearest - 1;
             }
             target = Mathf.Clamp(target, 0, m_points.Length - 1);
+            
         }
 
-        if (m_scroll.horizontal && snapInH && m_scroll.horizontalNormalizedPosition > 0f && m_scroll.horizontalNormalizedPosition < 1f)
+        if (m_scroll.horizontal && snapInH )//&& m_scroll.horizontalNormalizedPosition > 0f && m_scroll.horizontalNormalizedPosition < 1f)
         {
             targetH = m_points[target];
             LerpH = true;
