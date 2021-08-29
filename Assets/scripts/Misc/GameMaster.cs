@@ -76,7 +76,7 @@ public class GameMaster : MonoBehaviour
     private float m_timer;
     private bool m_refillDrawn;
     private bool m_win;
-    private bool m_canAutomate;
+    //private bool m_canAutomate;
     private bool m_doAutomate;
     private bool m_pickfromDrawn;
     private int m_nbPickedCards = 0;
@@ -89,6 +89,8 @@ public class GameMaster : MonoBehaviour
     private Queue<CardScript> m_cheatExcludedCards;
     public ParticleSystem m_cheatEffect;
     public GameObject m_planeForCardsMove;
+    private float m_automationCurSpeed;
+
     public void OnMovePlayed(eMoves move)
     {
         Debug.Log("[OnMovePlayed] " + move.ToString());
@@ -122,9 +124,11 @@ public class GameMaster : MonoBehaviour
                 m_score += SCORE[(int)move];
                 m_turn++;
             }
-        }   
-        m_canAutomate = Automate(m_doAutomate);
-        m_doAutomate = m_doAutomate & m_canAutomate;
+        }
+        m_automationCurSpeed += 1f;
+        m_doAutomate = Automate(m_doAutomate);
+        //m_canAutomate = Automate(m_doAutomate);
+        //m_doAutomate = m_doAutomate & m_canAutomate;
         if (!m_win)
         {
             ChekForWin();
@@ -171,7 +175,7 @@ public class GameMaster : MonoBehaviour
         m_refillDrawn = false;
         m_timer = 0;
         m_win = false;
-        m_canAutomate = false;
+        //m_canAutomate = false;
         m_nbPickedCards = 0;
         m_pickfromDrawn = false;
         m_optionsMenu.gameObject.SetActive(false);
@@ -473,38 +477,35 @@ public class GameMaster : MonoBehaviour
 
     private bool Automate(bool bDo)
     {
-        CardScript topDrawn = m_discardPile.GetTopCard();
-        //check for discard top card
-        if(topDrawn != null)
+        if(bDo)
         {
-            for(int i=0; i<m_familyPiles.Count; i++)
+            CardScript topDrawn = m_discardPile.GetTopCard();
+            //check for discard top card
+            if(topDrawn != null)
             {
-                if(m_familyPiles[i].CanAdd(topDrawn))
+                for(int i=0; i<m_familyPiles.Count; i++)
                 {
-                    if(bDo)
+                    if(m_familyPiles[i].CanAdd(topDrawn))
                     {
-                        topDrawn.MoveToParent(m_familyPiles[i], CardScript.Face.recto, m_automationSpeed, false);
+                        topDrawn.MoveToParent(m_familyPiles[i], CardScript.Face.recto, m_automationCurSpeed, false);
+                        return true;
                     }
-                    return true;
                 }
             }
-        }
-        // check for tableau top cards
-        for (int i = 0; i < m_tableaux.Count; i++)
-        {
-            //CardScript topTableauCard = m_tableaux[i].GetTopVisibleCard();
-            CardScript topTableauCard = m_tableaux[i].GetTopVisibleCard();
-            if (topTableauCard != null)
+            // check for tableau top cards
+            for (int i = 0; i < m_tableaux.Count; i++)
             {
-                for (int j = 0; j < m_familyPiles.Count; j++)
+                //CardScript topTableauCard = m_tableaux[i].GetTopVisibleCard();
+                CardScript topTableauCard = m_tableaux[i].GetTopVisibleCard();
+                if (topTableauCard != null)
                 {
-                    if (m_familyPiles[j].CanAdd(topTableauCard))
+                    for (int j = 0; j < m_familyPiles.Count; j++)
                     {
-                        if (bDo)
+                        if (m_familyPiles[j].CanAdd(topTableauCard))
                         {
-                            topTableauCard.MoveToParent(m_familyPiles[j], CardScript.Face.recto, m_automationSpeed, false);
+                            topTableauCard.MoveToParent(m_familyPiles[j], CardScript.Face.recto, m_automationCurSpeed, false);
+                            return true;
                         }
-                        return true;
                     }
                 }
             }
@@ -564,14 +565,15 @@ public class GameMaster : MonoBehaviour
 
     public void Automate()
     {
+        m_automationCurSpeed = m_automationSpeed;
         m_doAutomate = true;
-        m_canAutomate = Automate(m_doAutomate);
-        m_doAutomate = m_canAutomate;
+        Automate(true);
     }
 
     public bool CanAutomate()
     {
-        return m_canAutomate;
+        return true;
+        //return m_canAutomate;
     }
 
     public bool CanUndo()

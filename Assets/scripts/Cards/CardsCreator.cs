@@ -7,7 +7,7 @@ public class CardsCreator : ObjectBase
 {
     public GameObject m_cardPrefab;
     public DeckScript m_startDeck;
-    public TexturePack m_texturePack;
+//    public TexturePack m_texturePack;
     public float m_distributionDeltaTime = 0.05f;
     public bool m_shuffle = true;
     private List<CardScript> m_cards;
@@ -184,13 +184,15 @@ public class CardsCreator : ObjectBase
     {
         if(!m_cardsCreated)
         {
-            Debug.Log("CREATE CARDS");   
+            SceneLoader sl = FindObjectsOfType<SceneLoader>()[0];
+            TexturePack tp = sl.GetPack();
+            Debug.Log($"CREATE CARDS USING PACK {tp.name}");
             m_cards = new List<CardScript>();
             for (CardScript.Symbol i = CardScript.Symbol.spade; i< CardScript.Symbol.__MAX__; i++)
             {
                 for(CardScript.Figure j = CardScript.Figure.ace; j< CardScript.Figure.__MAX__; j++)
                 {
-                    CardScript card = CreateCard(i, j, true, m_texturePack);
+                    CardScript card = CreateCard(i, j, true, tp);
                     m_cards.Add(card);
                     if(m_startDeck != null)
                     {
@@ -207,13 +209,15 @@ public class CardsCreator : ObjectBase
     {
         if (!m_cardsCreated)
         {
-            Debug.Log("CREATE RANDOM CARDS");
+            SceneLoader sl = FindObjectsOfType<SceneLoader>()[0];
+            TexturePack tp = sl.GetPack();
+            Debug.Log($"CREATE RANDOM CARDS USING PACK {tp.name}");
             m_cards = new List<CardScript>();
             for (int i=0; i<nbcards; i++)
             {
                 int s = Random.Range(1, (int)CardScript.Symbol.__MAX__);
                 int n = Random.Range(1, (int)CardScript.Figure.__MAX__);
-                CardScript card = CreateCard((CardScript.Symbol)s, (CardScript.Figure)n, true, m_texturePack);
+                CardScript card = CreateCard((CardScript.Symbol)s, (CardScript.Figure)n, true, tp);
                 m_cards.Add(card);
                 if (m_startDeck != null)
                 {

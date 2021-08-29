@@ -35,6 +35,11 @@ public class NewGameMenu : MonoBehaviour
         {
             m_level.SetValue(n);
         }
+        n = PlayerPrefs.GetString(SceneLoader.LAST_TEXTURE_PACK_NAME);
+        if (!string.IsNullOrEmpty(n))
+        {
+            m_deckPack.SetValue(n);
+        }
     }
 
     private void Update()
@@ -48,7 +53,8 @@ public class NewGameMenu : MonoBehaviour
         //SceneManager.LoadScene("Solitaire");
         SceneLoader sl = FindObjectsOfType<SceneLoader>()[0];
         string level = m_level.GetValue();
-        sl.LoadScene(true, false, false, level);
+        string pack = m_deckPack.GetValue();
+        sl.LoadScene(true, false, false, level, pack);
     }
 
     void OnBack()

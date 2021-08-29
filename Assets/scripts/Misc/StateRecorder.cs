@@ -216,6 +216,9 @@ public class StateRecorder : MonoBehaviour
         {
             frameRateValue = 20;
         }
+
+        string[] q = QualitySettings.names;
+
         QualitySettings.vSyncCount = 0;
         QualitySettings.SetQualityLevel(qualityValue, true);
         float h = (float)Display.main.systemHeight / (float)resScale;

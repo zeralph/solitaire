@@ -50,6 +50,9 @@ MonoBehaviour:
   - Earth
   - DawnClouds
   - MegaSun
+  m_packs:
+  - pack0
+  - gameBoy
   m_gameWorld: {fileID: 1215912152992551479, guid: b9724553af144f2458140997bbbcf7b2, type: 3}
   m_mainMenu: {fileID: 5068699367885582750, guid: 168a4b36f4d55f74e9be4c59192f40b6, type: 3}
   m_scoreMenu: {fileID: 6958039579233033821, guid: 05ac85d3f90254880a869b16d212cd1e, type: 3}
