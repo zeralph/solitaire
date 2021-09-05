@@ -76,7 +76,7 @@ public class GameMaster : MonoBehaviour
     private float m_timer;
     private bool m_refillDrawn;
     private bool m_win;
-    //private bool m_canAutomate;
+    private bool m_canAutomate;
     private bool m_doAutomate;
     private bool m_pickfromDrawn;
     private int m_nbPickedCards = 0;
@@ -85,7 +85,6 @@ public class GameMaster : MonoBehaviour
     public int m_turn;
     private bool m_doInit = true;
     private int m_drawnToDiscardMoveCount = 0;
-    private bool m_canCheat;
     private Queue<CardScript> m_cheatExcludedCards;
     public ParticleSystem m_cheatEffect;
     public GameObject m_planeForCardsMove;
@@ -126,7 +125,7 @@ public class GameMaster : MonoBehaviour
             }
         }
         m_automationCurSpeed += 1f;
-        m_doAutomate = Automate(m_doAutomate);
+        m_canAutomate = Automate(m_doAutomate);
         //m_canAutomate = Automate(m_doAutomate);
         //m_doAutomate = m_doAutomate & m_canAutomate;
         if (!m_win)
@@ -175,7 +174,7 @@ public class GameMaster : MonoBehaviour
         m_refillDrawn = false;
         m_timer = 0;
         m_win = false;
-        //m_canAutomate = false;
+        m_canAutomate = false;
         m_nbPickedCards = 0;
         m_pickfromDrawn = false;
         m_optionsMenu.gameObject.SetActive(false);
@@ -187,7 +186,6 @@ public class GameMaster : MonoBehaviour
         m_inGameMenu.gameObject.SetActive(true);
         m_doInit = true;
         m_drawnToDiscardMoveCount = 0;
-        m_canCheat = false;
         string d = PlayerPrefs.GetString("Difficulty");
         if(!string.IsNullOrEmpty(d))
         {
@@ -195,77 +193,54 @@ public class GameMaster : MonoBehaviour
         }
     }
 
-    public bool CanCheat()
-    {
-        return m_canCheat;
-    }
-
     public void Cheat(CardScript cs1)
     {
-        if (true || m_canCheat)
+        if (cs1 != null && !cs1.GetParent().Istableau())
         {
-            m_canCheat = false;
-            //CardScript cs1 = m_discardPile.GetTopCard();
-            if (cs1 != null && !cs1.GetParent().Istableau())
+            List<CardScript> candidates = new List<CardScript>(); ;
+            //first : get an ace if familie are not all created
+            if(!AllFamiliesAreCreated())
             {
-                CardScript cs2 = null;
-                //first : get an ace if familie are not all created
-                if(!AllFamiliesAreCreated())
+                candidates.AddRange(GetComponent<CardsCreator>().FindAllCards(CardScript.Face.verso, CardScript.CardColor.notSet, CardScript.Figure.ace, CardScript.Symbol.notSet,m_cheatExcludedCards));
+            }
+            //get an king if empty slot
+            for (int i = 0; i < m_tableaux.Count; i++)
+            {
+                Tableau t = m_tableaux[i];                      
+                if (t.IsEmpty())
                 {
-                    cs2 = GetComponent<CardsCreator>().FindCard(CardScript.Face.verso, CardScript.CardColor.notSet, CardScript.Figure.ace, CardScript.Symbol.notSet,m_cheatExcludedCards);
+                    candidates.AddRange(GetComponent<CardsCreator>().FindAllCards(CardScript.Face.verso, CardScript.CardColor.notSet, CardScript.Figure.king, CardScript.Symbol.notSet, m_cheatExcludedCards));
                 }
-                //get an ace if empty slot
-                if (cs2 == null)
+            }
+            //else try to fill
+            for (int i = 0; i < m_tableaux.Count; i++)
+            {
+                Tableau t = m_tableaux[i];
+                CardScript cc = t.GetTopVisibleCard();
+                if (cc != null && cc.m_figure > CardScript.Figure.two)
                 {
-                    for (int i = 0; i < m_tableaux.Count; i++)
-                    {
-                        Tableau t = m_tableaux[i];                      
-                        if (t.IsEmpty())
-                        {
-                            cs2 = GetComponent<CardsCreator>().FindCard(CardScript.Face.verso, CardScript.CardColor.notSet, CardScript.Figure.king, CardScript.Symbol.notSet, m_cheatExcludedCards);
-                            if (cs2 != null)
-                            {
-                                break;
-                            }
-                        }
-                    }
+                    CardScript.CardColor color = (cc.m_color == CardScript.CardColor.red) ? CardScript.CardColor.black : CardScript.CardColor.red;
+                    CardScript.Figure figure = (CardScript.Figure)((int)cc.m_figure - 1);
+                    candidates.AddRange(GetComponent<CardsCreator>().FindAllCards(CardScript.Face.verso, color, figure, CardScript.Symbol.notSet, m_cheatExcludedCards));
                 }
-                //else try to fill
-                if (cs2 == null)
-                {
-                    for (int i = 0; i < m_tableaux.Count; i++)
-                    {
-                        Tableau t = m_tableaux[i];
-                        CardScript cc = t.GetTopVisibleCard();
-                        if (cc != null && cc.m_figure > CardScript.Figure.two)
-                        {
-                            CardScript.CardColor color = (cc.m_color == CardScript.CardColor.red) ? CardScript.CardColor.black : CardScript.CardColor.red;
-                            CardScript.Figure figure = (CardScript.Figure)((int)cc.m_figure - 1);
-                            cs2 = GetComponent<CardsCreator>().FindCard(CardScript.Face.verso, color, figure, CardScript.Symbol.notSet, m_cheatExcludedCards);
-                            if (cs2 != null)
-                            {
-                                break;
-                            }
-                        }
-                    }
-                }
-                if (cs2 != null)
-                {
-                    Debug.Log($"[CHEAT] : swapped {cs1.name} from from {cs1.GetParent().name} with {cs2.name} from {cs2.GetParent().name} ");
-                    m_cheatExcludedCards.Enqueue(cs2);
-                    //m_StartDeck.Add(cs1);
-                    m_cheatEffect.Play();
-                    cs1.RestoreTo(m_StartDeck, CardScript.Face.recto);
-                    cs1.Swap(cs2, m_discardPile);
-                    //cs2.RestoreTo(m_discardPile, CardScript.Face.recto);
-                    cs2.MoveToParent(m_discardPile, CardScript.Face.recto, 10, false);
-                    OnMovePlayed(GameMaster.eMoves.eCheat);
-                }
-                else
-                {
-                    m_cheatExcludedCards.Clear();
-                    Debug.LogWarning($"[CHEAT] cheat failed !");
-                }
+            }
+            if (candidates.Count > 0)
+            {
+                CardScript cs2 = candidates[Random.Range(0, candidates.Count)];
+                Debug.Log($"[CHEAT] : swapped {cs1.name} with {cs2.name} from {candidates.Count} candidates");
+                //m_cheatExcludedCards.Enqueue(cs2);
+                //m_StartDeck.Add(cs1);
+                m_cheatEffect.Play();
+                cs1.RestoreTo(m_StartDeck, CardScript.Face.recto);
+                cs1.Swap(cs2, m_discardPile);
+                //cs2.RestoreTo(m_discardPile, CardScript.Face.recto);
+                cs2.MoveToParent(m_discardPile, CardScript.Face.recto, 10, false);
+                OnMovePlayed(GameMaster.eMoves.eCheat);
+            }
+            else
+            {
+                m_cheatExcludedCards.Clear();
+                Debug.LogWarning($"[CHEAT] cheat failed !");
             }
         }
     }
@@ -477,39 +452,43 @@ public class GameMaster : MonoBehaviour
 
     private bool Automate(bool bDo)
     {
-        if(bDo)
+        CardScript topDrawn = m_discardPile.GetTopCard();
+        //check for discard top card
+        if(topDrawn != null)
         {
-            CardScript topDrawn = m_discardPile.GetTopCard();
-            //check for discard top card
-            if(topDrawn != null)
+            for(int i=0; i<m_familyPiles.Count; i++)
             {
-                for(int i=0; i<m_familyPiles.Count; i++)
+                if(m_familyPiles[i].CanAdd(topDrawn))
                 {
-                    if(m_familyPiles[i].CanAdd(topDrawn))
+                    if(bDo)
                     {
                         topDrawn.MoveToParent(m_familyPiles[i], CardScript.Face.recto, m_automationCurSpeed, false);
+                    }
+                    return true;
+                }
+            }
+        }
+        // check for tableau top cards
+        for (int i = 0; i < m_tableaux.Count; i++)
+        {
+            //CardScript topTableauCard = m_tableaux[i].GetTopVisibleCard();
+            CardScript topTableauCard = m_tableaux[i].GetTopVisibleCard();
+            if (topTableauCard != null)
+            {
+                for (int j = 0; j < m_familyPiles.Count; j++)
+                {
+                    if (m_familyPiles[j].CanAdd(topTableauCard))
+                    {
+                        if (bDo)
+                        {
+                            topTableauCard.MoveToParent(m_familyPiles[j], CardScript.Face.recto, m_automationCurSpeed, false);
+                        }
                         return true;
                     }
                 }
             }
-            // check for tableau top cards
-            for (int i = 0; i < m_tableaux.Count; i++)
-            {
-                //CardScript topTableauCard = m_tableaux[i].GetTopVisibleCard();
-                CardScript topTableauCard = m_tableaux[i].GetTopVisibleCard();
-                if (topTableauCard != null)
-                {
-                    for (int j = 0; j < m_familyPiles.Count; j++)
-                    {
-                        if (m_familyPiles[j].CanAdd(topTableauCard))
-                        {
-                            topTableauCard.MoveToParent(m_familyPiles[j], CardScript.Face.recto, m_automationCurSpeed, false);
-                            return true;
-                        }
-                    }
-                }
-            }
         }
+        m_doAutomate = false;
         return false;
     }
 
@@ -567,13 +546,12 @@ public class GameMaster : MonoBehaviour
     {
         m_automationCurSpeed = m_automationSpeed;
         m_doAutomate = true;
-        Automate(true);
+        m_doAutomate = Automate(true);
     }
 
     public bool CanAutomate()
     {
-        return true;
-        //return m_canAutomate;
+        return m_canAutomate;
     }
 
     public bool CanUndo()

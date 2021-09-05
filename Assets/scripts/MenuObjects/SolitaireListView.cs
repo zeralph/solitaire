@@ -36,6 +36,9 @@ public class SolitaireListView : MonoBehaviour, IDragHandler, IEndDragHandler
     UnityAction<string> m_onChange;
     //End drag system
 
+    public bool doTest = false;
+    public float test = 0f;
+
     void Awake()
     {
         m_layoutGroup = this.GetComponentInChildren<HorizontalOrVerticalLayoutGroup>();
@@ -54,6 +57,13 @@ public class SolitaireListView : MonoBehaviour, IDragHandler, IEndDragHandler
             AddItemlInternal(it, true, true, null);
         }
         m_onChange = null;
+
+        //m_layoutGroup.padding.top = 0;
+        //m_layoutGroup.padding.bottom = 0;
+        //m_layoutGroup.padding.right = 0;
+        RectTransform r = m_layoutGroup.transform.GetChild(0).GetComponent<RectTransform>();
+        m_layoutGroup.padding.left = (int)(m_containerWidth - r.rect.width) / 2;
+
     }
 
     public void AddOnChangeFunction(UnityAction<string> onChange)
@@ -122,6 +132,10 @@ public class SolitaireListView : MonoBehaviour, IDragHandler, IEndDragHandler
     }
     void Update()
     {
+        if(doTest)
+        {
+            m_scroll.horizontalNormalizedPosition = test;
+        }
         if (LerpH)
         {
             m_scroll.horizontalNormalizedPosition = Mathf.Lerp(m_scroll.horizontalNormalizedPosition, targetH, snapSpeed * Time.deltaTime);
@@ -160,10 +174,13 @@ public class SolitaireListView : MonoBehaviour, IDragHandler, IEndDragHandler
         if (m_screens > 0)
         {
             m_points = new float[m_screens];
-            float f = 1 / (float) (m_screens);
+            float f = 1.0f / (float) (m_screens);
+            float c = 1.0f / (float)(2 * m_screens);
+            float d = f / 2.0f;
+            d = 0;
             for (int i = 0; i<m_screens; i++)
             {
-                m_points[i] = i* f;
+                m_points[i] = i * f - d;
             }
         }
         else
@@ -189,7 +206,6 @@ public class SolitaireListView : MonoBehaviour, IDragHandler, IEndDragHandler
                 target = dragStartNearest - 1;
             }
             target = Mathf.Clamp(target, 0, m_points.Length - 1);
-            
         }
 
         if (m_scroll.horizontal && snapInH )//&& m_scroll.horizontalNormalizedPosition > 0f && m_scroll.horizontalNormalizedPosition < 1f)

@@ -139,11 +139,11 @@ public class ObjectBase : MonoBehaviour
                 //o.transform.localPosition = p;
                 Vector3 parentPos = o.GetParent().transform.position + o.GetParent().transform.TransformVector(p);
                 o.transform.position = parentPos;
-                Debug.LogWarning($"object : {o.name}, parent {o.transform.parent.name} has a Z of {p.z}");
+                //Debug.LogWarning($"object : {o.name}, parent {o.transform.parent.name} has a Z of {p.z}");
             }
             else
             {
-                Debug.LogWarning("object : " + this.transform.GetChild(i).name);
+                //Debug.LogWarning("object : " + this.transform.GetChild(i).name);
             }
         }
     }

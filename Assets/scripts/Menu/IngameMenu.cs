@@ -53,7 +53,7 @@ public class IngameMenu : MonoBehaviour
         m_automate.gameObject.SetActive(m_gameMaster.CanAutomate());
         m_undo.gameObject.SetActive(m_gameMaster.CanUndo());
         m_redo.gameObject.SetActive(m_gameMaster.CanRedo());
-        m_cheat.gameObject.SetActive(m_gameMaster.CanCheat());
+        m_cheat.gameObject.SetActive(false);// m_gameMaster.CanCheat());
         m_score.SetText($"  {m_gameMaster.GetScrore().ToString()} pts  ");
         m_turn.SetText(m_gameMaster.GetTurn().ToString());
         //m_continue.gameObject.SetActive(m_gameMaster.HasSave());

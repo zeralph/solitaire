@@ -76,22 +76,44 @@ public class CardScript : ObjectBase
     private GameMaster.eMoves m_lastMove;
     private ObjectBase m_lastParent;
     private AudioSource m_audio;
+    private bool m_turing;
+    private Animation m_animation;
     public override void Awake()
     {
         base.Awake();
         m_targetPos = transform.position;
         m_isMoving = false;
+        m_turing = false;
         m_moveWithMouse = false;
         m_speed = 0f;
         OutLine(false);
         m_lastMove = GameMaster.eMoves.eNotSet;
         m_lastParent = null;
         m_audio = this.GetComponent<AudioSource>();
+        m_animation = m_mesh.GetComponent<Animation>();
     }
 
 
     void Update()
     {  
+        if(m_turing && !m_animation.isPlaying )
+        {
+            m_turing = false;
+            if(m_face == Face.recto)
+            {
+                m_face = Face.verso;
+            }
+            else
+            {
+                m_face = Face.recto;
+            }
+            m_symbolImage.gameObject.SetActive(m_face == Face.recto);
+            m_value1Image.gameObject.SetActive(m_face == Face.recto);
+            m_value2Image.gameObject.SetActive(m_face == Face.recto);
+            m_symbol1Image.gameObject.SetActive(m_face == Face.recto);
+            m_symbol2Image.gameObject.SetActive(m_face == Face.recto);
+            m_recto.gameObject.SetActive(m_face == Face.recto);
+        }
         if(m_audio.isActiveAndEnabled && !m_audio.isPlaying)
         {
             m_audio.enabled = false;
@@ -378,7 +400,18 @@ public class CardScript : ObjectBase
         }
         else
         {
-            
+
+            Vector3 p = GetGameMaster().m_planeForCardsMove.transform.forward;
+            Plane plane = new Plane(p, GetGameMaster().m_planeForCardsMove.transform.position);
+            Ray ray = new Ray(this.transform.position, -p);
+            float point = 0f;
+            if (plane.Raycast(ray, out point))
+            {
+                Vector3 v = this.transform.position;
+                v.z = ray.GetPoint(point).z;
+                this.transform.position = v;
+            }
+
             newparent.Add(this);
             m_targetPos = newparent.GetTargetPosition(this);
             this.transform.rotation = newparent.transform.rotation;
@@ -501,22 +534,23 @@ public class CardScript : ObjectBase
         }
         else if (/*force ||*/ f != m_face)
         {
-            m_face = f;
-            Animation a = m_mesh.GetComponent<Animation>();
-            if (m_face == Face.recto)
+            //m_face = f;
+            if (f == Face.recto)
             {
-                a.Play("cardFlipVersoToRecto", PlayMode.StopAll);
+                m_animation.Play("cardFlipVersoToRecto", PlayMode.StopAll);
+                m_turing = true;
             }
-            else if (m_face == Face.verso)
+            else if (f == Face.verso)
             {
-                a.Play("cardFlipRectoToVerso", PlayMode.StopAll);
-            }   
-            m_symbolImage.gameObject.SetActive(m_face == Face.recto);
-            m_value1Image.gameObject.SetActive(m_face == Face.recto);
-            m_value2Image.gameObject.SetActive(m_face == Face.recto);
-            m_symbol1Image.gameObject.SetActive(m_face == Face.recto);
-            m_symbol2Image.gameObject.SetActive(m_face == Face.recto);
-            m_recto.gameObject.SetActive(m_face == Face.recto);
+                m_animation.Play("cardFlipRectoToVerso", PlayMode.StopAll);
+                m_turing = true;
+            }
+            m_symbolImage.gameObject.SetActive(true);
+            m_value1Image.gameObject.SetActive(true);
+            m_value2Image.gameObject.SetActive(true);
+            m_symbol1Image.gameObject.SetActive(true);
+            m_symbol2Image.gameObject.SetActive(true);
+            m_recto.gameObject.SetActive(true);
             AudioSource audio = this.GetComponent<AudioSource>();
             if(audio != null)
             {
