@@ -100,6 +100,7 @@ public class CardsCreator : ObjectBase
                 if(m_cardToDistributeIndex == m_cards.Count)
                 {
                     m_distributing = false;
+                    GetComponent<StateRecorder>().Clear();
                     GetGameMaster().SaveState(true);
                     GetGameMaster().OnMovePlayed(GameMaster.eMoves.eDistributed);
                 }
@@ -137,6 +138,7 @@ public class CardsCreator : ObjectBase
 
     public void DistributeCards()
     {
+        SortCards();
         //shuffle
         if(m_shuffle)
         {
@@ -147,17 +149,6 @@ public class CardsCreator : ObjectBase
                 m_cards[i] = m_cards[r];
                 m_cards[r] = s;
             }  
-        }
-        else
-        {
-            int i = FindIndex("heart_queen");
-            Swap(0, i);
-            i = FindIndex("heart_two");
-            Swap(1, i);
-            i = FindIndex("spade_ace");
-            Swap(7, i);
-            i = FindIndex("spade_eight");
-            i = FindIndex("spade_ace");
         }
         for (int i=0; i<m_cards.Count; i++)
         {
@@ -185,7 +176,7 @@ public class CardsCreator : ObjectBase
     private void DistributeCard(CardScript c)
     {
         //Add to the tableaux
-        GetComponent<StateRecorder>().Clear();
+        //GetComponent<StateRecorder>().Clear();
         bool bAdded = this.GetComponent<GameMaster>().DistributeCard(c);
         m_cardToDistributeIndex++;
     }
@@ -212,9 +203,11 @@ public class CardsCreator : ObjectBase
             TexturePack tp = sl.GetPack();
             Debug.Log($"CREATE CARDS USING PACK {tp.name}");
             m_cards = new List<CardScript>();
-            for (CardScript.Symbol i = CardScript.Symbol.spade; i< CardScript.Symbol.__MAX__; i++)
+            //for (CardScript.Symbol i = CardScript.Symbol.spade; i< CardScript.Symbol.__MAX__; i++)
+            for (CardScript.Figure j = CardScript.Figure.ace; j < CardScript.Figure.__MAX__; j++)
             {
-                for(CardScript.Figure j = CardScript.Figure.ace; j< CardScript.Figure.__MAX__; j++)
+                //for(CardScript.Figure j = CardScript.Figure.ace; j< CardScript.Figure.__MAX__; j++)
+                for (CardScript.Symbol i = CardScript.Symbol.spade; i < CardScript.Symbol.__MAX__; i++)
                 {
                     CardScript card = CreateCard(i, j, true, tp);
                     m_cards.Add(card);
@@ -227,7 +220,34 @@ public class CardsCreator : ObjectBase
             }
         }
         m_cardsCreated = true;
-    }    
+    }
+
+    public void SortCards()
+    {
+        CardScript.CardColor c = CardScript.CardColor.red;
+        CardScript.Figure f = CardScript.Figure.ace;
+        for (int i = 0; i < m_cards.Count; i++)
+        {
+            CardScript cs = m_cards[i];
+            CardScript cs2 = FindCard(CardScript.Face.notSet, c, f, CardScript.Symbol.notSet);
+            int j = m_cards.IndexOf(cs2);
+            m_cards[i] = cs2;
+            m_cards[j] = cs;
+            if (c == CardScript.CardColor.red)
+            {
+                c = CardScript.CardColor.black;
+            }
+            else
+            {
+                c = CardScript.CardColor.red;
+            }
+            f = (CardScript.Figure)((int)f + 1);
+            if (f == CardScript.Figure.__MAX__)
+            {
+                f = CardScript.Figure.ace;
+            }
+        }
+    }
 
     public void CreateRandomCards(int nbcards)
     {

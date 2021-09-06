@@ -247,4 +247,18 @@ public class ObjectBaseSerialized
         }
         return true;
     }
+
+    public int CountChildren()
+    {
+        if(this.children != null && this.children.Count>0)
+        {
+            int c = 1;
+            for (int i = 0; i < this.children.Count; i++)
+            {
+                c += this.children[i].CountChildren();
+            }
+            return c;
+        }
+        return 1;
+    }
 }

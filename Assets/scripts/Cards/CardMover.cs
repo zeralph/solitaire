@@ -113,7 +113,7 @@ public class CardMover : ObjectBase
         // Does the ray intersect any objects excluding the player layer
         if (Physics.Raycast(ray, out hit, Mathf.Infinity, layerMask))
         {
-            ObjectBase cs = hit.transform.GetComponent<ObjectBase>();
+            ObjectBase cs = hit.transform.GetComponentInParent<ObjectBase>();
             if(cs != null)
             {
                 return cs;

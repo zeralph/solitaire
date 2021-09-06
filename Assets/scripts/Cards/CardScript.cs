@@ -17,8 +17,8 @@ public class CardScript : ObjectBase
         notSet=0,
         spade=1,
         heart=2,
-        diamond=3,
-        club=4,
+        club = 3,
+        diamond =4,
         __MAX__
     }
     public enum Face
@@ -245,6 +245,7 @@ public class CardScript : ObjectBase
     {
         if(m_moveWithMouse)
         {
+            m_lastObjectUnder = GetObjectUnder(); 
             m_moveWithMouse = false;
             bool bFailed = true;
             ObjectBase curP = GetParent();
@@ -551,10 +552,10 @@ public class CardScript : ObjectBase
             m_symbol1Image.gameObject.SetActive(true);
             m_symbol2Image.gameObject.SetActive(true);
             m_recto.gameObject.SetActive(true);
-            AudioSource audio = this.GetComponent<AudioSource>();
-            if(audio != null)
+            if(m_audio != null)
             {
-                audio.PlayOneShot(m_cardFlip);
+                m_audio.enabled = true;
+                m_audio.PlayOneShot(m_cardFlip);
             }
         }      
     }

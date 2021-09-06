@@ -103,7 +103,7 @@ public class StateRecorder : MonoBehaviour
     {
         m_states.Clear();
         m_curStateIndex = 0;
-        Debug.Log("states cleared");
+        //Debug.Log("states cleared");
     }
 
     public void AddState(ObjectBase o, bool bSave)
@@ -143,6 +143,12 @@ public class StateRecorder : MonoBehaviour
             gm.m_turn = ss.turn;
             gm.m_score = ss.score;
             ss.o.Restore(b);
+            int c = ss.o.CountChildren();
+            if (c != 67)
+            {
+                Debug.LogError($"restored {c} card states (should be 67)");
+                Debug.Break();
+            }
             Debug.Log("[LoadPreviousState] state loaded");
         } 
     }
@@ -264,6 +270,12 @@ public class StateSerialized
         this.score = score;
         this.turn = turn;
         o = new ObjectBaseSerialized(startObj);
+        int c = o.CountChildren();
+        if(c != 67)
+        {
+            Debug.LogError($"saved {c} card states (should be 67)");
+            Debug.Break();
+        }
     }
     public bool Restore(ref int score, ref int turn, ObjectBase startObj)
     {
@@ -273,6 +285,13 @@ public class StateSerialized
         }
         score = this.score;
         turn = this.turn;
-        return o.Restore(startObj);
+        bool b = o.Restore(startObj);
+        int c = o.CountChildren();
+        if (c != 67)
+        {
+            Debug.LogError($"restored {c} card states (should be 67)");
+            Debug.Break();
+        }
+        return b;
     }
 }

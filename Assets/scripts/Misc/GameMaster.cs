@@ -92,7 +92,7 @@ public class GameMaster : MonoBehaviour
 
     public void OnMovePlayed(eMoves move)
     {
-        Debug.Log("[OnMovePlayed] " + move.ToString());
+        //Debug.Log("[OnMovePlayed] " + move.ToString());
         for (int i=0; i<m_tableaux.Count; i++)
         {
             m_tableaux[i].FlipTopcard();
@@ -135,7 +135,7 @@ public class GameMaster : MonoBehaviour
         CheckForBugs();
     }
 
-    void CheckForBugs()
+    bool CheckForBugs()
     {
         List<CardScript> l = GetComponent<CardsCreator>().GetCards();
         for (int i=0; i<l.Count; i++)
@@ -143,10 +143,12 @@ public class GameMaster : MonoBehaviour
             CardScript c = l[i];
             if(c.GetParent() == m_StartDeck)
             {
-                Debug.LogError("here");
-                Debug.Break();
+                return true;
+                //Debug.LogError("here");
+                //Debug.Break();
             }
         }
+        return false;
     }
 
     public bool CanPlayerInteract()
@@ -334,6 +336,7 @@ public class GameMaster : MonoBehaviour
                 GetComponent<CardsCreator>().BoomCards();
                 m_inGameMenu.OpenWin(m_score);
                 GetComponent<StateRecorder>().AddScore(m_score, m_turn);
+                GetComponent<StateRecorder>().ClearSave();
             }
         }
     }
