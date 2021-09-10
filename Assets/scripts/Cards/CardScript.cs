@@ -186,7 +186,7 @@ public class CardScript : ObjectBase
 
     public bool IsRecto()
     {
-        return m_face == Face.recto;
+        return m_face == Face.recto || (m_turing && m_face == Face.verso);
     }
 
     public void FlipRectoToVerso()
@@ -522,7 +522,7 @@ public class CardScript : ObjectBase
             {
                 m_mesh.transform.localRotation = Quaternion.Euler(0.0f, 0.0f, 0.0f);
             }
-            else if (m_face == Face.verso)
+            else// if (m_face == Face.verso)
             {
                 m_mesh.transform.localRotation = Quaternion.Euler(0.0f, 180.0f, 0.0f);
             }
