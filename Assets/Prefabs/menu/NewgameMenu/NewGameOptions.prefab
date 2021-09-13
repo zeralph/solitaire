@@ -388,6 +388,10 @@ PrefabInstance:
       propertyPath: m_Text
       value: 3 by 3
       objectReference: {fileID: 0}
+    - target: {fileID: 5013353663297354733, guid: 2fb7d36ea27447842a465c62e105099b, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: 595e7971a7d76b548aa22e31272893c9, type: 3}
     - target: {fileID: 5314611504920021202, guid: 2fb7d36ea27447842a465c62e105099b, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
@@ -743,6 +747,10 @@ PrefabInstance:
       propertyPath: m_Text
       value: Normal
       objectReference: {fileID: 0}
+    - target: {fileID: 5013353663297354733, guid: 2fb7d36ea27447842a465c62e105099b, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: b7d3c5c06234ff84d805df25d368ebd5, type: 3}
     - target: {fileID: 5314611504920021202, guid: 2fb7d36ea27447842a465c62e105099b, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
@@ -2141,6 +2149,10 @@ PrefabInstance:
       propertyPath: m_Text
       value: 1 by 1
       objectReference: {fileID: 0}
+    - target: {fileID: 5013353663297354733, guid: 2fb7d36ea27447842a465c62e105099b, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: ba7b4ef55efcd2a4daadbe61ead599c4, type: 3}
     - target: {fileID: 5314611504920021202, guid: 2fb7d36ea27447842a465c62e105099b, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
@@ -2246,6 +2258,10 @@ PrefabInstance:
       propertyPath: m_Text
       value: Easy
       objectReference: {fileID: 0}
+    - target: {fileID: 5013353663297354733, guid: 2fb7d36ea27447842a465c62e105099b, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: e2ed715cba9936e458ea7f9e269f8e4f, type: 3}
     - target: {fileID: 5314611504920021202, guid: 2fb7d36ea27447842a465c62e105099b, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
@@ -2347,6 +2363,10 @@ PrefabInstance:
       propertyPath: m_Text
       value: Hard
       objectReference: {fileID: 0}
+    - target: {fileID: 5013353663297354733, guid: 2fb7d36ea27447842a465c62e105099b, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: 3c0974ee6b9f8c14cb86ba7713224807, type: 3}
     - target: {fileID: 5314611504920021202, guid: 2fb7d36ea27447842a465c62e105099b, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5

@@ -137,7 +137,7 @@ public class CardScript : ObjectBase
         {
             m_targetPos = transform.position;
         }
-        if (m_lastMove != GameMaster.eMoves.eNotSet && m_lastMove != GameMaster.eMoves.eImpossibleMove && !m_turing)
+        if (m_lastMove != GameMaster.eMoves.eNotSet && m_lastMove != GameMaster.eMoves.eImpossibleMove && !m_turing && !m_isMoving)
         {
             GetGameMaster().OnMovePlayed(m_lastMove);
             m_lastMove = GameMaster.eMoves.eNotSet;

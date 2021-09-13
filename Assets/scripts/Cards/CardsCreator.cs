@@ -94,7 +94,7 @@ public class CardsCreator : ObjectBase
             if (m_timer > m_distributionDeltaTime)
             {
                 m_timer = 0;
-                int idx = m_cards.Count - 1 - m_cardToDistributeIndex;
+                int idx = /*m_cards.Count - 1 -*/ m_cardToDistributeIndex;
                 DistributeCard(m_cards[idx]);
                 //Debug.Log("ditributing card " + m_cardToDistributeIndex);
                 if(m_cardToDistributeIndex == m_cards.Count)
@@ -136,6 +136,14 @@ public class CardsCreator : ObjectBase
         m_cards[idx2] = t;
     }
 
+    private void swapCard(CardScript c, int index)
+    {      
+        int i = m_cards.IndexOf(c);
+        CardScript tmp = m_cards[index];
+        m_cards[index] = c;
+        m_cards[i] = tmp;
+    }
+
     public void DistributeCards()
     {
         SortCards();
@@ -149,6 +157,50 @@ public class CardsCreator : ObjectBase
                 m_cards[i] = m_cards[r];
                 m_cards[r] = s;
             }  
+        }
+        else
+        {
+            List<CardScript> c1 = FindAllCards(CardScript.Face.notSet, CardScript.CardColor.notSet, CardScript.Figure.ace);
+            List<CardScript> c2 = FindAllCards(CardScript.Face.notSet, CardScript.CardColor.notSet, CardScript.Figure.two);
+            List<CardScript> c3 = FindAllCards(CardScript.Face.notSet, CardScript.CardColor.notSet, CardScript.Figure.three);
+            List<CardScript> c4 = FindAllCards(CardScript.Face.notSet, CardScript.CardColor.notSet, CardScript.Figure.four);
+            List<CardScript> c5 = FindAllCards(CardScript.Face.notSet, CardScript.CardColor.notSet, CardScript.Figure.five);
+            List<CardScript> c6 = FindAllCards(CardScript.Face.notSet, CardScript.CardColor.notSet, CardScript.Figure.six);
+            List<CardScript> c7 = FindAllCards(CardScript.Face.notSet, CardScript.CardColor.notSet, CardScript.Figure.sevent);
+            swapCard(c1[0], 0);
+            swapCard(c2[3], 1);
+            swapCard(c4[1], 2);
+            swapCard(c5[2], 3);
+            swapCard(c6[2], 4);
+            swapCard(c7[1], 5);
+            swapCard(c7[3], 6);
+
+            swapCard(c1[1], 7);
+            swapCard(c3[0], 8);
+            swapCard(c4[2], 9);
+            swapCard(c5[3], 10);
+            swapCard(c6[3], 11);
+            swapCard(c7[2], 12);
+
+            swapCard(c1[2], 13);
+            swapCard(c3[1], 14);
+            swapCard(c4[3], 15);
+            swapCard(c6[0], 16);
+            swapCard(c7[0], 17);
+
+            swapCard(c1[3], 18);
+            swapCard(c3[2], 19);
+            swapCard(c5[0], 20);
+            swapCard(c6[1], 21);
+
+            swapCard(c2[0], 22);
+            swapCard(c3[3], 23);
+            swapCard(c5[1], 24);
+
+            swapCard(c2[1], 25);
+            swapCard(c4[0], 26);
+
+            swapCard(c2[2], 27);
         }
         for (int i=0; i<m_cards.Count; i++)
         {
