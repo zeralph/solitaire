@@ -22,6 +22,7 @@ public class GameMaster : MonoBehaviour
         eFamilyToFamily,
         eRestore,
         eDistributed,
+        eFlip,
         eCheat,
         __MAX__
     }
@@ -44,6 +45,7 @@ public class GameMaster : MonoBehaviour
         0,//eFamilyToFamily,
         0,//Restore,
         0,//distributed
+        0,//flip
         -500,//cheat
     };
     public WorldMoveScript m_world; 
@@ -101,7 +103,12 @@ public class GameMaster : MonoBehaviour
         {
             return;
         }
-        if(move == eMoves.eDrawnToDiscard)
+        if (move == eMoves.eFlip)
+        {
+            m_canAutomate = Automate(false);
+            return;
+        }
+        if (move == eMoves.eDrawnToDiscard)
         {
             m_drawnToDiscardMoveCount++;
             if((m_deck.GetNbChildCards() >0) && (m_drawnToDiscardMoveCount % m_nbDrawnCardsFromDeck) != 0)
@@ -110,7 +117,9 @@ public class GameMaster : MonoBehaviour
             }
         }
         m_drawnToDiscardMoveCount = 0;
-        if (move != eMoves.eRestore )
+        m_automationCurSpeed += 1f;
+        m_canAutomate = Automate(m_doAutomate);
+        if (move != eMoves.eRestore && !m_doAutomate)
         {
             SaveState(true);
             if (move == eMoves.eDistributed)
@@ -124,8 +133,7 @@ public class GameMaster : MonoBehaviour
                 m_turn++;
             }
         }
-        m_automationCurSpeed += 1f;
-        m_canAutomate = Automate(m_doAutomate);
+
         //m_canAutomate = Automate(m_doAutomate);
         //m_doAutomate = m_doAutomate & m_canAutomate;
         if (!m_win)

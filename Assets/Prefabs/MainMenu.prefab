@@ -111,7 +111,7 @@ Camera:
   m_CullingMask:
     serializedVersion: 2
     m_Bits: 4294967295
-  m_RenderingPath: -1
+  m_RenderingPath: 1
   m_TargetTexture: {fileID: 0}
   m_TargetDisplay: 0
   m_TargetEye: 3
@@ -418,7 +418,6 @@ MonoBehaviour:
   m_cardDecal: 0
   m_cardPrefab: {fileID: 5592622193794082588, guid: 661cd47d0e48948928456b184e31574a, type: 3}
   m_startDeck: {fileID: 3184846152743392384}
-  m_texturePack: {fileID: 5190065948587850960, guid: f4b75f1c4dbb2da41a45465fc68fbb31, type: 3}
   m_distributionDeltaTime: 0.05
   m_shuffle: 1
 --- !u!114 &5343964552312314106
@@ -1266,11 +1265,6 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 4256b19a0f28246c1b9902993384c3db, type: 3}
---- !u!224 &8494705740957734480 stripped
-RectTransform:
-  m_CorrespondingSourceObject: {fileID: 3437394123864117643, guid: 4256b19a0f28246c1b9902993384c3db, type: 3}
-  m_PrefabInstance: {fileID: 6509762371688220635}
-  m_PrefabAsset: {fileID: 0}
 --- !u!114 &6687575337344782931 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 475226746681496968, guid: 4256b19a0f28246c1b9902993384c3db, type: 3}
@@ -1282,3 +1276,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e7af7b784079c4560bef5587c07d48bb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!224 &8494705740957734480 stripped
+RectTransform:
+  m_CorrespondingSourceObject: {fileID: 3437394123864117643, guid: 4256b19a0f28246c1b9902993384c3db, type: 3}
+  m_PrefabInstance: {fileID: 6509762371688220635}
+  m_PrefabAsset: {fileID: 0}

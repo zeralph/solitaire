@@ -78,6 +78,7 @@ public class CardScript : ObjectBase
     private AudioSource m_audio;
     private bool m_turing;
     private Animation m_animation;
+
     public override void Awake()
     {
         base.Awake();
@@ -135,6 +136,11 @@ public class CardScript : ObjectBase
         if (!m_isMoving && transform.position != m_targetPos)
         {
             m_targetPos = transform.position;
+        }
+        if (m_lastMove != GameMaster.eMoves.eNotSet && m_lastMove != GameMaster.eMoves.eImpossibleMove && !m_turing)
+        {
+            GetGameMaster().OnMovePlayed(m_lastMove);
+            m_lastMove = GameMaster.eMoves.eNotSet;
         }
     }
 
@@ -479,11 +485,13 @@ public class CardScript : ObjectBase
         transform.position = finalPos;
         m_isMoving = false;
         SetHitable(true);
+        /*
         if (m_lastMove != GameMaster.eMoves.eNotSet && m_lastMove != GameMaster.eMoves.eImpossibleMove)
         {
             GetGameMaster().OnMovePlayed(m_lastMove);
             m_lastMove = GameMaster.eMoves.eNotSet;
         }
+        */
         m_lastParent = GetParent();
     }
 
@@ -515,6 +523,7 @@ public class CardScript : ObjectBase
 
     public void flipTo(Face f, bool force)
     {
+        m_lastMove = GameMaster.eMoves.eFlip;
         if (force)
         {
             m_face = f;
@@ -532,6 +541,7 @@ public class CardScript : ObjectBase
             m_symbol1Image.gameObject.SetActive(m_face == Face.recto);
             m_symbol2Image.gameObject.SetActive(m_face == Face.recto);
             m_recto.gameObject.SetActive(m_face == Face.recto);
+            
         }
         else if (/*force ||*/ f != m_face)
         {

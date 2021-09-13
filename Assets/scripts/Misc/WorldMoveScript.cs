@@ -16,6 +16,14 @@ public class WorldMoveScript : MonoBehaviour
         m_startMove = false;
         m_startAngle = this.transform.rotation;
         m_startPosition = this.transform.position;
+        Camera[] c = FindObjectsOfType<Camera>();
+        if(c != null)
+        {
+            for(int i=0; i<c.Length; i++)
+            {
+                //c[i].gameObject.SetActive(false);
+            }
+        }
     }
 
     // Update is called once per frame

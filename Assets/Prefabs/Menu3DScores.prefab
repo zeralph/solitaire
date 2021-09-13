@@ -113,7 +113,7 @@ Camera:
   m_CullingMask:
     serializedVersion: 2
     m_Bits: 4294967295
-  m_RenderingPath: -1
+  m_RenderingPath: 1
   m_TargetTexture: {fileID: 0}
   m_TargetDisplay: 0
   m_TargetEye: 3
@@ -508,7 +508,6 @@ MonoBehaviour:
   m_cardDecal: 0
   m_cardPrefab: {fileID: 5592622193794082588, guid: 661cd47d0e48948928456b184e31574a, type: 3}
   m_startDeck: {fileID: 786607842199092035}
-  m_texturePack: {fileID: 5190065948587850960, guid: 04c68e89ac396744a8250ed78243b000, type: 3}
   m_distributionDeltaTime: 0.05
   m_shuffle: 1
 --- !u!114 &5215148090173428843
